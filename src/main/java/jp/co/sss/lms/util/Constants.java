@@ -181,6 +181,7 @@ public interface Constants {
 	public static final String PROP_KEY_ESTIMATE_MAXCHECK = "estimate.maxCheck";
 	public static final String PROP_KEY_REPORTDOWNLOAD_MAXCHECK = "reportDownload.maxCheck";
 	public static final String PROP_KEY_FILESHARE_FILESHAREFLG = "fileShare.fileShareFlg";
+	public static final String PROP_KEY_SECURITY_AGREE_FLG = "securityAgreeFlg";
 
 
 	public static final String CODE_KEY_AUTH = "auth";
@@ -325,4 +326,7 @@ public interface Constants {
 
 	/** 評価レポート一括入力_CSVヘッダ */
 	public static final String EV_REPORT_CSV_DOWNLOAD = "ヘッダーに(★)の記載がある部分のみの変更を行ってください。※CSVの1-6行目の編集を行わないでください。\r\n評価点にカンマや改行などのCSVに影響がでる文字を使用しないでください。\r\n評価の編集後、CSVアップロードをすると変更した値で評価レポートに採点結果が反映されます。\r\n成果物の評価は0-100の整数と採点対象外のみとなります。\r\n";
+	
+	/** 成果物アップロードファイル　最大値 */ //TODO アップロードサイズ指定されたものに変更
+	public static final String DELIVERABLES_UPLOAD_MAX_SIZE ="1000";
 }

@@ -1,9 +1,12 @@
 package jp.co.sss.lms.entity;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -11,7 +14,6 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "m_company")
 public class MCompany {
-	
     @Id
     private Integer companyId;
     @Column
@@ -70,6 +72,8 @@ public class MCompany {
     private String workEndTime;
     @Column
     private Short fileShareFlg;
+    @OneToMany(mappedBy = "mCompany")
+    private List<TUserCompany> tUserCompanyList;
     
 	public Integer getCompanyId() {
 		return companyId;
@@ -245,5 +249,11 @@ public class MCompany {
 	public void setFileShareFlg(Short fileShareFlg) {
 		this.fileShareFlg = fileShareFlg;
 	}
-	
+	public List<TUserCompany> getTUserCompanyList() {
+		return tUserCompanyList;
+	}
+	public void setTUserCompanyList(List<TUserCompany> tUserCompanyList) {
+		this.tUserCompanyList = tUserCompanyList;
+	}
+
 }

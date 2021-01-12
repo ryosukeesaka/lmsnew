@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MLmsUser;
+import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.LoginRepository;
 import jp.co.sss.lms.util.PasswordUtil;
 
@@ -21,9 +22,14 @@ public class LoginService {
 	@Autowired
 	private HttpSession session;
 
-	public LoginUserDto getLoginInfo(String loginId, String password) {
-		String saltPassword = passwordUtil.getSaltedAndStrechedPassword(password, loginId);
-		MLmsUser mLmsUser = repository.findByLoginIdAndPassword(loginId, saltPassword);
+	/**
+	 * ログイン情報取得
+	 * @param loginForm
+	 * @return LoginUserDto
+	 */
+	public LoginUserDto getLoginInfo(LoginForm loginForm) {
+		String saltPassword = passwordUtil.getSaltedAndStrechedPassword(loginForm.getPassword(), loginForm.getLoginId());
+		MLmsUser mLmsUser = repository.findByLoginIdAndPassword(loginForm.getLoginId(), saltPassword);
 		if (mLmsUser == null) {
 			return null;
 		} else {

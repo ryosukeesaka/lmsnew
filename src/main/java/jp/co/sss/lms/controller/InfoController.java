@@ -10,7 +10,7 @@ import jp.co.sss.lms.dto.InfoDto;
 import jp.co.sss.lms.service.InfoService;
 
 @RestController
-@RequestMapping("/api/info")
+@RequestMapping("/info")
 public class InfoController {
 	
 	@Autowired

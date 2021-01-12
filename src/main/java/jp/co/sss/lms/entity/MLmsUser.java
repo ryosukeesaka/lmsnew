@@ -1,48 +1,67 @@
 package jp.co.sss.lms.entity;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "m_lms_user")
 public class MLmsUser {
+	
+	/** LMSユーザーID */
 	@Id
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
-    @TableGenerator(
-        name = "generator",
-        allocationSize = 1)
 	private Integer lmsUserId;
+	
+	/** ユーザーID */
 	@Column
 	private Integer userId;
+	
+	/** ロール */
 	@Column
 	private String role;
+	
+	/** 管理者権限 */
     @Column
     private Short adminFlg;
+    
+    /** 企業アカウントID */
     @Column
     private Integer accountId;
+    
+    /** 削除フラグ */
     @Column
     private Short deleteFlg;
+    
+    /** 初回作成者 */
     @Column
     private Integer firstCreateUser;
+    
+    /** 初回作成日時  */
     @Temporal(TemporalType.TIMESTAMP)
     private Date firstCreateDate;
+    
+    /** 最終更新者  */
     @Column
     private Integer lastModifiedUser;
+    
+    /** 最終更新日時 */
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
+    
+    /** 研修を通じてどのようになって欲しいか */
     @Column
     private String hopeViaTraning;
+    
+    /** プログラミング経験 */
     @Column
     private Short programmingExperience;
     @OneToOne(mappedBy = "mLmsUser")
@@ -56,7 +75,10 @@ public class MLmsUser {
     @OneToOne
     @JoinColumn(name = "lms_user_id", referencedColumnName = "lms_user_id")
     private TCourseUser tCourseUser;
+    @OneToMany(mappedBy = "mLmsUser")
+    private List<TDailyReportSubmit> tDailyReportSubmitList;
     
+   
 	public Integer getLmsUserId() {
 		return lmsUserId;
 	}
@@ -152,6 +174,12 @@ public class MLmsUser {
 	}
 	public void setTCourseUser(TCourseUser tCourseUser) {
 		this.tCourseUser = tCourseUser;
+	}
+	public List<TDailyReportSubmit> getTDailyReportSubmitList() {
+		return tDailyReportSubmitList;
+	}
+	public void setTDailyReportSubmitList(List<TDailyReportSubmit> tDailyReportSubmitList) {
+		this.tDailyReportSubmitList = tDailyReportSubmitList;
 	}
     
 }

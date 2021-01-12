@@ -1,7 +1,7 @@
 package jp.co.sss.lms.dto;
 
 import java.io.Serializable;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

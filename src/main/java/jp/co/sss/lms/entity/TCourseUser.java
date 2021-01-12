@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -13,26 +15,37 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "t_course_user")
 public class TCourseUser {
+	/** コース・ユーザー紐付けID */
 	@Id
     private Integer courseUserId;
-    @Column
+    @Column(name = "course_id", insertable = false, updatable = false)
     private Integer courseId;
+	/** LMSユーザID */
     @Column
     private Integer lmsUserId;
+    /** 企業アカウントID */
     @Column
     private Integer accountId;
+    /** 削除フラグ */
     @Column
     private Short deleteFlg;
+    /** 初回作成者 */
     @Column
     private Integer firstCreateUser;
+    /** 初回作成日時 */
     @Temporal(TemporalType.TIMESTAMP)
     private Date firstCreateDate;
+    /** 最終更新者 */
     @Column
     private Integer lastModifiedUser;
+    /** 最終更新日時 */
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
     @OneToOne(mappedBy = "tCourseUser")
     private MLmsUser mLmsUser;
+    @ManyToOne
+    @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+    private MCourse mCourse;
     
 	public Integer getCourseUserId() {
 		return courseUserId;
@@ -94,5 +107,11 @@ public class TCourseUser {
 	public void setMLmsUser(MLmsUser mLmsUser) {
 		this.mLmsUser = mLmsUser;
 	}
-    
+	public MCourse getMCourse() {
+		return mCourse;
+	}
+	public void setMCourse(MCourse mCourse) {
+		this.mCourse = mCourse;
+	}
+  
 }
