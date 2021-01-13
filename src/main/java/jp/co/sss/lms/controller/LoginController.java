@@ -1,7 +1,5 @@
 package jp.co.sss.lms.controller;
 
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +23,6 @@ public class LoginController {
 	private LoginService loginService;
 	@Autowired
 	private LoggingUtil loggingUtil;
-	@Autowired
-	private HttpSession session;
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -44,18 +40,4 @@ public class LoginController {
 		
 	}
 
-	@RequestMapping(value = "/logout")
-	public ResponseEntity<Boolean> logout() {
-		
-		// セッション情報を削除
-		session.removeAttribute("scopedTarget.loginUserDto");
-		session.removeAttribute("loginUserDto");
-		
-		StringBuffer sb = new StringBuffer("ログアウトしました。");
-		loggingUtil.appendLog(sb);
-		logger.info(sb.toString());
-		
-		return new ResponseEntity<>(true, HttpStatus.OK);
-		
-	}
 }
