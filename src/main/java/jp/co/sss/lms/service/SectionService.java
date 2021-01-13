@@ -25,7 +25,6 @@ import jp.co.sss.lms.entity.TFileSection;
 import jp.co.sss.lms.entity.TSectionDailyReport;
 import jp.co.sss.lms.repository.MSectionRepository;
 import jp.co.sss.lms.util.Constants;
-import jp.co.sss.lms.util.LoginUserUtil;
 import jp.co.sss.lms.util.MessageUtil;
 import jp.co.sss.lms.util.PasswordUtil;
 
@@ -38,8 +37,6 @@ import jp.co.sss.lms.util.PasswordUtil;
 public class SectionService {
 	@Autowired
 	MessageUtil messageUtil;
-	@Autowired
-	LoginUserUtil loginUserUtil;
 	@Autowired
 	TDailyReportSubmitService tDailyReportSubmitService;
 	@Autowired
@@ -76,10 +73,10 @@ public class SectionService {
 	 * @param sectionId セクションID
 	 * @return sectionServiceSectionDto セクションDto
 	 */
-	public SectionServiceSectionDto getSectionDto(Integer sectionId) {
+	public SectionServiceSectionDto getSectionDto(Integer sectionId, Integer accountId, Integer lmsUserId, Integer userId) {
 
 		// セクション関連情報を取得
-		MSection mSection = mSectionRepository.getSectionDetail(sectionId,loginUserUtil.getLoginAccountId(),Constants.DB_FLG_FALSE);
+		MSection mSection = mSectionRepository.getSectionDetail(sectionId, accountId, Constants.DB_FLG_FALSE);
 		
 		// SecitonServiceFileDtoListの作成
 		List<TFileSection> tFileSectionList = mSection.getTFileSectionList();
@@ -90,7 +87,7 @@ public class SectionService {
 			SectionServiceFileDto sectionServiceFileDto = new SectionServiceFileDto();
 
 			BeanUtils.copyProperties(tf.getMFile(), sectionServiceFileDto);
-			sectionServiceFileDto.setFileId(this.getHashedFiled(new SectionServiceFileDownloadDto(), tf.getFileId()));
+			sectionServiceFileDto.setFileId(this.getHashedFiled(new SectionServiceFileDownloadDto(), tf.getFileId(), userId));
 
 			sectionServiceFileDtoList.add(sectionServiceFileDto);
 		}
@@ -171,7 +168,7 @@ public class SectionService {
 		sectionServiceSectionDto.setReportDtoList(sectionServiceDailyReportDtoList);
 		sectionServiceSectionDto.setDeliverablesDtoList(sectionServiceDeliverablesSectionDtoList);
 		
-		return this.setDailyReportSubmitId(mSection, sectionServiceSectionDto) ;
+		return this.setDailyReportSubmitId(mSection, sectionServiceSectionDto, lmsUserId) ;
 	}
 	
 	
@@ -181,12 +178,12 @@ public class SectionService {
 	 * @param sectionServiceSectionDto セクションDto
 	 * @return レポート提出IDを設定したセクションDto
 	 */
-	private SectionServiceSectionDto setDailyReportSubmitId(MSection mSection,SectionServiceSectionDto sectionServiceSectionDto) {
+	private SectionServiceSectionDto setDailyReportSubmitId(MSection mSection,SectionServiceSectionDto sectionServiceSectionDto, Integer lmsUserId) {
 	    Timestamp date = new Timestamp(mSection.getDate().getTime());
         for (SectionServiceDailyReportDto dto : sectionServiceSectionDto.getReportDtoList()) {
         	//レポート提出情報を取得する
             TDailyReportSubmit tDailyReportSubmit = tDailyReportSubmitService.findByUserAndDate(
-                    loginUserUtil.getLoginLmsUserId(),date,dto.getDailyReportId());
+            		lmsUserId, date, dto.getDailyReportId());
             if (tDailyReportSubmit != null) {
                 dto.setDailyReportSubmitId(tDailyReportSubmit.getDailyReportSubmitId());
             }
@@ -201,9 +198,9 @@ public class SectionService {
 	 * @param fileId
 	 * @return hashFileId
 	 */
-	private String getHashedFiled(SectionServiceFileDownloadDto sectionServiceFileDownloadDto, Integer fileId) {
+	private String getHashedFiled(SectionServiceFileDownloadDto sectionServiceFileDownloadDto, Integer fileId, Integer userId) {
 		String hashFileId = passwordUtil.getSaltedAndStrechedPassword(fileId.toString(),
-				loginUserUtil.getLoginUserId().toString());
+				userId.toString());
 		Integer mappedFiled = sectionServiceFileDownloadDto.getFileIdMap().get(hashFileId);
 		if (!fileId.equals(mappedFiled)) {
 			sectionServiceFileDownloadDto.getFileIdMap().put(hashFileId, fileId);

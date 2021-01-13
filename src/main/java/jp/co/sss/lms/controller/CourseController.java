@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.CourseServiceCourseDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.service.CourseService;
+import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
-import jp.co.sss.lms.util.LoginUserUtil;
 
 /**
  * CourseController コース詳細画面への画面遷移を行うコントローラー
@@ -26,11 +26,7 @@ import jp.co.sss.lms.util.LoginUserUtil;
 public class CourseController {
 
 	@Autowired
-	LoginUserUtil loginUserUtil;
-	@Autowired
 	HttpSession session;
-	@Autowired
-	LoginUserDto loginUserDto;
 	@Autowired
 	CourseService courseService;
 	@Autowired
@@ -44,15 +40,15 @@ public class CourseController {
 	 * @return コース詳細情報
 	 */
 	@RequestMapping("/detail")
-	public ResponseEntity<CourseServiceCourseDto> detail() {
+	public ResponseEntity<CourseServiceCourseDto> detail(@RequestParam("courseId") Integer courseId, @RequestParam("role") String role) {
 
 		CourseServiceCourseDto courseServiceCourseDto = new CourseServiceCourseDto();
 		HttpStatus httpStatus = HttpStatus.OK;
 
-		if (!loginUserUtil.isStudent()) {
+		if (!Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 
 			// 入力パラメータのチェックを行い、問題があった場合はmessageにエラーメッセージを代入する
-			String message = courseService.getCourseInfo(loginUserDto.getCourseId());
+			String message = courseService.getCourseInfo(courseId);
 
 			if (!message.isEmpty()) {
 
@@ -67,7 +63,7 @@ public class CourseController {
 		} else {
 
 			// コース詳細関連情報の取得
-			courseServiceCourseDto = courseService.getCourseDetail(loginUserDto.getCourseId());
+			courseServiceCourseDto = courseService.getCourseDetail(courseId);
 
 		}
 

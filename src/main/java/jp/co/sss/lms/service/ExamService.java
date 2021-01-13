@@ -20,7 +20,6 @@ import jp.co.sss.lms.repository.MExamRepository;
 import jp.co.sss.lms.repository.TExamResultDetailRepository;
 import jp.co.sss.lms.repository.TExamResultRepository;
 import jp.co.sss.lms.util.Constants;
-import jp.co.sss.lms.util.LoginUserUtil;
 
 /**
  * 試験情報サービス<br>
@@ -32,14 +31,13 @@ import jp.co.sss.lms.util.LoginUserUtil;
  */
 @Service
 public class ExamService {
+	
 	@Autowired
 	MExamRepository mExamRepository;
 	@Autowired
 	TExamResultRepository tExamResultRepository;
 	@Autowired
 	TExamResultDetailRepository tExamResultDetailRepository;
-	@Autowired
-	LoginUserUtil loginUserUtil;
 
 	/**
 	 * 試験情報取得
@@ -47,11 +45,10 @@ public class ExamService {
 	 * @param form 試験開始form
 	 * @return mExam 試験情報Entity
 	 */
-	public ExamServiceExamDto getExam(ExamPlayForm form) {
+	public ExamServiceExamDto getExam(ExamPlayForm form, Integer lmsUserId) {
 
 		// examSectionId・lmsUserIdで検索、検索結果を試験情報Entityに保存
 		Integer examSectionId = form.getExamSectionId();
-		Integer lmsUserId = loginUserUtil.getLoginLmsUserId();
 		MExam mExam = mExamRepository.findByExamSectionIdAndLmsUserId(examSectionId, lmsUserId);
 
 		// 試験情報Entityから試験情報Dtoへ詰め替えして返す
@@ -64,11 +61,9 @@ public class ExamService {
 	 * @param examSectionId 試験セクションID
 	 * @return examResultDtoList 試験結果Dtoリスト
 	 */
-	public List<ExamServiceExamResultDto> getExamResult(Integer examSectionId) {
+	public List<ExamServiceExamResultDto> getExamResult(Integer examSectionId, Integer lmsUserId, Integer accountId) {
 
 		// examSectionId・lmsUserId・accountIdで検索、検索結果を試験結果Entityリストに保存
-		Integer lmsUserId = loginUserUtil.getLoginLmsUserId();
-		Integer accountId = loginUserUtil.getLoginAccountId();
 		List<TExamResult> tExamResultList = tExamResultRepository
 				.findByExamSectionIdAndLmsUserIdAndAccountId(examSectionId, lmsUserId, accountId);
 
@@ -98,11 +93,10 @@ public class ExamService {
 	 * @param form 試験開始form
 	 * @return mExam 試験情報Entity
 	 */
-	public ExamServiceExamDto getExamQuestionAndAnswer(ExamPlayForm form) {
+	public ExamServiceExamDto getExamQuestionAndAnswer(ExamPlayForm form, Integer accountId) {
 
 		// examIdで検索、検索結果を試験情報Entityに保存
 		Integer examId = form.getExamId();
-		Integer accountId = loginUserUtil.getLoginAccountId();
 		MExam mExam = mExamRepository.getSindleResultByExamId(examId, accountId);
 
 		// 試験情報Entityから試験情報Dtoへ詰め替えして返す
@@ -115,10 +109,9 @@ public class ExamService {
 	 * @param examId 試験ID
 	 * @return mExam 試験情報Entity
 	 */
-	public ExamServiceExamDto getExam(Integer examId) {
+	public ExamServiceExamDto getExam(Integer examId, Integer accountId) {
 
 		// examIdとaccountIdで検索、検索結果を試験情報Entityに保存
-		Integer accountId = loginUserUtil.getLoginAccountId();
 		MExam mExam = mExamRepository.getSindleResultByExamId(examId, accountId);
 		
 		// 試験情報Entityから試験情報Dtoへ詰め替えして返す
@@ -150,18 +143,18 @@ public class ExamService {
 	 * @param form 試験開始form
 	 * @return examResultDto 試験結果情報Dto
 	 */
-	public ExamServiceExamResultDto registExamResult(ExamPlayForm form) {
+	public ExamServiceExamResultDto registExamResult(ExamPlayForm form, Integer accountId, Integer lmsUserId, String role) {
 
 		// formのexamSectionIdから試験問題・解答情報取得
-		ExamServiceExamDto examDto = getExamQuestionAndAnswer(form);
+		ExamServiceExamDto examDto = getExamQuestionAndAnswer(form, accountId);
 
 		// 取得したexamSectionId,lmsUserId,accountIdを、試験結果Entityにセット
 		TExamResult tExamResult = new TExamResult();
 		MLmsUser mLmsUser = new MLmsUser();
 		tExamResult.setExamSectionId(form.getExamSectionId());
-		mLmsUser.setLmsUserId(loginUserUtil.getLoginLmsUserId());
+		mLmsUser.setLmsUserId(lmsUserId);
 		tExamResult.setMLmsUser(mLmsUser);
-		tExamResult.setAccountId(loginUserUtil.getLoginAccountId());
+		tExamResult.setAccountId(accountId);
 
 		// 時間が空でない場合、formから時間取得し、試験結果Entityにセット
 		if (form.getTime() != null) {
@@ -169,7 +162,7 @@ public class ExamService {
 		}
 
 		// ログインユーザが受講生の場合
-		if (loginUserUtil.isStudent()) {
+		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 			// 試験結果情報登録
 			tExamResultRepository.save(tExamResult);
 		}
@@ -189,7 +182,7 @@ public class ExamService {
 			TExamResultDetail tExamResultDetail = new TExamResultDetail();
 			tExamResultDetail.setQuestionId(examServiceQuestionDto.getQuestionId());
 			tExamResultDetail.setTExamResult(tExamResult);
-			tExamResultDetail.setLmsUserId(loginUserUtil.getLoginLmsUserId());
+			tExamResultDetail.setLmsUserId(lmsUserId);
 
 			// 回答が空でない場合回答取得、空の場合0代入
 			if (answer != null && answer[i] != null && !answer[i].toString().isEmpty()) {
@@ -199,10 +192,10 @@ public class ExamService {
 			}
 
 			// 取得したaccountIdを、試験結果詳細Entityにセット
-			tExamResultDetail.setAccountId(loginUserUtil.getLoginAccountId());
+			tExamResultDetail.setAccountId(accountId);
 
 			// ログインユーザが受講生の場合
-			if (loginUserUtil.isStudent()) {
+			if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 				// 試験結果詳細情報登録
 				tExamResultDetailRepository.save(tExamResultDetail);
 			}
@@ -216,7 +209,7 @@ public class ExamService {
 		tExamResult.setScore(score);
 
 		// ログインユーザが受講生の場合
-		if (loginUserUtil.isStudent()) {
+		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 			// 検索結果を試験結果Entityリストに保存
 			List<TExamResult> tExamResultList = tExamResultRepository.findByExamSectionIdAndLmsUserIdAndAccountId(
 					tExamResult.getExamSectionId(), tExamResult.getMLmsUser().getLmsUserId(),
@@ -250,20 +243,20 @@ public class ExamService {
 	 * @param examResultId 試験結果ID
 	 * @return examResultDto 試験結果情報Dto
 	 */
-	public ExamServiceExamResultDto getExamResultWithQuestion(Integer examResultId) {
+	public ExamServiceExamResultDto getExamResultWithQuestion(Integer examResultId, Integer accountId, Integer lmsUserId) {
 		// 試験結果IDを基に、試験結果情報を取得
 		TExamResult tExamResult = tExamResultRepository.findByExamResultId(examResultId,
-				loginUserUtil.getLoginAccountId());
+				accountId);
 
 		// 試験結果情報Dtoに値を代入する
 		ExamServiceExamResultDto examResultDto = new ExamServiceExamResultDto();
 		examResultDto.setExamResultId(tExamResult.getExamResultId());
-		examResultDto.setLmsUserId(loginUserUtil.getLoginLmsUserId());
+		examResultDto.setLmsUserId(lmsUserId);
 		examResultDto.setScore((double) tExamResult.getScore());
 		examResultDto.setDate(tExamResult.getFirstCreateDate());
 
 		// 試験IDを基に、試験情報Dtoを取得する
-		ExamServiceExamDto examDto = getExam(tExamResult.getTExamSection().getExamId());
+		ExamServiceExamDto examDto = getExam(tExamResult.getTExamSection().getExamId(), accountId);
 
 		// 試験情報Dtoに代入するための、試験問題Dtoのリストを作成する
 		List<MQuestion> questionList = tExamResult.getTExamSection().getMExam().getMQuestionList();

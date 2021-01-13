@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import jp.co.sss.lms.dto.DailyReportDto;
 import jp.co.sss.lms.dto.DailyReportFbDto;
 import jp.co.sss.lms.dto.IntelligibilityDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MDailyReportDetail;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.TDailyReportFb;
@@ -22,7 +21,6 @@ import jp.co.sss.lms.repository.TDailyReportFbRepository;
 import jp.co.sss.lms.repository.TDailyReportSubmitRepository;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.DateUtil;
-import jp.co.sss.lms.util.LoginUserUtil;
 import jp.co.sss.lms.util.MessageUtil;
 
 @Service
@@ -31,15 +29,11 @@ public class ReportService {
 	@Autowired
 	TDailyReportSubmitRepository sRepository;
 	@Autowired
-	LoginUserDto loginUserDto;
-	@Autowired
 	LoginRepository loginRepository;
 	@Autowired
 	TDailyReportFbRepository tDailyReportFbRepository;
 	@Autowired
 	DateUtil dateUtil;
-	@Autowired
-	LoginUserUtil loginUserUtil;
 	@Autowired
 	private MessageUtil messageUtil;
 	
@@ -131,11 +125,11 @@ public class ReportService {
 	 * @param dailyReportFbId 日報提出ID
 	 * @return saveDailyReportFeedback 日報フィードバックコメント情報更新処理
 	 */
-	public Integer dailyReportFbId(Integer dailyReportFbId) {
+	public Integer dailyReportFbId(Integer dailyReportFbId, Integer lmsUserId) {
 
 		TDailyReportFb tDailyReportFb = tDailyReportFbRepository.findById(dailyReportFbId).orElse(null);
 		tDailyReportFb.setDeleteFlg(Constants.DB_FEEDBACK_FLG_TRUE);
-		tDailyReportFb.setLastModifiedUser(loginUserUtil.getLoginLmsUserId());
+		tDailyReportFb.setLastModifiedUser(lmsUserId);
 		tDailyReportFb.setLastModifiedDate(
 				dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
@@ -148,7 +142,7 @@ public class ReportService {
 	 * @param dailyReportForm レポート詳細フォーム
 	 * @return saveDailyReportFeedback 日報フィードバックコメント情報更新処理
 	 */
-	public Integer insertDailyReportFeedback(DailyReportDetailForm dailyReportDetailForm) {
+	public Integer insertDailyReportFeedback(DailyReportDetailForm dailyReportDetailForm, Integer lmsUserId, Integer accountId) {
 
 		// DailyReportFormのフィールドバックIDを取得
 		TDailyReportFb tDailyReportFb = new TDailyReportFb();
@@ -157,14 +151,14 @@ public class ReportService {
 
 		// DailyReportIdがnullなら新規登録処理、ある場合には更新の処理を実行
 		tDailyReportFb.setTDailyReportSubmit(tDailyReportSubmit);
-		tDailyReportFb.setLmsUserId(loginUserUtil.getLoginLmsUserId());
+		tDailyReportFb.setLmsUserId(lmsUserId);
 		tDailyReportFb.setContent(dailyReportDetailForm.getContent());
-		tDailyReportFb.setAccountId(loginUserUtil.getLoginAccountId());
+		tDailyReportFb.setAccountId(accountId);
 		tDailyReportFb.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
-		tDailyReportFb.setFirstCreateUser(loginUserUtil.getLoginLmsUserId());
+		tDailyReportFb.setFirstCreateUser(lmsUserId);
 		tDailyReportFb
 				.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
-		tDailyReportFb.setLastModifiedUser(loginUserUtil.getLoginLmsUserId());
+		tDailyReportFb.setLastModifiedUser(lmsUserId);
 		tDailyReportFb.setLastModifiedDate(
 				dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
@@ -254,13 +248,13 @@ public class ReportService {
 	 * @param dailyReportSubmitId 日報提出ID
 	 * @return errorMessage
 	 */
-	public String erroerUserShow(Integer dailyReportSubmitId) {
+	public String erroerUserShow(Integer dailyReportSubmitId, Integer lmsUserId) {
 
 		// 日報提出IDから日報提出情報を取得
 		TDailyReportSubmit tDailyReportSubmit = sRepository.getOne(dailyReportSubmitId);
 
 		// ログインユーザーのLMSユーザーIDと日報提出情報のLMSユーザーIDを比較 ture:何も返さない, flese:エラーメッセージを返す
-		if (loginUserDto.getLmsUserId() == tDailyReportSubmit.getMLmsUser().getLmsUserId()) {
+		if (lmsUserId == tDailyReportSubmit.getMLmsUser().getLmsUserId()) {
 			// 一致した場合
 			return "";
 		} else {

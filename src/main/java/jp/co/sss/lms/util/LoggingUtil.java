@@ -17,6 +17,7 @@ import jp.co.sss.lms.dto.LoginUserDto;
  */
 @Component
 public class LoggingUtil {
+	
 	@Autowired
 	LoginUserDto loginUserDto;
 	@Autowired

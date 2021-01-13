@@ -9,13 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
 import jp.co.sss.lms.dto.ExamServiceExamResultDto;
 import jp.co.sss.lms.form.ExamResultDetailForm;
 import jp.co.sss.lms.service.ExamService;
-import jp.co.sss.lms.util.LoginUserUtil;
 import jp.co.sss.lms.util.MessageUtil;
 
 /**
@@ -28,8 +28,6 @@ import jp.co.sss.lms.util.MessageUtil;
 public class ExamDetailController {
 
 	@Autowired
-	LoginUserUtil loginUserUtil;
-	@Autowired
 	ExamService examService;
 	@Autowired
 	MessageUtil messageUtil;
@@ -41,16 +39,16 @@ public class ExamDetailController {
 	 */
 	@RequestMapping(path = "/exam/detail", method = RequestMethod.POST)
 	public ResponseEntity<Model> index(@RequestBody ExamResultDetailForm examResultDetailForm,
-			Model model) {
+			@RequestParam("accountId") Integer accountId, @RequestParam("lmsUserId") Integer lmsUserId, Model model) {
 		// 試験情報を取得
-		ExamServiceExamDto examDto = examService.getExam(examResultDetailForm.getExamId());
+		ExamServiceExamDto examDto = examService.getExam(examResultDetailForm.getExamId(), accountId);
 
 		// 平均点を取得するメソッドをここに入れる (getExamScoreAvg未更新)
 		Double avgScore = examService.getExamScoreAvg(examResultDetailForm.getExamId());
 
 		// 試験結果情報を取得する (examResultDetailForm未更新)
 		List<ExamServiceExamResultDto> examResultDtoList = examService
-				.getExamResult(examResultDetailForm.getExamSectionId());
+				.getExamResult(examResultDetailForm.getExamSectionId(), lmsUserId, accountId);
 
 		// DTOをビューに渡す
 		model.addAttribute("examDto", examDto);

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
@@ -35,10 +36,10 @@ public class AnswerCheckController {
 
 	// URLが呼ばれたときの初期表示
 	@PostMapping(value = "/answerCheck")
-	public ResponseEntity<ExamServiceExamDto> index(@RequestBody ExamPlayForm examPlayForm) {
+	public ResponseEntity<ExamServiceExamDto> index(@RequestBody ExamPlayForm examPlayForm, @RequestParam("lmsUserId") Integer lmsUserId) {
 
 		// 試験情報.試験IDをパラメータとして試験情報サービス.試験情報取得のサービスを呼び出し、試験情報を取得する
-		ExamServiceExamDto examServiceExamDto = examService.getExam(examPlayForm);
+		ExamServiceExamDto examServiceExamDto = examService.getExam(examPlayForm, lmsUserId);
 
 		return new ResponseEntity<>(examServiceExamDto, HttpStatus.OK);
 	}

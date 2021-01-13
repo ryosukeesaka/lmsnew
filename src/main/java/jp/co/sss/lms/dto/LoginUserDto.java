@@ -3,13 +3,11 @@ package jp.co.sss.lms.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+@RequestScope
 public class LoginUserDto implements Serializable {
 	
 	/**

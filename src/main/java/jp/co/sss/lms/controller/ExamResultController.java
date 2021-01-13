@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
@@ -36,13 +37,13 @@ public class ExamResultController {
 	 * @return 試験結果画面
 	 */
 	@RequestMapping(value = "/exam/result")
-	public ResponseEntity<Model> examResult(@RequestBody ExamPlayForm examPlayForm, Model model) {
+	public ResponseEntity<Model> examResult(@RequestBody ExamPlayForm examPlayForm, @RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId, @RequestParam("role") String role, Model model) {
 
 		// ②．formをパラメータとして、試験情報サービスを呼び出し、試験結果登録を行う
-		ExamServiceExamResultDto examResultDto = examSerivce.registExamResult(examPlayForm);
+		ExamServiceExamResultDto examResultDto = examSerivce.registExamResult(examPlayForm, lmsUserId, accountId, role);
 
 		// ③．formをパラメータとして、試験情報サービス.試験問題・解答情報取得を呼び出し、試験結果情報を取得する
-		ExamServiceExamDto examDto = examSerivce.getExamQuestionAndAnswer(examPlayForm);
+		ExamServiceExamDto examDto = examSerivce.getExamQuestionAndAnswer(examPlayForm, accountId);
 
 		// ④．スコアを計算する（計算式 ：得点(score) / 問題数(numOfQuestion) * 100）
 		double score = (examResultDto.getScore() / examDto.getNumOfQuestion()) * 100;

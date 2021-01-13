@@ -27,7 +27,6 @@ public class TeachingMaterialListController {
 
 	@Autowired
 	TeachingMaterialService teachingMaterialService;
-
 	@Autowired
 	private MessageUtil messageUtil;
 

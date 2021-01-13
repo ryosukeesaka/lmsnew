@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MUser;
 import jp.co.sss.lms.entity.TTemporaryPassStorage;
 import jp.co.sss.lms.form.MailAddressForm;
@@ -24,7 +23,6 @@ import jp.co.sss.lms.service.LoginService;
 import jp.co.sss.lms.service.PasswordService;
 import jp.co.sss.lms.service.UserService;
 import jp.co.sss.lms.util.LoggingUtil;
-import jp.co.sss.lms.util.LoginUserUtil;
 import jp.co.sss.lms.util.MessageUtil;
 
 /**
@@ -40,12 +38,6 @@ public class ResetPasswordController {
 	UserService userService;
 	@Autowired
 	MUserRepository repository;
-	@Autowired
-	LoginService loginService;
-	@Autowired
-	LoginUserDto loginUserDto;
-	@Autowired
-	LoginUserUtil loginUserUtil;
 	@Autowired
 	LoggingUtil loggingUtil;
 	@Autowired

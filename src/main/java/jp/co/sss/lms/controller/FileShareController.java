@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.FileShareDto;
 import jp.co.sss.lms.dto.ShareUserDto;
 import jp.co.sss.lms.service.FileShareService;
-import jp.co.sss.lms.util.LoginUserUtil;
 
 /**
  * FileShareController<br>
@@ -26,8 +26,6 @@ public class FileShareController {
 
 	@Autowired
 	FileShareService fileShareService;
-	@Autowired
-	LoginUserUtil loginUserUtil;
 
 	/** ダウンロード可能なファイルのリスト */
 	@Autowired
@@ -40,10 +38,10 @@ public class FileShareController {
 	 * @return ファイル共有画面
 	 */
 	@RequestMapping(value = "")
-	public ResponseEntity<List<FileShareDto>> index() {
+	public ResponseEntity<List<FileShareDto>> index(@RequestParam("userId") Integer userId) {
 
 		// ファイルリストの取得
-		List<FileShareDto> fileShareDtoList = fileShareService.getFileList(loginUserUtil.getLoginUserId());
+		List<FileShareDto> fileShareDtoList = fileShareService.getFileList(userId);
 
 		return new ResponseEntity<>(fileShareDtoList, HttpStatus.OK);
 

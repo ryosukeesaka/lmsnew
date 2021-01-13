@@ -2,7 +2,6 @@ package jp.co.sss.lms.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.SectionServiceSectionDto;
 import jp.co.sss.lms.service.DeliverableService;
 import jp.co.sss.lms.service.SectionService;
@@ -33,15 +31,11 @@ import jp.co.sss.lms.util.LoggingUtil;
 public class SectionController {
 
 	@Autowired
-	HttpSession httpSession;
-	@Autowired
 	SectionService sectionService;
 	@Autowired
 	DeliverableService deliverableService;
 	@Autowired
 	LoggingUtil loggingUtil;
-	@Autowired
-	LoginUserDto loginUserDto;
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -53,7 +47,9 @@ public class SectionController {
 	 * @return /section/detail セクション詳細画面へ遷移する
 	 */
 	@PostMapping("/detail")
-	public ResponseEntity<Model> postDetail(@RequestParam("sectionId") Integer sectionId, Model model) {
+	public ResponseEntity<Model> postDetail(@RequestParam("sectionId") Integer sectionId,
+			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId,
+			@RequestParam("userId") Integer userId, Model model) {
 
 		// セクション情報が取得できないときはエラー画面に遷移
 		String message = sectionService.getSessionInfo(sectionId);
@@ -68,9 +64,10 @@ public class SectionController {
 
 		} else {
 
-			SectionServiceSectionDto sectionServiceSectionDto = sectionService.getSectionDto(sectionId);
+			SectionServiceSectionDto sectionServiceSectionDto = sectionService.getSectionDto(sectionId, accountId,
+					lmsUserId, userId);
 			List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList = deliverableService
-					.getDeliverableWithSubmissionFlgDto(sectionId, loginUserDto.getLmsUserId());
+					.getDeliverableWithSubmissionFlgDto(sectionId, lmsUserId);
 
 			model.addAttribute("sectionServiceSectionDto", sectionServiceSectionDto);
 			model.addAttribute("deliverablesWithSubmissionFlgDtoList", deliverablesWithSubmissionFlgDtoList);
@@ -87,8 +84,11 @@ public class SectionController {
 	 * @return postDetailメソッドを呼び出す
 	 */
 	@GetMapping("/detail")
-	public ResponseEntity<Model> getDetail(@RequestParam("sectionId") Integer sectionId, Model model) {
-		return this.postDetail(sectionId, model);
+	public ResponseEntity<Model> getDetail(@RequestParam("sectionId") Integer sectionId,
+			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId,
+			@RequestParam("userId") Integer userId, Model model) {
+		
+		return this.postDetail(sectionId, lmsUserId, accountId, lmsUserId, model);
 	}
 
 }

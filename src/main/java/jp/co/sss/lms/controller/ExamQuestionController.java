@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
@@ -31,10 +32,11 @@ public class ExamQuestionController {
 	 * @return 試験問題画面
 	 */
 	@RequestMapping(path = "/exam/question", method = RequestMethod.POST)
-	public ResponseEntity<Model> index(@RequestBody ExamPlayForm examPlayForm, Model model) {
+	public ResponseEntity<Model> index(@RequestBody ExamPlayForm examPlayForm,
+			@RequestParam("accountId") Integer accountId, Model model) {
 
 		// サービスを呼ぶ（Idで検索し、Dtoにエンティティがセットされる ＊表示に必要なデータ）
-		ExamServiceExamDto examServiceExamDto = examService.getExamQuestionAndAnswer(examPlayForm);
+		ExamServiceExamDto examServiceExamDto = examService.getExamQuestionAndAnswer(examPlayForm, accountId);
 
 		// Dtoの値をビューに渡す
 		model.addAttribute("examServiceExamDto", examServiceExamDto);

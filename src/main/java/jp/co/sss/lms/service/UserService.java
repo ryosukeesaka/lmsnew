@@ -8,8 +8,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
@@ -19,7 +17,6 @@ import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
 import jp.co.sss.lms.util.DateUtil;
-import jp.co.sss.lms.util.LoginUserUtil;
 import jp.co.sss.lms.util.MessageUtil;
 import jp.co.sss.lms.util.PasswordUtil;
 
@@ -36,11 +33,7 @@ public class UserService {
 	@Autowired
 	MUserRepository mUserRepository;
 	@Autowired
-	LoginUserUtil loginUserUtil;
-	@Autowired
 	LoginService loginService;
-	@Autowired
-	LoginUserDto loginUserDto;
 	@Autowired
 	HttpSession session;
 	@Autowired
@@ -58,13 +51,13 @@ public class UserService {
 	 * パスワード変更
 	 *
 	 */
-	public String changePassword(LoginForm loginForm) {
+	public String changePassword(LoginForm loginForm, Integer userId) {
 
 		// 現在パスワードと変更後のパスワードが一致している場合
 		// 変更後のパスワードと確認パスワードが不一致の場合はフロント側でチェックする
 
 		// リポジトリから得た情報をエンティティに格納
-		MUser mUser = mUserRepository.getOne(loginUserDto.getUserId());
+		MUser mUser = mUserRepository.getOne(userId);
 		String hashedCurrentPassword = passwordUtil.getSaltedAndStrechedPassword(loginForm.getCurrentPassword(),
 				mUser.getLoginId());
 		// 現在パスワードチェック
@@ -78,7 +71,8 @@ public class UserService {
 		mUser.setPasswordChangeDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString()));
 		// 更新作業
 		MUser newMUser = mUserRepository.save(mUser);
-		loginUserDto.setPasswordChangeDate(new Timestamp(newMUser.getPasswordChangeDate().getTime()));
+		
+		// ログイン情報を取得し直し、画面に返す。
 
 		return "";
 	}
@@ -87,18 +81,19 @@ public class UserService {
 	 * パスワード変更(パスワード再設定用)
 	 *
 	 */
-	public void changePasswordOfResetPassword(LoginForm loginForm, BindingResult result) {
+	public void changePasswordOfResetPassword(LoginForm loginForm, Integer userId) {
 
 		// 変更後のパスワードと確認パスワードが不一致の場合のチェックはフロントで行う。
 
 		// リポジトリから得た情報をエンティティに格納
-		MUser mUser = mUserRepository.getOne(loginUserDto.getUserId());
+		MUser mUser = mUserRepository.getOne(userId);
 
 		mUser.setPassword(passwordUtil.getSaltedAndStrechedPassword(loginForm.getPassword(), mUser.getLoginId()));
 		mUser.setPasswordChangeDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString()));
 		// 更新作業
 		MUser newMUser = mUserRepository.save(mUser);
-		loginUserDto.setPasswordChangeDate(new Timestamp(newMUser.getPasswordChangeDate().getTime()));
+		
+		// ログイン情報を取得しなおして画面に返す。
 
 	}
 

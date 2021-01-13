@@ -15,12 +15,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.DailyReportDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.DailyReportDetailForm;
 import jp.co.sss.lms.service.ReportService;
+import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.LoggingUtil;
-import jp.co.sss.lms.util.LoginUserUtil;
 
 /**
  * DailyReportController
@@ -33,10 +32,6 @@ import jp.co.sss.lms.util.LoginUserUtil;
 @RequestMapping("/dailyReport")
 public class DailyReportController {
 
-	@Autowired
-	LoginUserUtil loginUserUtil;
-	@Autowired
-	LoginUserDto loginUserDto;
 	@Autowired
 	ReportService dailyReportService;
 	@Autowired
@@ -58,7 +53,9 @@ public class DailyReportController {
 	 */
 
 	@RequestMapping(path = "/detail", method = RequestMethod.POST)
-	public ResponseEntity<DailyReportDto> detail(@RequestBody DailyReportDetailForm dailyReportDetailForm) {
+	public ResponseEntity<DailyReportDto> detail(@RequestBody DailyReportDetailForm dailyReportDetailForm,
+			@RequestParam("userId") Integer userId, @RequestParam("accountId") Integer accountId,
+			@RequestParam("role") String role, @RequestParam("lmsUserId") Integer lmsUserId) {
 
 		HttpStatus httpStatus = HttpStatus.OK;
 
@@ -75,8 +72,8 @@ public class DailyReportController {
 			httpStatus = HttpStatus.NOT_FOUND;
 		}
 
-		if (loginUserUtil.isStudent()) {
-			message = dailyReportService.erroerUserShow(dailyReportDetailForm.getDailyReportSubmitId());
+		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
+			message = dailyReportService.erroerUserShow(dailyReportDetailForm.getDailyReportSubmitId(), lmsUserId);
 
 			if (!message.isEmpty()) {
 				StringBuffer sb = new StringBuffer(message);
@@ -98,9 +95,8 @@ public class DailyReportController {
 		// dailyReportSubmitIdではなく、dailyReportIdを検索対象として
 		// 出力している可能性がある。
 		// レポート情報サービス.レポート提出情報取得
-		DailyReportDto dailyReportDto = dailyReportService.getDailyReportSubmit(
-				dailyReportDetailForm.getDailyReportSubmitId(), loginUserDto.getUserId(),
-				/* date, */ loginUserDto.getAccountId());
+		DailyReportDto dailyReportDto = dailyReportService
+				.getDailyReportSubmit(dailyReportDetailForm.getDailyReportSubmitId(), userId, /* date, */ accountId);
 //		model.addAttribute("dailyReportDto", dailyReportDto);
 //		model.addAttribute("intelligibilityDto", dailyReportDto.getIntelligibilityDtoList());
 
@@ -120,14 +116,15 @@ public class DailyReportController {
 	 * @return /report/detail
 	 */
 	@RequestMapping(path = "/result", method = RequestMethod.POST)
-	public Integer insert(@RequestBody DailyReportDetailForm dailyReportDetailForm) {
+	public Integer insert(@RequestBody DailyReportDetailForm dailyReportDetailForm,
+			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId) {
 
 		// TODO 実装バグ
 		// フィードバック登録後に更新ボタンを押下で再度登録される。
 		// ボタン押下又はページを更新するたびに、DailyReportController.javaへ遷移し、
 		// フィールドバック登録機能であるdailyReportService.insertDailyReportが実行されてしまうため。
 		// レポート情報サービス.フィードバックコメント情報登録
-		Integer insertCount = dailyReportService.insertDailyReportFeedback(dailyReportDetailForm);
+		Integer insertCount = dailyReportService.insertDailyReportFeedback(dailyReportDetailForm, lmsUserId, accountId);
 
 		return insertCount;
 	}
@@ -143,10 +140,10 @@ public class DailyReportController {
 	// フィードバック登録後に戻るボタンで登録したものが消える。
 	@RequestMapping(value = "/delete")
 	public Integer delete(@RequestBody DailyReportDetailForm dailyReportDetailForm,
-			@RequestParam Integer dailyReportSubmitId, @RequestParam Integer dailyReportFbId, Model model) {
+			@RequestParam Integer dailyReportSubmitId, @RequestParam Integer dailyReportFbId, @RequestParam("lmsUserId") Integer lmsUserId, Model model) {
 
 		// 日報フィードバックコメント情報削除API
-		Integer deleteCount = dailyReportService.dailyReportFbId(dailyReportFbId);
+		Integer deleteCount = dailyReportService.dailyReportFbId(dailyReportFbId, lmsUserId);
 
 //		// レポート情報サービス.レポート提出情報取得
 //		dailyReportDto = dailyReportService.getDailyReportSubmit(dailyReportSubmitId,  loginUserDto.getUserId(),/*date,*/ loginUserDto.getAccountId());
