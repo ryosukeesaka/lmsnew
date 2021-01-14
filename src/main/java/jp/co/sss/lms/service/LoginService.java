@@ -1,5 +1,7 @@
 package jp.co.sss.lms.service;
 
+import java.sql.Timestamp;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
@@ -19,8 +21,6 @@ public class LoginService {
 	private LoginRepository repository;
 	@Autowired
 	private PasswordUtil passwordUtil;
-	@Autowired
-	private HttpSession session;
 
 	/**
 	 * ログイン情報取得
@@ -49,7 +49,10 @@ public class LoginService {
 		loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
 		loginUserDto.setSupportAvailable(mLmsUser.getTUserPlace().getMPlace().getSupportAvailable());
 		loginUserDto.setFileShareFlg(mLmsUser.getTUserCompany().getMCompany().getFileShareFlg());
-		session.setAttribute("loginUserDto", loginUserDto);
+		if (mLmsUser.getMUser().getPasswordChangeDate() != null) {
+			loginUserDto.setPasswordChangeDate(new Timestamp(mLmsUser.getMUser().getPasswordChangeDate().getTime()));
+		}
+		
 		return loginUserDto;
 	}
 
