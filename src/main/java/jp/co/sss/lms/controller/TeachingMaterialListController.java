@@ -2,12 +2,13 @@ package jp.co.sss.lms.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.entity.MCourse;
@@ -31,22 +32,23 @@ public class TeachingMaterialListController {
 	private MessageUtil messageUtil;
 
 	@RequestMapping("/download/teachingMaterialList")
-	public String showTeachingMaterialList(Model model, HttpSession session) {
+	public ResponseEntity<Model> showTeachingMaterialList(@RequestParam("courseId") Integer courseId,
+			@RequestParam("lmsUserId") Integer lmsUserId, Model model) {
 
 		// コースIDの改竄チェックの結果、問題がある場合、リクエストスコープにエラーメッセージを保存
-		if (!teachingMaterialService.checkCourseId()) {
+		if (!teachingMaterialService.checkCourseId(courseId, lmsUserId)) {
 			model.addAttribute("token", messageUtil.getMessage(Constants.VALID_KEY_TOKEN));
 		}
 
 		// mCourseにコース情報を入れる
-		MCourse mCourse = teachingMaterialService.getCourseId();
+		MCourse mCourse = teachingMaterialService.getCourseId(courseId);
 
 		// コースIDがあった場合、リクエストスコープに取得したコース名を保存
 		model.addAttribute("courseName", mCourse.getCourseName());
 
 		// teachingMateriaLlistに教材の紐づけ情報を入れる
 		List<TCourseTeachingMaterial> teachingMateriaLlist = teachingMaterialService
-				.getCourseTeachingMaterialDownloadUrlDtoList();
+				.getCourseTeachingMaterialDownloadUrlDtoList(courseId);
 
 		// 教材の紐づけができなかった場合、リクエストスコープにエラーメッセージを保存
 		if (CollectionUtils.isEmpty(teachingMateriaLlist)) {
@@ -58,7 +60,7 @@ public class TeachingMaterialListController {
 		}
 
 		// teachingMaterialList.htmlに遷移
-		return "course/download/teachingMaterialList";
+		return new ResponseEntity<>(model, HttpStatus.OK);
 	}
 
 }

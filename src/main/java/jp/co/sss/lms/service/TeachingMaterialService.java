@@ -35,17 +35,14 @@ public class TeachingMaterialService {
 	 * 
 	 * @return true/false ログイン情報のコースIDとDBのコースIDが等しいならtrue,等しくないならfalse
 	 */
-	public boolean checkCourseId() {
-
-		Integer LogincourseId = loginUserDto.getCourseId();
-		Integer lmsUserId = loginUserDto.getLmsUserId();
+	public boolean checkCourseId(Integer courseId, Integer lmsUserId) {
 
 		// ユーザIDからDBに登録してあるコースIDを取得
 		TCourseUser tCourseUser = tCourseUserRepository.findByLmsUserId(lmsUserId);
-		Integer DBCourseId = tCourseUser.getMCourse().getCourseId();
+		Integer dbCourseId = tCourseUser.getMCourse().getCourseId();
 
 		// ログイン情報のコースIDとDBのコースIDのチェック
-		if (LogincourseId != DBCourseId) {
+		if (courseId != dbCourseId) {
 			return false;
 		}
 		return true;
@@ -56,8 +53,7 @@ public class TeachingMaterialService {
 	 * 
 	 * @return mCourseRepository.getOne(courseId)
 	 */
-	public MCourse getCourseId() {
-		Integer courseId = loginUserDto.getCourseId();
+	public MCourse getCourseId(Integer courseId) {
 		return mCourseRepository.getOne(courseId);
 	}
 
@@ -66,8 +62,7 @@ public class TeachingMaterialService {
 	 * 
 	 * @return tCourseTeachingMaterialRepository.findByCourseId(courseId)
 	 */
-	public List<TCourseTeachingMaterial> getCourseTeachingMaterialDownloadUrlDtoList() {
-		Integer courseId = loginUserDto.getCourseId();
+	public List<TCourseTeachingMaterial> getCourseTeachingMaterialDownloadUrlDtoList(Integer courseId) {
 		return tCourseTeachingMaterialRepository.findByCourseId(courseId);
 	}
 
