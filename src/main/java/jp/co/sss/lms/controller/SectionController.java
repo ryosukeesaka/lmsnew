@@ -11,12 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
 import jp.co.sss.lms.dto.SectionServiceSectionDto;
+import jp.co.sss.lms.form.LoginForm;
+import jp.co.sss.lms.form.SectionForm;
 import jp.co.sss.lms.service.DeliverableService;
 import jp.co.sss.lms.service.SectionService;
 import jp.co.sss.lms.util.LoggingUtil;
@@ -47,33 +50,27 @@ public class SectionController {
 	 * @return /section/detail セクション詳細画面へ遷移する
 	 */
 	@PostMapping("/detail")
-	public ResponseEntity<Model> postDetail(@RequestParam("sectionId") Integer sectionId,
-			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId,
-			@RequestParam("userId") Integer userId, Model model) {
-
+	public ResponseEntity<SectionServiceSectionDto> postDetail(@RequestBody SectionForm sectionForm, Model model) {
+		
+		SectionServiceSectionDto sectionServiceSectionDto = new SectionServiceSectionDto();
+		HttpStatus httpStatus = HttpStatus.OK;
 		// セクション情報が取得できないときはエラー画面に遷移
-		String message = sectionService.getSessionInfo(sectionId);
+		String message = sectionService.getSessionInfo(sectionForm);
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
-
-			model.addAttribute("message", message);
-
-			return new ResponseEntity<>(model, HttpStatus.NOT_FOUND);
-
+			
+			httpStatus = HttpStatus.NOT_FOUND;
+			
 		} else {
-
-			SectionServiceSectionDto sectionServiceSectionDto = sectionService.getSectionDto(sectionId, accountId,
-					lmsUserId, userId);
+			sectionServiceSectionDto = sectionService.getSectionDto(sectionForm);
 			List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList = deliverableService
-					.getDeliverableWithSubmissionFlgDto(sectionId, lmsUserId);
-
-			model.addAttribute("sectionServiceSectionDto", sectionServiceSectionDto);
-			model.addAttribute("deliverablesWithSubmissionFlgDtoList", deliverablesWithSubmissionFlgDtoList);
-
-			return new ResponseEntity<>(model, HttpStatus.OK);
+					.getDeliverableWithSubmissionFlgDto(sectionForm.getSectionId(), sectionForm.getAccountId());
+			
+			sectionServiceSectionDto.setDeliverablesWithSubmissionFlgDtoList(deliverablesWithSubmissionFlgDtoList);
 		}
+		return new ResponseEntity<>(sectionServiceSectionDto, httpStatus);
 	}
 
 	/**
@@ -84,11 +81,9 @@ public class SectionController {
 	 * @return postDetailメソッドを呼び出す
 	 */
 	@GetMapping("/detail")
-	public ResponseEntity<Model> getDetail(@RequestParam("sectionId") Integer sectionId,
-			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId,
-			@RequestParam("userId") Integer userId, Model model) {
+	public ResponseEntity<SectionServiceSectionDto> getDetail(@RequestBody SectionForm sectionForm, Model model) {
 		
-		return this.postDetail(sectionId, lmsUserId, accountId, lmsUserId, model);
+		return this.postDetail(sectionForm,model);
 	}
 
 }

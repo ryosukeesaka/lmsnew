@@ -19,6 +19,10 @@ public class DeliverableServiceDeliverablesWithSubmissionFlgDto {
 
 	// 提出フラグ
 	private Short submissionFlg;
+	
+	public DeliverableServiceDeliverablesWithSubmissionFlgDto() {
+		
+	}
 
 	public Integer getDeliverablesId() {
 		return deliverablesId;

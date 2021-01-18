@@ -32,6 +32,12 @@ public class SectionServiceSectionDto {
 	private List<SectionServiceDailyReportDto> reportDtoList;
 	/** 成果物Dtoリスト */
 	private List<SectionServiceDeliverablesSectionDto> deliverablesDtoList;
+	/** 成果物提出確認リスト */
+	private List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList;
+	
+	public SectionServiceSectionDto() {
+		
+	}
 	
 	public Integer getSectionId() {
 		return sectionId;
@@ -113,6 +119,13 @@ public class SectionServiceSectionDto {
 		this.deliverablesDtoList = deliverablesDtoList;
 	}
 
-	
+	public List<DeliverableServiceDeliverablesWithSubmissionFlgDto> getDeliverablesWithSubmissionFlgDtoList() {
+		return deliverablesWithSubmissionFlgDtoList;
+	}
 
+	public void setDeliverablesWithSubmissionFlgDtoList(
+			List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList) {
+		this.deliverablesWithSubmissionFlgDtoList = deliverablesWithSubmissionFlgDtoList;
+	}
+	
 }

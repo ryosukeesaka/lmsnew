@@ -23,6 +23,7 @@ import jp.co.sss.lms.entity.TDeliverablesSection;
 import jp.co.sss.lms.entity.TExamSection;
 import jp.co.sss.lms.entity.TFileSection;
 import jp.co.sss.lms.entity.TSectionDailyReport;
+import jp.co.sss.lms.form.SectionForm;
 import jp.co.sss.lms.repository.MSectionRepository;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.MessageUtil;
@@ -52,10 +53,10 @@ public class SectionService {
 	 * @param sectionId セクションID
 	 * @return エラーメッセージ
 	 */
-	public String getSessionInfo(Integer sectionId) {
+	public String getSessionInfo(SectionForm sectionForm) {
 
 		// セクション情報サービス.セクション情報取得を利用する
-		MSection mSection = mSectionRepository.findBySectionId(sectionId);
+		MSection mSection = mSectionRepository.findBySectionId(sectionForm.getSectionId());
 
 		if (mSection == null) {
 
@@ -63,7 +64,6 @@ public class SectionService {
 			return messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
 
 		}
-
 		return "";
 	}
 
@@ -73,10 +73,10 @@ public class SectionService {
 	 * @param sectionId セクションID
 	 * @return sectionServiceSectionDto セクションDto
 	 */
-	public SectionServiceSectionDto getSectionDto(Integer sectionId, Integer accountId, Integer lmsUserId, Integer userId) {
+	public SectionServiceSectionDto getSectionDto(SectionForm sectionForm) {
 
 		// セクション関連情報を取得
-		MSection mSection = mSectionRepository.getSectionDetail(sectionId, accountId, Constants.DB_FLG_FALSE);
+		MSection mSection = mSectionRepository.getSectionDetail(sectionForm.getSectionId(), sectionForm.getAccountId(), Constants.DB_FLG_FALSE);
 		
 		// SecitonServiceFileDtoListの作成
 		List<TFileSection> tFileSectionList = mSection.getTFileSectionList();
@@ -87,7 +87,7 @@ public class SectionService {
 			SectionServiceFileDto sectionServiceFileDto = new SectionServiceFileDto();
 
 			BeanUtils.copyProperties(tf.getMFile(), sectionServiceFileDto);
-			sectionServiceFileDto.setFileId(this.getHashedFiled(new SectionServiceFileDownloadDto(), tf.getFileId(), userId));
+			sectionServiceFileDto.setFileId(this.getHashedFiled(new SectionServiceFileDownloadDto(), tf.getFileId(), sectionForm.getUserId()));
 
 			sectionServiceFileDtoList.add(sectionServiceFileDto);
 		}
@@ -168,7 +168,7 @@ public class SectionService {
 		sectionServiceSectionDto.setReportDtoList(sectionServiceDailyReportDtoList);
 		sectionServiceSectionDto.setDeliverablesDtoList(sectionServiceDeliverablesSectionDtoList);
 		
-		return this.setDailyReportSubmitId(mSection, sectionServiceSectionDto, lmsUserId) ;
+		return this.setDailyReportSubmitId(mSection, sectionServiceSectionDto, sectionForm.getLmsUserId()) ;
 	}
 	
 	
