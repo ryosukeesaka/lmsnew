@@ -54,7 +54,7 @@ public class CourseService {
 			// コース情報取得に失敗した場合
 		}
 		if (mCourse == null) {
-			String[] values = { "sectionId" };
+			String[] values = { "courseId" };
 			return messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
 		} else {
 			return "";
