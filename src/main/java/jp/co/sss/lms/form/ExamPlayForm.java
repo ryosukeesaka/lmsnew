@@ -11,6 +11,10 @@ import java.util.List;
  */
 public class ExamPlayForm {
 	
+	/**LMSユーザID*/
+	private Integer lmsUserId;
+	/**アカウントID*/
+	private Integer accountId;
 	/**試験ID*/
 	private Integer examId;
 	/**セクションID*/
@@ -27,6 +31,22 @@ public class ExamPlayForm {
 	private Integer time;
 	/**試験問題*/
 	private List<QuestionForm> questionList;
+
+	public Integer getLmsUserId() {
+		return lmsUserId;
+	}
+
+	public void setLmsUserId(Integer lmsUserId) {
+		this.lmsUserId = lmsUserId;
+	}
+
+	public Integer getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
 
 	public Integer getExamId() {
 		return examId;
