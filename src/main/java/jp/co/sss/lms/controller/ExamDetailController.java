@@ -1,15 +1,15 @@
 package jp.co.sss.lms.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
@@ -38,24 +38,25 @@ public class ExamDetailController {
 	 * @return 試験詳細画面&不正画面のURL
 	 */
 	@RequestMapping(path = "/exam/detail", method = RequestMethod.POST)
-	public ResponseEntity<Model> index(@RequestBody ExamResultDetailForm examResultDetailForm,
-			@RequestParam("accountId") Integer accountId, @RequestParam("lmsUserId") Integer lmsUserId, Model model) {
+	public ResponseEntity<Map<String, Object>> index(@RequestBody ExamResultDetailForm examResultDetailForm) {
 		// 試験情報を取得
-		ExamServiceExamDto examDto = examService.getExam(examResultDetailForm.getExamId(), accountId);
+		ExamServiceExamDto examDto = examService.getExam(examResultDetailForm.getExamId(), examResultDetailForm.getAccountId());
 
 		// 平均点を取得するメソッドをここに入れる (getExamScoreAvg未更新)
 		Double avgScore = examService.getExamScoreAvg(examResultDetailForm.getExamId());
 
 		// 試験結果情報を取得する (examResultDetailForm未更新)
 		List<ExamServiceExamResultDto> examResultDtoList = examService
-				.getExamResult(examResultDetailForm.getExamSectionId(), lmsUserId, accountId);
+				.getExamResult(examResultDetailForm.getExamSectionId(), examResultDetailForm.getLmsUserId(),
+						examResultDetailForm.getAccountId());
 
 		// DTOをビューに渡す
-		model.addAttribute("examDto", examDto);
-		model.addAttribute("avgScore", avgScore);
-		model.addAttribute("examResultDtoList", examResultDtoList);
+		Map<String, Object> map = new HashMap<>();
+		map.put("examDto", examDto);
+		map.put("avgScore", avgScore);
+		map.put("examResultDtoList", examResultDtoList);
 
-		return new ResponseEntity<>(model, HttpStatus.OK);
+		return new ResponseEntity<>(map, HttpStatus.OK);
 
 	}
 }

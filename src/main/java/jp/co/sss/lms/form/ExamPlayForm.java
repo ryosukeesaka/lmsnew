@@ -15,6 +15,8 @@ public class ExamPlayForm {
 	private Integer lmsUserId;
 	/**アカウントID*/
 	private Integer accountId;
+	/**権限*/
+	private String role;
 	/**試験ID*/
 	private Integer examId;
 	/**セクションID*/
@@ -46,6 +48,14 @@ public class ExamPlayForm {
 
 	public void setAccountId(Integer accountId) {
 		this.accountId = accountId;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public Integer getExamId() {

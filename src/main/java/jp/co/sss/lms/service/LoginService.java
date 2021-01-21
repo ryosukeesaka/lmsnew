@@ -2,8 +2,6 @@ package jp.co.sss.lms.service;
 
 import java.sql.Timestamp;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
