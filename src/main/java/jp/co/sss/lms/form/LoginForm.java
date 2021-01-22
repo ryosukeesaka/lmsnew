@@ -10,6 +10,7 @@ public class LoginForm {
 	private String password;
 	private String currentPassword;
 	private String passwordConfirm;
+	private Integer userId;
 	
 	public String getLoginId() {
 		return loginId;
@@ -48,4 +49,12 @@ public class LoginForm {
 		this.password = password;
 	}
 
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	
 }

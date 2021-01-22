@@ -51,13 +51,13 @@ public class UserService {
 	 * パスワード変更
 	 *
 	 */
-	public String changePassword(LoginForm loginForm, Integer userId) {
+	public String changePassword(LoginForm loginForm) {
 
 		// 現在パスワードと変更後のパスワードが一致している場合
 		// 変更後のパスワードと確認パスワードが不一致の場合はフロント側でチェックする
 
 		// リポジトリから得た情報をエンティティに格納
-		MUser mUser = mUserRepository.getOne(userId);
+		MUser mUser = mUserRepository.getOne(loginForm.getUserId());
 		String hashedCurrentPassword = passwordUtil.getSaltedAndStrechedPassword(loginForm.getCurrentPassword(),
 				mUser.getLoginId());
 		// 現在パスワードチェック

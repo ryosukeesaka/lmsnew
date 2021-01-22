@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.form.LoginForm;
@@ -30,10 +29,10 @@ public class ChangePasswordController {
 	 * @return
 	 */
 	@RequestMapping(value = "/changePassword/change", method = RequestMethod.POST)
-	public ResponseEntity<String> change(@RequestBody LoginForm loginForm, @RequestParam("userId") Integer userId) {
+	public ResponseEntity<String> change(@RequestBody LoginForm loginForm) {
 
 		// 相関チェック
-		String message = userService.changePassword(loginForm, userId);
+		String message = userService.changePassword(loginForm);
 		if (!message.equals("")) {
 			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
 		}

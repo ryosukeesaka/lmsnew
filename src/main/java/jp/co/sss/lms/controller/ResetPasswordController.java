@@ -1,5 +1,8 @@
 package jp.co.sss.lms.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -7,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,7 +21,6 @@ import jp.co.sss.lms.form.MailAddressForm;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
 import jp.co.sss.lms.service.InfoService;
-import jp.co.sss.lms.service.LoginService;
 import jp.co.sss.lms.service.PasswordService;
 import jp.co.sss.lms.service.UserService;
 import jp.co.sss.lms.util.LoggingUtil;
@@ -62,11 +63,12 @@ public class ResetPasswordController {
 	 * @return completeへの遷移
 	 */
 	@RequestMapping(value = "/complete", method = RequestMethod.POST)
-	public ResponseEntity<Model> complete(@RequestBody MailAddressForm mailAddressForm, Model model) {
+	public ResponseEntity<Map<String, Object>> complete(@RequestBody MailAddressForm mailAddressForm) {
 
 		// ユーザーマスタ情報の取得
 		String mailaddress = mailAddressForm.getMailAddress();
 		MUser mUser = userService.getMUser(mailaddress);
+		Map<String, Object> map = new HashMap<>();
 
 		// 入力されたメールアドレスが存在しない場合、次の処理を行わず、パスワード再設定画面1へ遷移。
 		if (mUser == null) {
@@ -74,9 +76,9 @@ public class ResetPasswordController {
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 
-			model.addAttribute("message", "そのメールアドレスは存在しません");
+			map.put("message", "そのメールアドレスは存在しません");
 
-			return new ResponseEntity<>(model, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 取得した情報パラメータとしてサービスを呼び出しパスワード変更情報を取得する｡
@@ -97,9 +99,9 @@ public class ResetPasswordController {
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 
-			model.addAttribute("message", "そのメールアドレスは存在しません");
+			map.put("message", "そのメールアドレスは存在しません");
 			
-			return new ResponseEntity<>(model, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 更新した状態でのパスワード変更情報を取得
@@ -111,9 +113,9 @@ public class ResetPasswordController {
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 			
-			model.addAttribute("message", "パスワード再設定で不正なアクセスがありました。");
+			map.put("message", "パスワード再設定で不正なアクセスがありました。");
 
-			return new ResponseEntity<>(model, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 宛先の設定
@@ -132,10 +134,10 @@ public class ResetPasswordController {
 		//	MailUtil.sendResetPasswordMail(to, subject, body);
 
 		// パスワード再設定画面2を表示
-		model.addAttribute("userName", mUserUpdate.getUserName());
-		model.addAttribute("timeLimit", tTemporaryPassStorageUpdate.getTimeLimit());
+		map.put("userName", mUserUpdate.getUserName());
+		map.put("timeLimit", tTemporaryPassStorageUpdate.getTimeLimit());
 
-		return new ResponseEntity<>(model, HttpStatus.OK);
+		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 
 //	/**
