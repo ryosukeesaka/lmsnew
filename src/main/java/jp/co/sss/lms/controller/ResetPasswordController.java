@@ -78,7 +78,7 @@ public class ResetPasswordController {
 
 			map.put("message", "そのメールアドレスは存在しません");
 
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 取得した情報パラメータとしてサービスを呼び出しパスワード変更情報を取得する｡
@@ -101,7 +101,7 @@ public class ResetPasswordController {
 
 			map.put("message", "そのメールアドレスは存在しません");
 			
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 更新した状態でのパスワード変更情報を取得
@@ -115,7 +115,7 @@ public class ResetPasswordController {
 			
 			map.put("message", "パスワード再設定で不正なアクセスがありました。");
 
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
 		// 宛先の設定
