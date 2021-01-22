@@ -19,7 +19,6 @@ import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.TDeliverablesResult;
 import jp.co.sss.lms.entity.TDeliverablesSection;
-import jp.co.sss.lms.form.UploadForm;
 import jp.co.sss.lms.repository.TDeliverablesResultRepository;
 import jp.co.sss.lms.repository.TDeliverablesSectionRepository;
 import jp.co.sss.lms.util.Constants;
@@ -94,10 +93,10 @@ public class DeliverableService {
 	 * @param DeliverablesForm 成果物を格納しているフォーム
 	 * @return 成果物登録成功の場合True 失敗の場合False
 	 */
-	public boolean deliverableUpload(MultipartFile multipartFile,UploadForm form) {
+	public boolean deliverableUpload(MultipartFile multipartFile,String sectionId, String deliverableId) {
 		
 		//formの情報をEntityに格納する
-		TDeliverablesResult tDeliverablesResult = covertFormToEntity(multipartFile,form,loginUserDto);
+		TDeliverablesResult tDeliverablesResult = covertFormToEntity(multipartFile,sectionId,deliverableId,loginUserDto);
 		
 		//二重アップロード検証
 		boolean isUpload = isDoubleTransmission(tDeliverablesResult);
@@ -121,13 +120,13 @@ public class DeliverableService {
 	 * @param loginUser ログイン中のユーザー情報
 	 * @return 成果物Entityを返す
 	 */
-	private TDeliverablesResult covertFormToEntity(MultipartFile file, UploadForm form,LoginUserDto loginUser) {
+	private TDeliverablesResult covertFormToEntity(MultipartFile file, String sectionId, String deliverableId,LoginUserDto loginUser) {
 		
 		TDeliverablesResult tDeliverablesResult = new TDeliverablesResult();
 		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
 		
 		//成果物・セクション紐づけIDを設定
-		tDeliverablesSection.setDeliverablesSectionId(Integer.parseInt(form.getSectionId()));
+		tDeliverablesSection.setDeliverablesSectionId(Integer.parseInt(sectionId));
 		tDeliverablesResult.settDeliverablesSection(tDeliverablesSection);
 		//ファイルパスを設定
 		tDeliverablesResult.setFilePath("deliverablesFiles/" + tDeliverablesSection.getDeliverablesSectionId()+ "/" + Integer.toString(loginUser.getLmsUserId())+"/"+ file.getOriginalFilename());
@@ -175,7 +174,7 @@ public class DeliverableService {
 	 * @param deliverablesSectionId 成果物ID
 	 * @return errorMessege エラーメッセージ
 	 */
-	public String checkDeliverablesInfo(MultipartFile file, UploadForm form) {
+	public String checkDeliverablesInfo(MultipartFile file,String deliverableId) {
 		
 		//ファイルが未入力、アップロードしたファイルサイズが0である場合
 		if(file.getSize() == 0 || file == null) {
@@ -190,7 +189,7 @@ public class DeliverableService {
 		
 		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
 		// 成果物情報取得
-		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(Integer.parseInt(form.getDeliverablesSectionId()));
+		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(Integer.parseInt(deliverableId));
 		//提出済みの成果物がない場合
 		if(!tDeliverablesSection.getTDeliverablesResultList().isEmpty()) {
 			String[] values = { "deliverables" };

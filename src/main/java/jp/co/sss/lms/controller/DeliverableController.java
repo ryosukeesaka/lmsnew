@@ -4,17 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import jp.co.sss.lms.form.UploadForm;
 import jp.co.sss.lms.service.DeliverableService;
 import jp.co.sss.lms.util.LoggingUtil;
 
@@ -33,11 +30,11 @@ public class DeliverableController {
 	
 	@PostMapping(value="/upload")
 	@ResponseBody
-	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionInfo")UploadForm uploadForm) {
+	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionId")String sectionId, @RequestParam("deliverableId")String deliverableId) {
 		
 		
 		//入力パラメータのチェック
-		String message = deliverableService.checkDeliverablesInfo(multipartFile,uploadForm);
+		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId);
 		
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
@@ -47,7 +44,7 @@ public class DeliverableController {
 		}
 		
 		//ファイルアップロード処理 (アップロードに成功した場合true）
-		boolean isUpload = deliverableService.deliverableUpload(multipartFile,uploadForm);
+		boolean isUpload = deliverableService.deliverableUpload(multipartFile,sectionId,deliverableId);
 		
 		//アップロードに失敗した場合
 		if(!isUpload) {
