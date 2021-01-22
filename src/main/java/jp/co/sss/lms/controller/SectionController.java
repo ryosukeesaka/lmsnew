@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
 import jp.co.sss.lms.dto.SectionServiceSectionDto;
-import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.form.SectionForm;
 import jp.co.sss.lms.service.DeliverableService;
 import jp.co.sss.lms.service.SectionService;

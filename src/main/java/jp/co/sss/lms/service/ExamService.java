@@ -93,11 +93,10 @@ public class ExamService {
 	 * @param form 試験開始form
 	 * @return mExam 試験情報Entity
 	 */
-	public ExamServiceExamDto getExamQuestionAndAnswer(ExamPlayForm form, Integer accountId) {
+	public ExamServiceExamDto getExamQuestionAndAnswer(ExamPlayForm form) {
 
 		// examIdで検索、検索結果を試験情報Entityに保存
-		Integer examId = form.getExamId();
-		MExam mExam = mExamRepository.getSindleResultByExamId(examId, accountId);
+		MExam mExam = mExamRepository.getSindleResultByExamId(form.getExamId(), form.getAccountId());
 
 		// 試験情報Entityから試験情報Dtoへ詰め替えして返す
 		return getExam(mExam);
@@ -143,18 +142,18 @@ public class ExamService {
 	 * @param form 試験開始form
 	 * @return examResultDto 試験結果情報Dto
 	 */
-	public ExamServiceExamResultDto registExamResult(ExamPlayForm form, Integer accountId, Integer lmsUserId, String role) {
+	public ExamServiceExamResultDto registExamResult(ExamPlayForm form) {
 
 		// formのexamSectionIdから試験問題・解答情報取得
-		ExamServiceExamDto examDto = getExamQuestionAndAnswer(form, accountId);
+		ExamServiceExamDto examDto = getExamQuestionAndAnswer(form);
 
 		// 取得したexamSectionId,lmsUserId,accountIdを、試験結果Entityにセット
 		TExamResult tExamResult = new TExamResult();
 		MLmsUser mLmsUser = new MLmsUser();
 		tExamResult.setExamSectionId(form.getExamSectionId());
-		mLmsUser.setLmsUserId(lmsUserId);
+		mLmsUser.setLmsUserId(form.getLmsUserId());
 		tExamResult.setMLmsUser(mLmsUser);
-		tExamResult.setAccountId(accountId);
+		tExamResult.setAccountId(form.getAccountId());
 
 		// 時間が空でない場合、formから時間取得し、試験結果Entityにセット
 		if (form.getTime() != null) {
@@ -162,7 +161,7 @@ public class ExamService {
 		}
 
 		// ログインユーザが受講生の場合
-		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
+		if (Constants.CODE_VAL_ROLL_STUDENT.equals(form.getRole())) {
 			// 試験結果情報登録
 			tExamResultRepository.save(tExamResult);
 		}
@@ -182,7 +181,7 @@ public class ExamService {
 			TExamResultDetail tExamResultDetail = new TExamResultDetail();
 			tExamResultDetail.setQuestionId(examServiceQuestionDto.getQuestionId());
 			tExamResultDetail.setTExamResult(tExamResult);
-			tExamResultDetail.setLmsUserId(lmsUserId);
+			tExamResultDetail.setLmsUserId(form.getLmsUserId());
 
 			// 回答が空でない場合回答取得、空の場合0代入
 			if (answer != null && answer[i] != null && !answer[i].toString().isEmpty()) {
@@ -192,10 +191,10 @@ public class ExamService {
 			}
 
 			// 取得したaccountIdを、試験結果詳細Entityにセット
-			tExamResultDetail.setAccountId(accountId);
+			tExamResultDetail.setAccountId(form.getAccountId());
 
 			// ログインユーザが受講生の場合
-			if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
+			if (Constants.CODE_VAL_ROLL_STUDENT.equals(form.getRole())) {
 				// 試験結果詳細情報登録
 				tExamResultDetailRepository.save(tExamResultDetail);
 			}
@@ -209,7 +208,7 @@ public class ExamService {
 		tExamResult.setScore(score);
 
 		// ログインユーザが受講生の場合
-		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
+		if (Constants.CODE_VAL_ROLL_STUDENT.equals(form.getRole())) {
 			// 検索結果を試験結果Entityリストに保存
 			List<TExamResult> tExamResultList = tExamResultRepository.findByExamSectionIdAndLmsUserIdAndAccountId(
 					tExamResult.getExamSectionId(), tExamResult.getMLmsUser().getLmsUserId(),

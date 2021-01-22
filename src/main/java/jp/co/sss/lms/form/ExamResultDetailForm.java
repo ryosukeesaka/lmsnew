@@ -14,6 +14,8 @@ public class ExamResultDetailForm {
 	private Integer examSectionId;
 	/**LMSユーザーID*/
 	private Integer lmsUserId;
+	/**アカウントID*/
+	private Integer accountId;
 
 	public Integer getExamId() {
 		return examId;
@@ -38,4 +40,13 @@ public class ExamResultDetailForm {
 	public void setLmsUserId(Integer lmsUserId) {
 		this.lmsUserId = lmsUserId;
 	}
+
+	public Integer getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+	
 }

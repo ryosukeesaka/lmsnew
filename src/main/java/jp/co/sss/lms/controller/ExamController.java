@@ -1,15 +1,15 @@
 package jp.co.sss.lms.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.ExamServiceExamDto;
@@ -49,21 +49,22 @@ public class ExamController {
 	 */
 
 	@RequestMapping(path = "/exam/resultDetail", method = RequestMethod.POST)
-	public ResponseEntity<Model> index(@RequestBody ExamPlayForm examPlayForm, @RequestParam("accountId") Integer accountId, @RequestParam("lmsUserId") Integer lmsUserId, Model model) {
-
+	public ResponseEntity<Map<String, Object>> index(@RequestBody ExamPlayForm examPlayForm) {
+		
 		// 試験結果IDが数値でない場合のチェックはフロント側で実装する。
 
 		// 試験情報サービス．試験結果情報取得
-		ExamServiceExamDto examServiceExamDto = examService.getExam(examPlayForm.getExamId(), accountId);
-		ExamServiceExamResultDto singleExam = examService.getExamResultWithQuestion(examPlayForm.getExamResultId(), accountId, lmsUserId);
-		List<ExamServiceExamResultDto> examResultDetailDto = examService.getExamResult(examPlayForm.getExamSectionId(), lmsUserId, accountId);
+		ExamServiceExamDto examServiceExamDto = examService.getExam(examPlayForm.getExamId(), examPlayForm.getAccountId());
+		ExamServiceExamResultDto singleExam = examService.getExamResultWithQuestion(examPlayForm.getExamResultId(), examPlayForm.getAccountId(), examPlayForm.getLmsUserId());
+		List<ExamServiceExamResultDto> examResultDetailDto = examService.getExamResult(examPlayForm.getExamSectionId(), examPlayForm.getLmsUserId(), examPlayForm.getAccountId());
 
 		// 上で取得した試験結果情報をもとに試験結果詳細情報の項目を設定
-		model.addAttribute("examServiceExamDto", examServiceExamDto);
-		model.addAttribute("singleExam", singleExam);
-		model.addAttribute("examServiceExamResultDto", examResultDetailDto);
+		Map<String, Object> map = new HashMap<>();
+		map.put("examServiceExamDto", examServiceExamDto);
+		map.put("singleExam", singleExam);
+		map.put("examServiceExamResultDto", examResultDetailDto);
 
-		return new ResponseEntity<>(model, HttpStatus.OK);
+		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
 
 }
