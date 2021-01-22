@@ -54,9 +54,15 @@ public class SectionService {
 	 * @return エラーメッセージ
 	 */
 	public String getSessionInfo(SectionForm sectionForm) {
+		
+		// Integer nullJudgment = null;
+		if (!isNumber(sectionForm.getSectionId())) {
+			String[] values = { "sectionId" };
+			return messageUtil.getMessage(Constants.VALID_KEY_INTEGER, values);
+		}
 
 		// セクション情報サービス.セクション情報取得を利用する
-		MSection mSection = mSectionRepository.findBySectionId(sectionForm.getSectionId());
+		MSection mSection = mSectionRepository.findBySectionId(Integer.parseInt(sectionForm.getSectionId()));
 
 		if (mSection == null) {
 
@@ -76,7 +82,7 @@ public class SectionService {
 	public SectionServiceSectionDto getSectionDto(SectionForm sectionForm) {
 
 		// セクション関連情報を取得
-		MSection mSection = mSectionRepository.getSectionDetail(sectionForm.getSectionId(), sectionForm.getAccountId(), Constants.DB_FLG_FALSE);
+		MSection mSection = mSectionRepository.getSectionDetail(Integer.parseInt(sectionForm.getSectionId()), sectionForm.getAccountId(), Constants.DB_FLG_FALSE);
 		
 		// SecitonServiceFileDtoListの作成
 		List<TFileSection> tFileSectionList = mSection.getTFileSectionList();
@@ -207,5 +213,21 @@ public class SectionService {
 		}
 		return hashFileId;
 	}
+	/**
+	 * 
+	 * 関数概要 数値変換チェック
+	 * 
+	 * @param val 数値変換を行う文字列
+	 * @return true/false 変換可能の場合 true, 変換不可の場合 false
+	 */
+	private boolean isNumber(String val) {
+		try {
+			Integer.parseInt(val);
+			return true;
+		} catch (NumberFormatException nfex) {
+			return false;
+		}
+	}
+
 
 }

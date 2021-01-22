@@ -8,18 +8,18 @@ package jp.co.sss.lms.form;
 public class SectionForm {
 
 	/** セクションID */
-	private Integer sectionId;
+	private String sectionId;
 	/** 企業アカウントID */
 	private Integer accountId;
 	/** LMSユーザID */
 	private Integer lmsUserId;
 	/** ユーザID */
 	private Integer userId;
-
-	public Integer getSectionId() {
+	
+	public String getSectionId() {
 		return sectionId;
 	}
-	public void setSectionId(Integer sectionId) {
+	public void setSectionId(String sectionId) {
 		this.sectionId = sectionId;
 	}
 	public Integer getAccountId() {
@@ -40,5 +40,6 @@ public class SectionForm {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
+	
 	
 }

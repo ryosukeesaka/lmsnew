@@ -12,12 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.TDeliverablesResult;
 import jp.co.sss.lms.entity.TDeliverablesSection;
-import jp.co.sss.lms.form.DeliverablesForm;
+import jp.co.sss.lms.form.UploadForm;
 import jp.co.sss.lms.repository.TDeliverablesResultRepository;
 import jp.co.sss.lms.repository.TDeliverablesSectionRepository;
 import jp.co.sss.lms.util.Constants;
@@ -92,10 +94,10 @@ public class DeliverableService {
 	 * @param DeliverablesForm 成果物を格納しているフォーム
 	 * @return 成果物登録成功の場合True 失敗の場合False
 	 */
-	public boolean deliverableUpload(DeliverablesForm uploadFile) {
+	public boolean deliverableUpload(MultipartFile multipartFile,UploadForm form) {
 		
 		//formの情報をEntityに格納する
-		TDeliverablesResult tDeliverablesResult = covertFormToEntity(uploadFile, loginUserDto);
+		TDeliverablesResult tDeliverablesResult = covertFormToEntity(multipartFile,form,loginUserDto);
 		
 		//二重アップロード検証
 		boolean isUpload = isDoubleTransmission(tDeliverablesResult);
@@ -119,18 +121,18 @@ public class DeliverableService {
 	 * @param loginUser ログイン中のユーザー情報
 	 * @return 成果物Entityを返す
 	 */
-	private TDeliverablesResult covertFormToEntity(DeliverablesForm uploadFile,LoginUserDto loginUser) {
+	private TDeliverablesResult covertFormToEntity(MultipartFile file, UploadForm form,LoginUserDto loginUser) {
 		
 		TDeliverablesResult tDeliverablesResult = new TDeliverablesResult();
 		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
 		
 		//成果物・セクション紐づけIDを設定
-		tDeliverablesSection.setDeliverablesSectionId(uploadFile.getSectionId());
+		tDeliverablesSection.setDeliverablesSectionId(Integer.parseInt(form.getSectionId()));
 		tDeliverablesResult.settDeliverablesSection(tDeliverablesSection);
 		//ファイルパスを設定
-		tDeliverablesResult.setFilePath("deliverablesFiles/" + tDeliverablesSection.getDeliverablesSectionId()+ "/" + Integer.toString(loginUser.getLmsUserId())+"/"+ uploadFile.getUploadFile().getOriginalFilename());
+		tDeliverablesResult.setFilePath("deliverablesFiles/" + tDeliverablesSection.getDeliverablesSectionId()+ "/" + Integer.toString(loginUser.getLmsUserId())+"/"+ file.getOriginalFilename());
 		//ファイルサイズを設定
-		tDeliverablesResult.setFileSize(uploadFile.getUploadFile().getSize());
+		tDeliverablesResult.setFileSize(file.getSize());
 		//LMSユーザーIDを設定
 		MLmsUser mLmsUser = new MLmsUser();
 		mLmsUser.setLmsUserId(loginUser.getLmsUserId());
@@ -173,22 +175,22 @@ public class DeliverableService {
 	 * @param deliverablesSectionId 成果物ID
 	 * @return errorMessege エラーメッセージ
 	 */
-	public String checkDeliverablesInfo(DeliverablesForm uploadFile) {
+	public String checkDeliverablesInfo(MultipartFile file, UploadForm form) {
 		
 		//ファイルが未入力、アップロードしたファイルサイズが0である場合
-		if(uploadFile.getUploadFile().getSize() == 0 || uploadFile.getUploadFile() == null) {
+		if(file.getSize() == 0 || file == null) {
 			String[] values = { "deliverablesName" };
 			return messageUtil.getMessage(Constants.VALID_KEY_REQUIRED, values);
 		}
 		//最大ファイルサイズをアップロードされたファイルが超過した場合
-		else if(uploadFile.getUploadFile().getSize() > Integer.parseInt(Constants.DELIVERABLES_UPLOAD_MAX_SIZE)) {
+		else if(file.getSize() > Integer.parseInt(Constants.DELIVERABLES_UPLOAD_MAX_SIZE)) {
 			String[] values = { Constants.DELIVERABLES_UPLOAD_MAX_SIZE };
 			return messageUtil.getMessage(Constants.VALID_KEY_UPLOAD_SIZE , values);
 		}
 		
 		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
 		// 成果物情報取得
-		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(uploadFile.getDeliverablesSectionId());
+		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(Integer.parseInt(form.getDeliverablesSectionId()));
 		//提出済みの成果物がない場合
 		if(!tDeliverablesSection.getTDeliverablesResultList().isEmpty()) {
 			String[] values = { "deliverables" };

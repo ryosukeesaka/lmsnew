@@ -40,34 +40,47 @@ public class CourseController {
 	 * @return コース詳細情報
 	 */
 	@RequestMapping("/detail")
-	public ResponseEntity<CourseServiceCourseDto> detail(@RequestParam("courseId") Integer courseId, @RequestParam("role") String role) {
+	public ResponseEntity<CourseServiceCourseDto> detail(@RequestParam("courseId") String courseId, @RequestParam("role") String role) {
 
 		CourseServiceCourseDto courseServiceCourseDto = new CourseServiceCourseDto();
 		HttpStatus httpStatus = HttpStatus.OK;
-
-		if (!Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
-
+		
+		//受講生権限の場合
+		if(Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 			// 入力パラメータのチェックを行い、問題があった場合はmessageにエラーメッセージを代入する
 			String message = courseService.getCourseInfo(courseId);
-
+			
 			if (!message.isEmpty()) {
-
 				StringBuffer sb = new StringBuffer(message);
 				loggingUtil.appendLog(sb);
 				logger.info(sb.toString());
-
+				//Reponseステータスの変更
 				httpStatus = HttpStatus.NOT_FOUND;
-
+				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
+	
+			} else {
+				// コース詳細関連情報の取得
+				courseServiceCourseDto = courseService.getCourseDetail(Integer.parseInt(courseId));
+				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
 			}
-			
-		} else {
-
-			// コース詳細関連情報の取得
-			courseServiceCourseDto = courseService.getCourseDetail(courseId);
-
+		//受講生権限以外の場合
+		}else {
+			// 入力パラメータのチェックを行い、問題があった場合はmessageにエラーメッセージを代入する
+			String message = courseService.getCourseInfo(courseId);
+						
+			if (!message.isEmpty()) {
+				StringBuffer sb = new StringBuffer(message);
+				loggingUtil.appendLog(sb);
+				logger.info(sb.toString());
+				//Reponseステータスの変更
+				httpStatus = HttpStatus.NOT_FOUND;
+				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
+				
+			} else {
+				// コース詳細関連情報の取得
+				courseServiceCourseDto = courseService.getCourseDetail(Integer.parseInt(courseId));
+				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
+			}			
 		}
-
-		return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
-
 	}
 }

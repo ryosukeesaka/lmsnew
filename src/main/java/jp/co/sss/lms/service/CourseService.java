@@ -41,18 +41,19 @@ public class CourseService {
 	 * @param courseId コースID
 	 * @return errorMessege
 	 */
-	public String getCourseInfo(Integer courseId) {
-
-		// コース情報取得
-		MCourse mCourse = courseRepository.findByCourseId(courseId);
+	public String getCourseInfo(String courseId) {
 
 		// Integer nullJudgment = null;
 		if (!isNumber(courseId.toString())) {
 			String[] values = { "courseId" };
 			return messageUtil.getMessage(Constants.VALID_KEY_INTEGER, values);
 
-			// コース情報取得に失敗した場合
+			
 		}
+		// コース情報取得
+		MCourse mCourse = courseRepository.findByCourseId(Integer.parseInt(courseId));
+		
+		// コース情報取得に失敗した場合
 		if (mCourse == null) {
 			String[] values = { "courseId" };
 			return messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
