@@ -39,7 +39,7 @@ public interface TStudentAttendanceRepository extends JpaRepository<TStudentAtte
 	@Query("SELECT t1 FROM TStudentAttendance t1"
 			+ " WHERE t1.lmsUserId = :lmsUserId"
 			+ " AND t1.trainingDate = :trainingDate"
-			+ " AND deleteFlg = 0")
+			+ " AND t1.deleteFlg = 0")
 	TStudentAttendance findByLmsUserIdAndTrainingDate(@Param("lmsUserId") Integer lmsUserId, @Param("trainingDate") Date trainingDate);
 
 }
