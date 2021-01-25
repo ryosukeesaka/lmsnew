@@ -93,10 +93,10 @@ public class DeliverableService {
 	 * @param DeliverablesForm 成果物を格納しているフォーム
 	 * @return 成果物登録成功の場合True 失敗の場合False
 	 */
-	public boolean deliverableUpload(MultipartFile multipartFile,String sectionId, String deliverableId) {
+	public boolean deliverableUpload(MultipartFile multipartFile,String sectionId, String deliverableId,String lmsUserId,String accountId,String firstCreateUser,String lastModifiedUser) {
 		
 		//formの情報をEntityに格納する
-		TDeliverablesResult tDeliverablesResult = covertFormToEntity(multipartFile,sectionId,deliverableId,loginUserDto);
+		TDeliverablesResult tDeliverablesResult = covertFormToEntity(multipartFile,sectionId,deliverableId,lmsUserId,accountId,firstCreateUser,lastModifiedUser);
 		
 		//二重アップロード検証
 		boolean isUpload = isDoubleTransmission(tDeliverablesResult);
@@ -111,7 +111,7 @@ public class DeliverableService {
 			//データベースに成果物情報を登録
 			tDeliverablesResultRepository.save(tDeliverablesResult);
 		}
-		return isUpload;
+		return !isUpload;
 	}
 	
 	/**
@@ -120,34 +120,34 @@ public class DeliverableService {
 	 * @param loginUser ログイン中のユーザー情報
 	 * @return 成果物Entityを返す
 	 */
-	private TDeliverablesResult covertFormToEntity(MultipartFile file, String sectionId, String deliverableId,LoginUserDto loginUser) {
+	private TDeliverablesResult covertFormToEntity(MultipartFile file, String sectionId, String deliverableId,String lmsUserId,String accountId,String firstCreateUser,String lastModifiedUser) {
 		
 		TDeliverablesResult tDeliverablesResult = new TDeliverablesResult();
 		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
 		
 		//成果物・セクション紐づけIDを設定
-		tDeliverablesSection.setDeliverablesSectionId(Integer.parseInt(sectionId));
+		tDeliverablesSection.setDeliverablesSectionId(Integer.parseInt(deliverableId));
 		tDeliverablesResult.settDeliverablesSection(tDeliverablesSection);
 		//ファイルパスを設定
-		tDeliverablesResult.setFilePath("deliverablesFiles/" + tDeliverablesSection.getDeliverablesSectionId()+ "/" + Integer.toString(loginUser.getLmsUserId())+"/"+ file.getOriginalFilename());
+		tDeliverablesResult.setFilePath("deliverablesFiles/" + tDeliverablesSection.getDeliverablesSectionId()+ "/" + lmsUserId +"/"+ file.getOriginalFilename());
 		//ファイルサイズを設定
 		tDeliverablesResult.setFileSize(file.getSize());
 		//LMSユーザーIDを設定
 		MLmsUser mLmsUser = new MLmsUser();
-		mLmsUser.setLmsUserId(loginUser.getLmsUserId());
+		mLmsUser.setLmsUserId(Integer.parseInt(lmsUserId));
 		tDeliverablesResult.setMLmsUser(mLmsUser);
 		//提出時間を設定
 		tDeliverablesResult.setSubmissionTime(new Timestamp(new Date().getTime()));
 		//企業アカウントを設定
-		tDeliverablesResult.setAccountId(loginUser.getAccountId());
+		tDeliverablesResult.setAccountId(Integer.parseInt(accountId));
 		//削除フラグを設定
 		tDeliverablesResult.setDeleteFlg(Constants.DB_FLG_FALSE);
 		//初回作成者を設定
-		tDeliverablesResult.setFirstCreateUser(loginUser.getLmsUserId());
+		tDeliverablesResult.setFirstCreateUser(Integer.parseInt(firstCreateUser));
 		//初回作成日を設定
 		tDeliverablesResult.setFirstCreateDate(new Timestamp(new Date().getTime()));
 		//最終更新者を設定
-		tDeliverablesResult.setLastModifiedUser(loginUser.getLmsUserId());
+		tDeliverablesResult.setLastModifiedUser(Integer.parseInt(lastModifiedUser));
 		//最終更新日を設定
 		tDeliverablesResult.setLastModifiedDate(new Timestamp(new Date().getTime()));
 	

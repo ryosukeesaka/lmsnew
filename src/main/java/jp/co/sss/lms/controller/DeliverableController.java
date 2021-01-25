@@ -1,5 +1,7 @@
 package jp.co.sss.lms.controller;
 
+import java.sql.Timestamp;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,8 +33,9 @@ public class DeliverableController {
 	
 	@PostMapping(value="/upload")
 	@ResponseBody
-	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionId")String sectionId, @RequestParam("deliverableId")String deliverableId) {
-		
+	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionId")String sectionId, @RequestParam("deliverableId")String deliverableId,
+											@RequestParam("lmsUserId")String lmsUserId, @RequestParam("accountId") String accountId, @RequestParam("firstCreateUser")String firstCreateUser, 
+											 @RequestParam("lastModifiedUser")String lastModifiedUser) {
 		
 		//入力パラメータのチェック
 		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId);
@@ -44,7 +48,7 @@ public class DeliverableController {
 		}
 		
 		//ファイルアップロード処理 (アップロードに成功した場合true）
-		boolean isUpload = deliverableService.deliverableUpload(multipartFile,sectionId,deliverableId);
+		boolean isUpload = deliverableService.deliverableUpload(multipartFile,sectionId,deliverableId,lmsUserId,accountId,firstCreateUser,lastModifiedUser);
 		
 		//アップロードに失敗した場合
 		if(!isUpload) {

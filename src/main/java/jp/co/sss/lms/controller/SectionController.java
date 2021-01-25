@@ -64,7 +64,7 @@ public class SectionController {
 		} else {
 			sectionServiceSectionDto = sectionService.getSectionDto(sectionForm);
 			List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList = deliverableService
-					.getDeliverableWithSubmissionFlgDto(Integer.parseInt(sectionForm.getSectionId()), sectionForm.getAccountId());
+					.getDeliverableWithSubmissionFlgDto(Integer.parseInt(sectionForm.getSectionId()), sectionForm.getLmsUserId());
 			
 			sectionServiceSectionDto.setDeliverablesWithSubmissionFlgDtoList(deliverablesWithSubmissionFlgDtoList);
 		}
