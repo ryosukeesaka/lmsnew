@@ -1,5 +1,7 @@
 package jp.co.sss.lms.util;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.LinkedHashMap;
 
 import org.springframework.stereotype.Component;
@@ -26,6 +28,22 @@ public class AttendanceUtil {
 		TrainingTime total = new TrainingTime(hour, minute);
 		return total;
 	}
+	
+	 /**
+     * 時刻分を丸めた本日日付を取得
+     * @return
+     */
+    public static Date getTrainingDate() {
+        Date trainingDate;
+        DateUtil dateUtil = new DateUtil();
+        try {
+            trainingDate = dateUtil.parse(dateUtil.toString(new Date()));
+        } catch (ParseException e) {
+            // DateUtil#toStringとparseは同様のフォーマットを使用しているため、起こりえないエラー
+            throw new IllegalStateException();
+        }
+        return trainingDate;
+    }
 
 	/**
 	 * SSS定時・出退勤時間を元に、遅刻早退を判定をする
