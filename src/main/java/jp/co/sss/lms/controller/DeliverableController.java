@@ -1,5 +1,7 @@
 package jp.co.sss.lms.controller;
 
+import java.sql.Timestamp;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import jp.co.sss.lms.service.DeliverableService;
@@ -33,16 +35,16 @@ public class DeliverableController {
 	@ResponseBody
 	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionId")String sectionId, @RequestParam("deliverableId")String deliverableId,
 											@RequestParam("lmsUserId")String lmsUserId, @RequestParam("accountId") String accountId, @RequestParam("firstCreateUser")String firstCreateUser, 
-											 @RequestParam("lastModifiedUser")String lastModifiedUser)throws MultipartException {
+											 @RequestParam("lastModifiedUser")String lastModifiedUser, @RequestParam("deliverablesName")String deliverablesName) {
 		
 		//入力パラメータのチェック
-		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId);
+		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId,deliverablesName);
 		
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
-			return new ResponseEntity<>(message, HttpStatus.OK);
+			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
 		}
 		
 		//ファイルアップロード処理 (アップロードに成功した場合true）
@@ -51,7 +53,7 @@ public class DeliverableController {
 		//アップロードに失敗した場合
 		if(!isUpload) {
 			String faildMessage= deliverableService.failUpload();
-			return new ResponseEntity<>(faildMessage, HttpStatus.OK);
+			return new ResponseEntity<>(faildMessage, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>("", HttpStatus.OK);
 		
