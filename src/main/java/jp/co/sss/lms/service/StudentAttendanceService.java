@@ -338,7 +338,7 @@ public class StudentAttendanceService {
 	}
 
 	/**
-	 * 直接入力された勤怠情報を更新
+	 * 直接入力された勤怠情報を更新(バックエンドの処理は完成、フロントエンドとの疎通は未実施)
 	 * 
 	 * @param attendanceForm 勤怠情報のフォーム
 	 * @return 更新完了メッセージ
