@@ -1,6 +1,8 @@
 package jp.co.sss.lms.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +29,9 @@ public class AgreeSecurityController {
 	 * @param form  ログインフォーム
 	 */
 	@RequestMapping(value = "/changePassword")
-	public void index(@RequestParam("securityFlg") Integer securityFlg) {
-		mUserService.update();
+	public ResponseEntity<HttpStatus> index(@RequestParam("userId") Integer userId) {
+		mUserService.update(userId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

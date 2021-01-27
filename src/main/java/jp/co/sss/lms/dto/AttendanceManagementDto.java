@@ -1,5 +1,7 @@
 package jp.co.sss.lms.dto;
 
+import java.util.LinkedHashMap;
+
 /**
  * 勤怠管理画面用DTOクラス
  * 
@@ -15,6 +17,12 @@ public class AttendanceManagementDto extends StudentAttendanceDto {
 
 	/** セクション名 */
 	private String sectionName;
+
+	/** 中抜け時間のプルダウン */
+	private LinkedHashMap<Integer, String> blankTimes;
+
+	/** 中抜け時間（プルダウン初期表示用） */
+	private String blankTimeSelect;
 
 	public boolean getIsToday() {
 		return isToday;
@@ -38,6 +46,22 @@ public class AttendanceManagementDto extends StudentAttendanceDto {
 
 	public void setSectionName(String sectionName) {
 		this.sectionName = sectionName;
+	}
+
+	public LinkedHashMap<Integer, String> getBlankTimes() {
+		return blankTimes;
+	}
+
+	public void setBlankTimes(LinkedHashMap<Integer, String> blankTimes) {
+		this.blankTimes = blankTimes;
+	}
+
+	public String getBlankTimeSelect() {
+		return blankTimeSelect;
+	}
+
+	public void setBlankTimeSelect(String blankTimeSelect) {
+		this.blankTimeSelect = blankTimeSelect;
 	}
 
 }

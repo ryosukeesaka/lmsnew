@@ -4,10 +4,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,6 +25,15 @@ public class TStudentAttendance {
 
 	/** 受講生入力勤怠情報ID */
 	@Id
+	@Column(name = "student_attendance_id")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
+	@TableGenerator(
+			name = "generator", 
+			table="id_generator", 
+			pkColumnName = "pk",
+		    valueColumnName = "value",
+		    pkColumnValue = "T_STUDENT_ATTENDANCE_STUDENT_ATTENDANCE_ID",
+			allocationSize = 1)
 	private Integer studentAttendanceId;
 
 	/** LMSユーザID */

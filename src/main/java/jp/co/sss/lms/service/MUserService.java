@@ -25,8 +25,8 @@ public class MUserService {
 	 * セキュリティ同意フラグをDBに登録
 	 * @return success!! 
 	 */
-	public void update() {
-		MUser mUser = mUserRepository.getOne(loginUserDto.getUserId());
+	public void update(Integer userId) {
+		MUser mUser = mUserRepository.getOne(userId);
 		mUser.setSecurityAgreeFlg((short) 1);
 		mUserRepository.save(mUser);
 		loginUserDto.setSecurityAgreeFlg((short) 1);
