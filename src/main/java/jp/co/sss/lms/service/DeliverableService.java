@@ -75,7 +75,9 @@ public class DeliverableService {
 			// SubmissionFlgの設定
 			deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_FALSE);
 			for (int i = 0; i < tds.getTDeliverablesResultList().size(); i++) {
-				deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_TRUE);
+				if(tds.getTDeliverablesResultList().get(i).getMLmsUser().getLmsUserId() == lmsUserId) {
+					deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_TRUE);
+				}
 			}
 
 			deliverableWithSubmissionFlgDto.setSubmissionDeadLine(tds.getSubmissionDeadline());
