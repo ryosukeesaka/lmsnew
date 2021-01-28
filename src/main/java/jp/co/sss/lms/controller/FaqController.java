@@ -1,9 +1,11 @@
 package jp.co.sss.lms.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,12 +33,13 @@ public class FaqController {
 	 * @return よくある質問画面への遷移
 	 */
 	@RequestMapping(value = "")
-	public ResponseEntity<Model> index(@RequestBody FaqSearchForm faqSearchForm, Model model) {
+	public ResponseEntity<Map<String, Object>> index(@RequestBody FaqSearchForm faqSearchForm) {
 
-		model.addAttribute("faqCategoryList", faqService.getFaqCategoryList());
-		model.addAttribute("faqList", faqService.getFaqDtoList(faqSearchForm));
+		Map<String, Object> map = new HashMap<>();
+		map.put("faqCategoryList", faqService.getFaqCategoryList());
+		map.put("faqList", faqService.getFaqDtoList(faqSearchForm));
 
-		return new ResponseEntity<>(model, HttpStatus.OK);
+		return new ResponseEntity<>(map, HttpStatus.OK);
 		
 	}
 
