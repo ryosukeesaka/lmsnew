@@ -1,7 +1,7 @@
 package jp.co.sss.lms.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.CourseServiceSectionDto;
@@ -46,7 +45,7 @@ public class AttendanceController {
 
 	@Autowired
 	private HttpSession session;
-	
+
 
 	/**
 	 * 勤怠管理画面の初期表示
@@ -57,13 +56,49 @@ public class AttendanceController {
 	@RequestMapping(value = "/detail", method = RequestMethod.GET)
 	public ResponseEntity<List<AttendanceManagementDto>> index(@RequestParam("courseId") Integer courseId,
 			@RequestParam("lmsUserId") Integer lmsUserId){
-		
+
 		// コースに紐付くセクション情報を取得
 		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService.getSectionDtoList(courseId);
-		
+
 		// 生徒の勤怠情報を取得
 		Map<String, StudentAttendanceDto> studentAttendanceDtoMap = studentAttendanceService.getStudentAttendanceDtoMap(lmsUserId);
-		
+
+		// 勤怠管理画面用のDTOを作成する
+		// 引数としてcourseServiceSectionDtoListとstudentAttendanceDtoMapを渡す
+		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
+				.createAttendanceManagementDto(courseServiceSectionDtoList, studentAttendanceDtoMap);
+
+		return new ResponseEntity<>(attendanceManagementDtoList, HttpStatus.OK);
+	}
+
+
+	/**
+	 *納期に間に合わず、出勤ボタン押下後の処理は未実装
+	 */
+	@RequestMapping(value="/punchIn", params="punchIn", method = RequestMethod.GET)
+	public ResponseEntity<List<AttendanceManagementDto>>  punchIn(Model model, @RequestParam("lmsUserId") Integer lmsUserId
+			, @RequestParam("courseId") Integer courseId, @RequestParam("accountId") Integer accountId) {
+
+		//本日日時を取得
+		Date trainingDate = AttendanceUtil.getTrainingDate();
+		System.out.println(lmsUserId);
+
+		String errors = studentAttendanceService.validPunchIn(lmsUserId, trainingDate, courseId);
+		String message = studentAttendanceService.punchIn(lmsUserId, trainingDate, courseId, accountId);
+
+
+		//メッセージ
+		//		model.addAttribute("message", message);
+		//		model.addAttribute("error", errors);
+		//		return "forward:/attendance/detail";
+
+		//		return new ResponseEntity<>(message,HttpStatus.OK);
+
+		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService.getSectionDtoList(courseId);
+
+		// 生徒の勤怠情報を取得
+		Map<String, StudentAttendanceDto> studentAttendanceDtoMap = studentAttendanceService.getStudentAttendanceDtoMap(lmsUserId);
+
 		// 勤怠管理画面用のDTOを作成する
 		// 引数としてcourseServiceSectionDtoListとstudentAttendanceDtoMapを渡す
 		List<AttendanceManagementDto> attendanceManagementDtoList = studentAttendanceService
@@ -71,45 +106,33 @@ public class AttendanceController {
 		
 		return new ResponseEntity<>(attendanceManagementDtoList, HttpStatus.OK);
 	}
-	
-	/**
-	 * 勤怠情報直接変更 ※画面遷移のみ実装
-	 * @return
-	 */
-	@RequestMapping(path = "/update")
-	public String update() {
-		return "attendance/update";
-	}
 
-	/**
-	 *納期に間に合わず、出勤ボタン押下後の処理は未実装
-	 */
-	@RequestMapping(value="/punchIn", method = RequestMethod.GET)
-	public String punchIn(int lmsUserId, int courseId, int accountId) {
-
-		//本日日時を取得
-		Date trainingDate = AttendanceUtil.getTrainingDate();
-		
-		studentAttendanceService.punchIn(lmsUserId, trainingDate, courseId, accountId);
-		
-		return "/attendance/detail/";
-	}
-	
 	/**
 	 *納期に間に合わず、退勤ボタン押下後の処理は未実装
 	 */
-	@RequestMapping(value = "/punchOut", method = RequestMethod.GET)
-	public String punchOut(int lmsUserId, int courseId) {
-		
-		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService
-				.getSectionDtoList(courseId);
+	@RequestMapping(value = "/punchOut", params="punchOut", method = RequestMethod.GET)
+	public String punchOut(Model model) {
 
+		LoginUserDto loginUserDto = (LoginUserDto) session.getAttribute("loginUserDto");
+		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService
+				.getSectionDtoList(loginUserDto.getCourseId());
+		int lmsUserId = loginUserDto.getLmsUserId();
 		//本日日時を取得
 		Date trainingDate = AttendanceUtil.getTrainingDate();
-		
-		studentAttendanceService.punchOut(lmsUserId, trainingDate, courseServiceSectionDtoList);
-		
+		TStudentAttendance tStudentAttendance = new TStudentAttendance();
+		MessageUtil messageUtil = new MessageUtil();
+		String error = null;
+		if (StringUtils.isNotBlank(tStudentAttendance.getTrainingEndTime())){
+			error = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHALREADYEXISTS);
+			return error;
+		}
+		String errors = studentAttendanceService.validPunchOut(lmsUserId, trainingDate, courseServiceSectionDtoList);
+		String message = studentAttendanceService.punchOut(lmsUserId, trainingDate, courseServiceSectionDtoList);
+		//メッセージ
+		model.addAttribute("message", message);
+		model.addAttribute("error", errors);
+
 		return "/attendance/detail/";
 	}	
-	
+
 }
