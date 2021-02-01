@@ -75,7 +75,9 @@ public class DeliverableService {
 			// SubmissionFlgの設定
 			deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_FALSE);
 			for (int i = 0; i < tds.getTDeliverablesResultList().size(); i++) {
-				deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_TRUE);
+				if(tds.getTDeliverablesResultList().get(i).getMLmsUser().getLmsUserId() == lmsUserId) {
+					deliverableWithSubmissionFlgDto.setSubmissionFlg(Constants.DB_FLG_TRUE);
+				}
 			}
 
 			deliverableWithSubmissionFlgDto.setSubmissionDeadLine(tds.getSubmissionDeadline());
@@ -174,11 +176,11 @@ public class DeliverableService {
 	 * @param deliverablesSectionId 成果物ID
 	 * @return errorMessege エラーメッセージ
 	 */
-	public String checkDeliverablesInfo(MultipartFile file,String deliverableId) {
+	public String checkDeliverablesInfo(MultipartFile file,String deliverableId,String deliverablesName) {
 		
 		//ファイルが未入力、アップロードしたファイルサイズが0である場合
 		if(file.getSize() == 0 || file == null) {
-			String[] values = { "deliverablesName" };
+			String[] values = { deliverablesName };
 			return messageUtil.getMessage(Constants.VALID_KEY_REQUIRED, values);
 		}
 		//最大ファイルサイズをアップロードされたファイルが超過した場合
@@ -192,7 +194,7 @@ public class DeliverableService {
 		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(Integer.parseInt(deliverableId));
 		//提出済みの成果物がない場合
 		if(!tDeliverablesSection.getTDeliverablesResultList().isEmpty()) {
-			String[] values = { "deliverables" };
+			String[] values = { deliverablesName };
 			return messageUtil.getMessage(Constants.VALID_KEY_ALREADY_EXISTS, values);
 		}
 		return "";

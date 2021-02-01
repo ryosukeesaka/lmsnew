@@ -35,10 +35,10 @@ public class DeliverableController {
 	@ResponseBody
 	public ResponseEntity<String> upload(@RequestParam("file")MultipartFile multipartFile,@RequestParam("sectionId")String sectionId, @RequestParam("deliverableId")String deliverableId,
 											@RequestParam("lmsUserId")String lmsUserId, @RequestParam("accountId") String accountId, @RequestParam("firstCreateUser")String firstCreateUser, 
-											 @RequestParam("lastModifiedUser")String lastModifiedUser) {
+											 @RequestParam("lastModifiedUser")String lastModifiedUser, @RequestParam("deliverablesName")String deliverablesName) {
 		
 		//入力パラメータのチェック
-		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId);
+		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId,deliverablesName);
 		
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
