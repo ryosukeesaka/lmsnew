@@ -182,17 +182,14 @@ public class StudentAttendanceService {
 	 * @param accountId 企業ID
 	 * @return 更新完了メッセージ
 	 */
-	public String punchIn(int lmsUserId, Date trainingDate, int courseId, int accountId) {	
+	public void punchIn(int lmsUserId, Date trainingDate, int courseId, int accountId) {	
 		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
-		// INSERT
-		boolean isUpdate = true;
-		String message = null;
 
-		String errors = validPunchIn(lmsUserId, trainingDate, courseId);
-		if(errors == null) {
+		boolean errors = validPunchIn(lmsUserId, trainingDate, courseId);
+		
+		if(tStudentAttendance == null) {
 			// 存在しなければ、レコードを新規作成する
 			tStudentAttendance = new TStudentAttendance();
-			isUpdate = false;
 			// entityにデフォルト値をセット
 			// DeleteFlgをセット
 			tStudentAttendance.setDeleteFlg(Constants.DB_FLG_FALSE);
@@ -207,7 +204,6 @@ public class StudentAttendanceService {
 			// accountIdをセット
 			tStudentAttendance.setAccountId(accountId);
 
-			message = messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
 			// 現在時刻
 			TrainingTime trainingStartTime = new TrainingTime();
 			// zero paddingされた、HH:mm形式の文字列
@@ -223,14 +219,11 @@ public class StudentAttendanceService {
 		}
 
 		// true レコードがある場合　更新を行う。共通項目も更新する。 
-		if (isUpdate) {
-			//　直接変更
-			//repository.updateStudentAttendance(tStudentAttendance);
-		} else {
+		if (errors == true) {
 			//　情報を保存
 			repository.save(tStudentAttendance);
 		}
-		return message;
+
 	}
 
 	/**
@@ -240,12 +233,13 @@ public class StudentAttendanceService {
 	 * @param courseServiceSectionDtoList
 	 * @return 更新完了メッセージ
 	 */
-	public String punchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
+	public void punchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
 		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
-		String message = null;
-		String errors = validPunchOut(lmsUserId, trainingDate, courseServiceSectionDtoList);
+
+		boolean errors = validPunchOut(lmsUserId, trainingDate, courseServiceSectionDtoList);
+		
 		// INSERT
-		if (errors == null ) {
+		if (errors == true ) {
 			// 現在時刻
 			TrainingTime trainingEndTime = new TrainingTime();
 			// zero paddingされた、HH:mm形式の文字列
@@ -257,11 +251,11 @@ public class StudentAttendanceService {
 					new TrainingTime(tStudentAttendance.getTrainingStartTime()),
 					new TrainingTime(tStudentAttendance.getTrainingEndTime()));
 			tStudentAttendance.setStatus(attendanceStatusEnum.code);
-			message = messageUtil.getMessage(Constants.PROP_KEY_ATTENDANCE_UPDATE_NOTICE);
+
 			// 情報を保存
 			repository.save(tStudentAttendance);
 		}
-		return message;
+;
 	}
 
 	/**
@@ -271,8 +265,8 @@ public class StudentAttendanceService {
 	 * @param courseId コースID
 	 * @return エラーメッセージ
 	 */
-	public String validPunchIn(int lmsUserId, Date trainingDate, int courseId) {
-		String errors = null;
+	public boolean validPunchIn(int lmsUserId, Date trainingDate, int courseId) {
+		
 		Date date = null;
 		//sectionの研修日取得
 		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService
@@ -285,11 +279,15 @@ public class StudentAttendanceService {
 		//今日が研修日か
 		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
 		String trainingDateStr = sdf.format(trainingDate);
+		
+		boolean errors = true;
+		//研修日が今日ではないとき
 		if (!dateStr.equals(trainingDateStr)) {
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_NOTWORKDAY);
+			errors = false;
 		}
+		//既に登録済みの時
 		if(tStudentAttendance != null) {
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHALREADYEXISTS);
+			errors = false;
 		}
 		return errors;
 	}
@@ -300,8 +298,8 @@ public class StudentAttendanceService {
 	 * @param courseServiceSectionDtoList コース情報サービス セクションDTO
 	 * @return エラーメッセージ
 	 */
-	public String validPunchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
-		String errors = null;
+	public boolean validPunchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
+		boolean errors = true;
 		Date date = null;
 		//sectionの研修日取得
 		for (CourseServiceSectionDto dto : courseServiceSectionDtoList) {
@@ -312,27 +310,23 @@ public class StudentAttendanceService {
 		//今日が研修日か
 		String trainingDateStr = sdf.format(trainingDate);
 		if (!dateStr.equals(trainingDateStr)) {
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_NOTWORKDAY);
-			return errors;
+			errors = false;
 		}
 		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
 		if (tStudentAttendance == null) {
 			// 出勤情報がないため退勤情報を入力出来ません
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHINEMPTY);
-			return errors;
+			errors = false;
 		}
 		String trainingStartTime = tStudentAttendance.getTrainingStartTime();
 		TrainingTime trainingEndTime = new TrainingTime();
 		// zero paddingされた、HH:mm形式の文字列
 		String trainingEndTimeStr = trainingEndTime.toString();
 		if (trainingStartTime != null && trainingStartTime.compareTo(trainingEndTimeStr) > 0) {
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_TRAININGTIMERANGE);
-			return errors;
+			errors = false;
 		}
 		if (tStudentAttendance != null && !StringUtils.isBlank(tStudentAttendance.getTrainingEndTime())) {
 			// 既に入力されているのでエラー「本日の勤怠情報は既に入力されています」
-			errors = messageUtil.getMessage(Constants.VALID_KEY_ATTENDANCE_PUNCHALREADYEXISTS);
-			return errors;
+			errors = false;
 		}
 		return errors;
 	}
