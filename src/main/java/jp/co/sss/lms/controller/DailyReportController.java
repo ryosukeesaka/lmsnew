@@ -97,12 +97,10 @@ public class DailyReportController {
 		// レポート情報サービス.レポート提出情報取得
 		DailyReportDto dailyReportDto = dailyReportService
 				.getDailyReportSubmit(dailyReportDetailForm.getDailyReportSubmitId(), userId, /* date, */ accountId);
-//		model.addAttribute("dailyReportDto", dailyReportDto);
-//		model.addAttribute("intelligibilityDto", dailyReportDto.getIntelligibilityDtoList());
 
 		// レポート情報サービス.フィードバックコメント提出情報取得
-//		DailyReportDto dailyReportDto = dailyReportService.getDailyReportFeedbackSubmit(dailyReportDetailForm.getDailyReportSubmitId());
-//		model.addAttribute("dailyReportFbDto", dailyReportDto.getDailyReportFbDtoList());
+		DailyReportDto dailyReportFbDtoList = dailyReportService.getDailyReportFeedbackSubmit(dailyReportDetailForm.getDailyReportSubmitId());
+		dailyReportDto.setDailyReportFbDtoList(dailyReportFbDtoList.getDailyReportFbDtoList());
 
 		return new ResponseEntity<DailyReportDto>(dailyReportDto, httpStatus);
 	}
@@ -119,11 +117,6 @@ public class DailyReportController {
 	public Integer insert(@RequestBody DailyReportDetailForm dailyReportDetailForm,
 			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId) {
 
-		// TODO 実装バグ
-		// フィードバック登録後に更新ボタンを押下で再度登録される。
-		// ボタン押下又はページを更新するたびに、DailyReportController.javaへ遷移し、
-		// フィールドバック登録機能であるdailyReportService.insertDailyReportが実行されてしまうため。
-		// レポート情報サービス.フィードバックコメント情報登録
 		Integer insertCount = dailyReportService.insertDailyReportFeedback(dailyReportDetailForm, lmsUserId, accountId);
 
 		return insertCount;
@@ -139,20 +132,10 @@ public class DailyReportController {
 	// TODO 実装バグ
 	// フィードバック登録後に戻るボタンで登録したものが消える。
 	@RequestMapping(value = "/delete")
-	public Integer delete(@RequestBody DailyReportDetailForm dailyReportDetailForm,
-			@RequestParam Integer dailyReportSubmitId, @RequestParam Integer dailyReportFbId, @RequestParam("lmsUserId") Integer lmsUserId, Model model) {
+	public Integer delete(@RequestParam("dailyReportFbId") Integer dailyReportFbId, @RequestParam("lmsUserId") Integer lmsUserId) {
 
 		// 日報フィードバックコメント情報削除API
 		Integer deleteCount = dailyReportService.dailyReportFbId(dailyReportFbId, lmsUserId);
-
-//		// レポート情報サービス.レポート提出情報取得
-//		dailyReportDto = dailyReportService.getDailyReportSubmit(dailyReportSubmitId,  loginUserDto.getUserId(),/*date,*/ loginUserDto.getAccountId());
-//		model.addAttribute("dailyReportDto", dailyReportDto);
-//		model.addAttribute("intelligibilityDto", dailyReportDto.getIntelligibilityDtoList());
-//
-//		// レポート情報サービス.フィードバックコメント提出情報取得
-//		dailyReportDto = dailyReportService.getDailyReportFeedbackSubmit(dailyReportSubmitId);
-//		model.addAttribute("dailyReportFbDto", dailyReportDto.getDailyReportFbDtoList());
 
 		return deleteCount;
 	}
