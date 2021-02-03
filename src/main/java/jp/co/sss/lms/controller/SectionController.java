@@ -59,7 +59,7 @@ public class SectionController {
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 			
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = HttpStatus.BAD_REQUEST;
 			
 		} else {
 			sectionServiceSectionDto = sectionService.getSectionDto(sectionForm);
