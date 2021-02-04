@@ -176,7 +176,7 @@ public class DeliverableService {
 	 * @param deliverablesSectionId 成果物ID
 	 * @return errorMessege エラーメッセージ
 	 */
-	public String checkDeliverablesInfo(MultipartFile file,String deliverableId,String deliverablesName) {
+	public String checkDeliverablesInfo(MultipartFile file,String deliverableId,String deliverablesName,String lmsUserId) {
 		
 		//ファイルが未入力、アップロードしたファイルサイズが0である場合
 		if(file.getSize() == 0 || file == null) {
@@ -189,11 +189,11 @@ public class DeliverableService {
 			return messageUtil.getMessage(Constants.VALID_KEY_UPLOAD_SIZE , values);
 		}
 		
-		TDeliverablesSection tDeliverablesSection = new TDeliverablesSection();
+		TDeliverablesResult tDeliverablesResult = new TDeliverablesResult();
 		// 成果物情報取得
-		tDeliverablesSection = tDeliverablesSectionRepository.findByDeliverablesSectionId(Integer.parseInt(deliverableId));
+		tDeliverablesResult = tDeliverablesResultRepository.findByDeliverablesSectionIdAndLmsUserId(Integer.parseInt(deliverableId),Integer.parseInt(lmsUserId));
 		//提出済みの成果物がない場合
-		if(!tDeliverablesSection.getTDeliverablesResultList().isEmpty()) {
+		if(tDeliverablesResult != null) {
 			String[] values = { deliverablesName };
 			return messageUtil.getMessage(Constants.VALID_KEY_ALREADY_EXISTS, values);
 		}

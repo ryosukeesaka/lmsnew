@@ -42,7 +42,4 @@ public interface TDeliverablesSectionRepository extends JpaRepository<TDeliverab
 		public List<TDeliverablesSection> getDeliverablesSubmissionFlg
 		(@Param("sectionId") Integer sectionId,@Param("lmsUserId") Integer lmsUserId);
 		
-		//成果物情報取得
-		public TDeliverablesSection findByDeliverablesSectionId(Integer deliverablesSectionId);
-		
 }

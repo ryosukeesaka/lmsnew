@@ -38,13 +38,13 @@ public class DeliverableController {
 											 @RequestParam("lastModifiedUser")String lastModifiedUser, @RequestParam("deliverablesName")String deliverablesName) {
 		
 		//入力パラメータのチェック
-		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId,deliverablesName);
+		String message = deliverableService.checkDeliverablesInfo(multipartFile,deliverableId,deliverablesName,lmsUserId);
 		
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
-			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(message, HttpStatus.OK);
 		}
 		
 		//ファイルアップロード処理 (アップロードに成功した場合true）
@@ -53,7 +53,7 @@ public class DeliverableController {
 		//アップロードに失敗した場合
 		if(!isUpload) {
 			String faildMessage= deliverableService.failUpload();
-			return new ResponseEntity<>(faildMessage, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(faildMessage, HttpStatus.OK);
 		}
 		return new ResponseEntity<>("", HttpStatus.OK);
 		
