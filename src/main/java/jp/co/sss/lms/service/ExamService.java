@@ -69,18 +69,14 @@ public class ExamService {
 
 		// 試験結果Entityリストを試験結果Dtoリストへ詰め替え
 		List<ExamServiceExamResultDto> examResultDtoList = new ArrayList<>();
-		// 現回転数取得用変数作成
-		int count = 0;
+		
 		for (TExamResult tExamResult : tExamResultList) {
 			ExamServiceExamResultDto examResultDto = new ExamServiceExamResultDto();
 			examResultDto.setExamResultId(tExamResult.getExamResultId());
 			examResultDto.setScore((double) tExamResult.getScore());
 			examResultDto.setDate(tExamResult.getFirstCreateDate());
-			examResultDto.setReply(tExamResult.getTExamResultDetailList().get(count).getReply());
 			examResultDto.setLmsUserId(tExamResult.getMLmsUser().getLmsUserId());
 			examResultDtoList.add(examResultDto);
-			// 現回転数更新
-			count++;
 		}
 
 		// 試験結果Dtoリストを返す
@@ -237,7 +233,7 @@ public class ExamService {
 	}
 
 	/**
-	 * 試験結果情報取得
+	 * 試験結果詳細情報取得
 	 * 
 	 * @param examResultId 試験結果ID
 	 * @return examResultDto 試験結果情報Dto
