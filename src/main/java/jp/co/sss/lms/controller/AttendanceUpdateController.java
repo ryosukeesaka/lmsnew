@@ -66,14 +66,16 @@ public class AttendanceUpdateController {
 	 * @param attendanceForm 勤怠情報のフォーム
 	 * @return 勤怠情報直接編集画面の初期表示メソッドへ遷移
 	 */
-	@RequestMapping(path = "/attendance/update/complete", method = RequestMethod.GET)
-	public ResponseEntity<String> complete(@RequestBody AttendanceForm attendanceForm,
-			@RequestParam("courseId") Integer courseId, @RequestParam("lmsUserId") Integer lmsUserId) {
+	@RequestMapping(path = "/update/complete", method = RequestMethod.POST)
+//	public ResponseEntity<String> complete(@RequestBody AttendanceForm attendanceForm,
+//			@RequestParam("courseId") Integer courseId, @RequestParam("lmsUserId") Integer lmsUserId) {
+	public ResponseEntity<String> complete(@RequestBody AttendanceForm attendanceForm) {
 
 		String message;
 
 		// 不正な入力が場合に更新メソッド
 		message = studentAttendanceService.update(attendanceForm);
+		
 		// 更新成功メッセージを登録して返す
 		return new ResponseEntity<>(message, HttpStatus.OK);
 

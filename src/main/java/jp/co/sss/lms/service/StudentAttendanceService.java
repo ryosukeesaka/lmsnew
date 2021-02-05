@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.CourseServiceSectionDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.StudentAttendanceDto;
 import jp.co.sss.lms.entity.TStudentAttendance;
 import jp.co.sss.lms.enums.AttendanceStatusEnum;
@@ -51,8 +50,6 @@ public class StudentAttendanceService {
 	@Autowired
 	private CourseService courseService;
 
-	@Autowired
-	private HttpSession session;
 
 	/**
 	 * 勤怠情報取得
@@ -343,10 +340,10 @@ public class StudentAttendanceService {
 		List<TStudentAttendance> tStudentAttendanceList = new ArrayList<>();
 
 		// ログインユーザ情報の取得
-		LoginUserDto loginUser = (LoginUserDto) session.getAttribute("loginUserDto");
+		//LoginUserDto loginUser = (LoginUserDto) session.getAttribute("loginUserDto");
 
 		// LMSユーザIDから勤怠情報リストを作成
-		List<TStudentAttendance> list = repository.findByLmsUserId(loginUser.getLmsUserId());
+		List<TStudentAttendance> list = repository.findByLmsUserId(form.getLmsUserId());
 
 		// 登録用エンティティのリストをフォームから作成
 		for (DailyAttendanceForm attendanceForm : form.getAttendanceList()) {
@@ -361,7 +358,7 @@ public class StudentAttendanceService {
 			}
 
 			// 研修日の形式をDate型に変換してセット
-			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.s");
+			SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 				tStudentAttendance.setTrainingDate(sdFormat.parse(attendanceForm.getTrainingDate()));
 			} catch (ParseException e) {
@@ -378,8 +375,8 @@ public class StudentAttendanceService {
 			}
 
 			// LMSユーザIDとアカウントIDの項目をセット
-			tStudentAttendance.setLmsUserId(loginUser.getLmsUserId());
-			tStudentAttendance.setAccountId(loginUser.getAccountId());
+			tStudentAttendance.setLmsUserId(form.getLmsUserId());
+//			tStudentAttendance.setAccountId(loginUser.getAccountId());
 
 			// 出勤時刻を整形してセット
 			TrainingTime trainingStartTime = null;

@@ -76,10 +76,10 @@ public class AttendanceController {
 	 * 勤怠情報直接変更 ※画面遷移のみ実装
 	 * @return
 	 */
-	@RequestMapping(path = "/update")
-	public String update() {
-		return "attendance/update";
-	}
+//	@RequestMapping(path = "/update")
+//	public String update() {
+//		return "attendance/update";
+//	}
 
 	/**
 	 *納期に間に合わず、出勤ボタン押下後の処理は未実装
