@@ -25,7 +25,7 @@ import jp.co.sss.lms.util.MessageUtil;
 
 @Service
 public class ReportService {
-	
+
 	@Autowired
 	TDailyReportSubmitRepository sRepository;
 	@Autowired
@@ -36,36 +36,31 @@ public class ReportService {
 	DateUtil dateUtil;
 	@Autowired
 	private MessageUtil messageUtil;
-	
-	// TODO すべての値をDTOに詰め切れていないので追加する（わからない値はコメントアウト）
-	// TODO Dチームにプッシュをしてよいか確認 (※プッシュ前必ずTODOコメント削除)
+
 	/**
 	 * 　日報情報取得に関するメソッドです。
-	 * @param dailyReportId
-	 * @param userId
-	 * @param accountId
-	 * @return　DailyReportDto　日報情報DTO
+	 * @param dailyReportSubmitId
+	 * @param userId ユーザID
+	 * @param accountId 企業アカウントID
+	 * @return DailyReportDto　日報情報DTO
 	 */
-	public DailyReportDto getDailyReportSubmit(Integer dailyReportSubmitId, Integer userId, /*Date date,*/ Integer accountId) {
+	public DailyReportDto getDailyReportSubmit(Integer dailyReportSubmitId, Integer userId, Integer accountId) {
 
-		TDailyReportSubmit drData = sRepository.findByDailyReportSubmitIdANDLmsUserIdANDDate(dailyReportSubmitId, userId, /*date,*/ accountId,Constants.DB_FLG_FALSE);
+		TDailyReportSubmit drData = sRepository.findByDailyReportSubmitIdANDLmsUserIdANDDate(dailyReportSubmitId, userId, accountId,Constants.DB_FLG_FALSE);
 		DailyReportDto dto=  new DailyReportDto();
 		if(drData != null) {
 			dto=  createDTO(drData);
 		}
-		
+
 		return dto;
 	}
 
 	//DTO作成
 	public DailyReportDto createDTO(TDailyReportSubmit drData) {
+
 		DailyReportDto drDto = new DailyReportDto();
-		
-//		TDailyReportSubmit list = drData.get(0);
-		drDto.setDailyReportId(drData.getMDailyReport().getDailyReportId()); //日報Id
-		drDto.setDailyReportSubmitId(drData.getDailyReportSubmitId()); //日報詳細Id
-//		drDto.setCourseId(drData.getmLmsUser().getTCourseUser().getCourseId());//コースID
-		//セクションID
+		drDto.setDailyReportId(drData.getMDailyReport().getDailyReportId());
+		drDto.setDailyReportSubmitId(drData.getDailyReportSubmitId());
 		drDto.setReportName(drData.getMDailyReport().getReportName());
 		drDto.setFileName(drData.getMDailyReport().getFileName());
 		drDto.setSheetName(drData.getMDailyReport().getSheetName());
@@ -84,15 +79,14 @@ public class ReportService {
 		drDto.setClmIntel(drData.getMDailyReport().getClmIntel());
 		drDto.setUserName(drData.getMLmsUser().getMUser().getUserName());
 		drDto.setDate(drData.getDate());
-		//日付form
-		
+
 		//報告レポートに関する詰め替え処理
 		List<String> fieldNameList = new ArrayList<String>();
 		for (MDailyReportDetail mDailyReportDetail : drData.getMDailyReport().getMDailyReportDetailList()) {
 			fieldNameList.add(mDailyReportDetail.getFieldName());
 		}
 		drDto.setFieldName(fieldNameList);
-		
+
 		List<Integer> fieldNumList = new ArrayList<Integer>();
 		List<String> contentList = new ArrayList<String>();
 		for (TDailyReportSubmitDetail tDailyReportSubmitDetail : drData.getTDailyReportSubmitDetailList()) {
@@ -101,7 +95,7 @@ public class ReportService {
 		}
 		drDto.setFieldNum(fieldNumList);
 		drDto.setContent(contentList);
-		
+
 		//学習理解度に関する詰め替え処理
 		IntelligibilityDto tIintelligibility = new IntelligibilityDto();
 		List<IntelligibilityDto> tIintelligibilityList = new ArrayList<IntelligibilityDto>();
@@ -114,18 +108,18 @@ public class ReportService {
 			tIintelligibilityList.add(tIintelligibility);
 		}
 		drDto.setIntelligibilityDtoList(tIintelligibilityList);
-		
+
 		return drDto;
-		
 	}
 	
 	/**
 	 * 日報フィードバックコメント削除処理
 	 *
-	 * @param dailyReportFbId 日報提出ID
+	 * @param dailyReportFbId 日報フィードバックコメントID
+	 * @param lmsUserId LMSユーザID
 	 * @return saveDailyReportFeedback 日報フィードバックコメント情報更新処理
 	 */
-	public Integer dailyReportFbId(Integer dailyReportFbId, Integer lmsUserId) {
+	public Integer deleteDailyReportFeedback(Integer dailyReportFbId, Integer lmsUserId) {
 
 		TDailyReportFb tDailyReportFb = tDailyReportFbRepository.findById(dailyReportFbId).orElse(null);
 		tDailyReportFb.setDeleteFlg(Constants.DB_FEEDBACK_FLG_TRUE);
@@ -140,6 +134,8 @@ public class ReportService {
 	 * 日報フィードバックコメント情報登録APIになります
 	 * 
 	 * @param dailyReportForm レポート詳細フォーム
+	 * @param lmsUserId LMSユーザID
+	 * @param accountId 企業アカウントID
 	 * @return saveDailyReportFeedback 日報フィードバックコメント情報更新処理
 	 */
 	public Integer insertDailyReportFeedback(DailyReportDetailForm dailyReportDetailForm, Integer lmsUserId, Integer accountId) {
@@ -177,7 +173,6 @@ public class ReportService {
 		tDailyReportFb = tDailyReportFbRepository.save(tDailyReportFb);
 
 		if (tDailyReportFb.getDailyReportFbId() == null || tDailyReportFb.getDailyReportFbId() == 0) {
-
 			return 0;
 		}
 		return 1;
@@ -186,13 +181,13 @@ public class ReportService {
 	/**
 	 * 日報フィードバック提出情報の取得APIになります
 	 * 
-	 * @param dailyReportSubmitId 日報ID
+	 * @param dailyReportSubmitId 日報提出ID
 	 * @return dailyReportDto 日報情報取得DTO（フィードバック情報のリストのみのDTO）
 	 */
-	public DailyReportDto getDailyReportFeedbackSubmit(Integer dailyRepoetId) {
+	public DailyReportDto getDailyReportFeedbackSubmit(Integer dailyReportSubmitId) {
 		// 日報IDを使いフィードバック情報を取得
 		List<TDailyReportFb> tDailyReportFbList = tDailyReportFbRepository
-				.findByDailyReportFbIdANDDeleteFlg(dailyRepoetId, Constants.DB_FLG_FALSE);
+				.findByDailyReportFbIdANDDeleteFlg(dailyReportSubmitId, Constants.DB_FLG_FALSE);
 
 		List<DailyReportFbDto> dailyReportFbDtoList = new ArrayList<DailyReportFbDto>();
 		// レポートフィードバックDTOへの詰め替え
@@ -215,22 +210,15 @@ public class ReportService {
 	}
 
 	/**
-	 * 日報提出IDの不正アクセスチェックをするメソッドです。
+	 * 日報提出IDの存在チェックをするメソッドです。
 	 * 
-	 * @param dailySubmitId 日報提出ID
+	 * @param dailyReportSubmitId 日報提出ID
 	 * @return errorMessage
 	 */
-	public String errorShow(Integer dailyReportSubmitId) {
+	public String checkDailyReportSubmitId(Integer dailyReportSubmitId) {
 
 		// 日報提出情報取得
-		TDailyReportSubmit tDailyReportSubmit = sRepository.getOne(dailyReportSubmitId);
-
-		// Integer nullJudgment = null;
-		if (!isNumber(dailyReportSubmitId.toString())) {
-
-			String[] values = { "dailySubmitId" };
-			return messageUtil.getMessage(Constants.VALID_KEY_TOKEN, values);
-		}
+		TDailyReportSubmit tDailyReportSubmit = sRepository.findById(dailyReportSubmitId).orElse(null);
 
 		// 日報提出情報取得に失敗した場合
 		if (tDailyReportSubmit == null) {
@@ -239,21 +227,21 @@ public class ReportService {
 		} else {
 			return "";
 		}
-
 	}
 
 	/**
-	 * ログインユーザーとレポート提出情報のLMSユーザーIDが一致か不一致かを判断するメソッドです。
+	 * ログインユーザとレポート提出情報のLMSユーザIDが一致か不一致かを判断するメソッドです。
 	 * 
 	 * @param dailyReportSubmitId 日報提出ID
+	 * @param lmsUserId LMSユーザID
 	 * @return errorMessage
 	 */
-	public String erroerUserShow(Integer dailyReportSubmitId, Integer lmsUserId) {
+	public String checkLmsUserId(Integer dailyReportSubmitId, Integer lmsUserId) {
 
 		// 日報提出IDから日報提出情報を取得
 		TDailyReportSubmit tDailyReportSubmit = sRepository.getOne(dailyReportSubmitId);
 
-		// ログインユーザーのLMSユーザーIDと日報提出情報のLMSユーザーIDを比較 ture:何も返さない, flese:エラーメッセージを返す
+		// ログインユーザのLMSユーザIDと日報提出情報のLMSユーザIDを比較 ture:何も返さない, flese:エラーメッセージを返す
 		if (lmsUserId == tDailyReportSubmit.getMLmsUser().getLmsUserId()) {
 			// 一致した場合
 			return "";
@@ -264,20 +252,4 @@ public class ReportService {
 		}
 	}
 
-	/**
-	 * 
-	 * 関数概要 数値変換チェック
-	 * 
-	 * @param val 数値変換を行う文字列
-	 * @return true/false 変換可能の場合 true, 変換不可の場合 false
-	 */
-	private boolean isNumber(String val) {
-		try {
-			Integer.parseInt(val);
-			return true;
-		} catch (NumberFormatException nfex) {
-			return false;
-		}
-	}
-	
 }
