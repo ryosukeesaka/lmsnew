@@ -20,7 +20,6 @@ import jp.co.sss.lms.repository.MExamRepository;
 import jp.co.sss.lms.repository.TExamResultDetailRepository;
 import jp.co.sss.lms.repository.TExamResultRepository;
 import jp.co.sss.lms.util.Constants;
-import jp.co.sss.lms.util.DateUtil;
 
 /**
  * 試験情報サービス<br>
@@ -39,8 +38,7 @@ public class ExamService {
 	TExamResultRepository tExamResultRepository;
 	@Autowired
 	TExamResultDetailRepository tExamResultDetailRepository;
-	@Autowired
-	DateUtil dateUtil;
+
 	/**
 	 * 試験情報取得
 	 * 
@@ -152,13 +150,6 @@ public class ExamService {
 		mLmsUser.setLmsUserId(form.getLmsUserId());
 		tExamResult.setMLmsUser(mLmsUser);
 		tExamResult.setAccountId(form.getAccountId());
-		tExamResult.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
-		tExamResult.setFirstCreateUser(form.getLmsUserId());
-		tExamResult
-		.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
-		tExamResult.setLastModifiedUser(form.getLmsUserId());
-		tExamResult
-		.setLastModifiedDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
 		// 時間が空でない場合、formから時間取得し、試験結果Entityにセット
 		if (form.getTime() != null) {
@@ -187,13 +178,6 @@ public class ExamService {
 			tExamResultDetail.setQuestionId(examServiceQuestionDto.getQuestionId());
 			tExamResultDetail.setTExamResult(tExamResult);
 			tExamResultDetail.setLmsUserId(form.getLmsUserId());
-			tExamResult.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
-			tExamResult.setFirstCreateUser(form.getLmsUserId());
-			tExamResult
-			.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
-			tExamResult.setLastModifiedUser(form.getLmsUserId());
-			tExamResult
-			.setLastModifiedDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
 			// 回答が空でない場合回答取得、空の場合0代入
 			if (answer != null && answer[i] != null && !answer[i].toString().isEmpty()) {
@@ -256,8 +240,7 @@ public class ExamService {
 	 */
 	public ExamServiceExamResultDto getExamResultWithQuestion(Integer examResultId, Integer accountId, Integer lmsUserId) {
 		// 試験結果IDを基に、試験結果情報を取得
-		TExamResult tExamResult = tExamResultRepository.findByExamResultId(examResultId,
-				accountId);
+		TExamResult tExamResult = tExamResultRepository.findByExamResultIdANDAccountId(examResultId,accountId);
 
 		// 試験結果情報Dtoに値を代入する
 		ExamServiceExamResultDto examResultDto = new ExamServiceExamResultDto();
