@@ -248,6 +248,7 @@ public class StudentAttendanceService {
 					new TrainingTime(tStudentAttendance.getTrainingStartTime()),
 					new TrainingTime(tStudentAttendance.getTrainingEndTime()));
 			tStudentAttendance.setStatus(attendanceStatusEnum.code);
+			System.out.println(tStudentAttendance);
 
 			// 情報を保存
 			repository.save(tStudentAttendance);
@@ -265,13 +266,21 @@ public class StudentAttendanceService {
 	public boolean validPunchIn(int lmsUserId, Date trainingDate, int courseId) {
 		
 		Date date = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		Date now = new Date();
+		String nowStr = sdf.format(now);
+		String dtoDate = "";
+		
 		//sectionの研修日取得
 		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService
 				.getSectionDtoList(courseId);
 		for (CourseServiceSectionDto dto : courseServiceSectionDtoList) {
-			date = dto.getDate();
+			dtoDate = sdf.format(dto.getDate());
+			if(nowStr.equals(dtoDate)) {
+				date = dto.getDate();
+			}
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		
 		String dateStr = sdf.format(date);
 		//今日が研修日か
 		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
@@ -298,11 +307,22 @@ public class StudentAttendanceService {
 	public boolean validPunchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
 		boolean errors = true;
 		Date date = null;
+		///////////////////////////////////////////////////////
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		Date now = new Date();
+		String nowStr = sdf.format(now);
+		String dtoDate = "";
+		///////////////////////////////////////////////////////
 		//sectionの研修日取得
 		for (CourseServiceSectionDto dto : courseServiceSectionDtoList) {
-			date = dto.getDate();
+			/////////////////////////////////////////
+			dtoDate = sdf.format(dto.getDate());
+			if(nowStr.equals(dtoDate)) {
+				date = dto.getDate();
+			}
+			/////////////////////////////////////////
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+		
 		String dateStr = sdf.format(date);
 		//今日が研修日か
 		String trainingDateStr = sdf.format(trainingDate);
@@ -318,6 +338,7 @@ public class StudentAttendanceService {
 		TrainingTime trainingEndTime = new TrainingTime();
 		// zero paddingされた、HH:mm形式の文字列
 		String trainingEndTimeStr = trainingEndTime.toString();
+		
 		if (trainingStartTime != null && trainingStartTime.compareTo(trainingEndTimeStr) > 0) {
 			errors = false;
 		}
