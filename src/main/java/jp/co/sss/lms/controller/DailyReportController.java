@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,11 +46,12 @@ public class DailyReportController {
 	 * 初期表示
 	 * 
 	 * @param dailyReportDetailForm レポート詳細フォーム
-	 * @param result                入力チェック
-	 * @param model                 モデル属性のホルダー
-	 * @return /report/detail
+	 * @param userId ユーザID
+	 * @param accountId 企業アカウントID
+	 * @param role ロール
+	 * @param lmsUserId LMSユーザID
+	 * @return dailyReportDto レポート提出情報
 	 */
-
 	@RequestMapping(path = "/detail", method = RequestMethod.POST)
 	public ResponseEntity<DailyReportDto> detail(@RequestBody DailyReportDetailForm dailyReportDetailForm,
 			@RequestParam("userId") Integer userId, @RequestParam("accountId") Integer accountId,
@@ -59,44 +59,37 @@ public class DailyReportController {
 
 		HttpStatus httpStatus = HttpStatus.OK;
 
-		// TODO 実装バグ
-		// 日報提出ID(dailyReportSubmitId)が数値以外の場合、不正アクセス画面(illegal.html)へ遷移しない。
-		// エラー情報を取得
-		String message = dailyReportService.errorShow(dailyReportDetailForm.getDailyReportSubmitId());
+		// 日報提出IDの存在チェック
+		String message = dailyReportService.checkDailyReportSubmitId(dailyReportDetailForm.getDailyReportSubmitId());
 
 		if (!message.isEmpty()) {
 			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 
-			httpStatus = HttpStatus.NOT_FOUND;
-		}
+			httpStatus = HttpStatus.BAD_REQUEST;
+		} else {
+			if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
+				// ログインユーザのLMSユーザIDチェック
+				message = dailyReportService.checkLmsUserId(dailyReportDetailForm.getDailyReportSubmitId(), lmsUserId);
 
-		if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
-			message = dailyReportService.erroerUserShow(dailyReportDetailForm.getDailyReportSubmitId(), lmsUserId);
+				if (!message.isEmpty()) {
+					StringBuffer sb = new StringBuffer(message);
+					loggingUtil.appendLog(sb);
+					logger.info(sb.toString());
 
-			if (!message.isEmpty()) {
-				StringBuffer sb = new StringBuffer(message);
-				loggingUtil.appendLog(sb);
-				logger.info(sb.toString());
-
-				httpStatus = HttpStatus.NOT_FOUND;
+					httpStatus = HttpStatus.BAD_REQUEST;
+				}
 			}
 		}
-		if (httpStatus == HttpStatus.NOT_FOUND) {
+
+		if (httpStatus == HttpStatus.BAD_REQUEST) {
 			return new ResponseEntity<DailyReportDto>(new DailyReportDto(), httpStatus);
 		}
 
-		// TODO 実装バグ
-		// dailyReportSubmitIdの値が
-		// ・1の場合、report/detail.htmlでは企業担当者フィールドバック以外が出力される。
-		// 本来であれば、企業担当者側のフィードバックと受講者側の情報全てが出力される。
-		// ・2の場合、週報が出力される。
-		// dailyReportSubmitIdではなく、dailyReportIdを検索対象として
-		// 出力している可能性がある。
 		// レポート情報サービス.レポート提出情報取得
 		DailyReportDto dailyReportDto = dailyReportService
-				.getDailyReportSubmit(dailyReportDetailForm.getDailyReportSubmitId(), userId, /* date, */ accountId);
+				.getDailyReportSubmit(dailyReportDetailForm.getDailyReportSubmitId(), userId, accountId);
 
 		// レポート情報サービス.フィードバックコメント提出情報取得
 		DailyReportDto dailyReportFbDtoList = dailyReportService.getDailyReportFeedbackSubmit(dailyReportDetailForm.getDailyReportSubmitId());
@@ -109,14 +102,15 @@ public class DailyReportController {
 	 * フィードバックコメント登録
 	 * 
 	 * @param dailyReportDetailForm レポート詳細フォーム
-	 * @param result                入力チェック
-	 * @param model                 モデル属性のホルダー
-	 * @return /report/detail
+	 * @param lmsUserId LMSユーザID
+	 * @param accountId 企業アカウントID
+	 * @return insertCount 登録件数
 	 */
 	@RequestMapping(path = "/result", method = RequestMethod.POST)
 	public Integer insert(@RequestBody DailyReportDetailForm dailyReportDetailForm,
 			@RequestParam("lmsUserId") Integer lmsUserId, @RequestParam("accountId") Integer accountId) {
 
+		// 日報フィードバックコメント情報登録API
 		Integer insertCount = dailyReportService.insertDailyReportFeedback(dailyReportDetailForm, lmsUserId, accountId);
 
 		return insertCount;
@@ -125,17 +119,15 @@ public class DailyReportController {
 	/**
 	 * フィードバックコメント削除
 	 * 
-	 * @param dailyReportDetailForm レポート詳細フォーム
-	 * @param model                 モデル属性のホルダー
-	 * @return /report/detail
+	 * @param dailyReportFbId 日報フィードバックコメントID
+	 * @param lmsUserId LMSユーザID
+	 * @return deleteCount 削除件数
 	 */
-	// TODO 実装バグ
-	// フィードバック登録後に戻るボタンで登録したものが消える。
 	@RequestMapping(value = "/delete")
 	public Integer delete(@RequestParam("dailyReportFbId") Integer dailyReportFbId, @RequestParam("lmsUserId") Integer lmsUserId) {
 
 		// 日報フィードバックコメント情報削除API
-		Integer deleteCount = dailyReportService.dailyReportFbId(dailyReportFbId, lmsUserId);
+		Integer deleteCount = dailyReportService.deleteDailyReportFeedback(dailyReportFbId, lmsUserId);
 
 		return deleteCount;
 	}

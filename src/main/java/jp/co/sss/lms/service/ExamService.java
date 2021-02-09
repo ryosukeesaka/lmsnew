@@ -20,6 +20,7 @@ import jp.co.sss.lms.repository.MExamRepository;
 import jp.co.sss.lms.repository.TExamResultDetailRepository;
 import jp.co.sss.lms.repository.TExamResultRepository;
 import jp.co.sss.lms.util.Constants;
+import jp.co.sss.lms.util.DateUtil;
 
 /**
  * 試験情報サービス<br>
@@ -38,7 +39,8 @@ public class ExamService {
 	TExamResultRepository tExamResultRepository;
 	@Autowired
 	TExamResultDetailRepository tExamResultDetailRepository;
-
+	@Autowired
+	DateUtil dateUtil;
 	/**
 	 * 試験情報取得
 	 * 
@@ -69,18 +71,14 @@ public class ExamService {
 
 		// 試験結果Entityリストを試験結果Dtoリストへ詰め替え
 		List<ExamServiceExamResultDto> examResultDtoList = new ArrayList<>();
-		// 現回転数取得用変数作成
-		int count = 0;
+		
 		for (TExamResult tExamResult : tExamResultList) {
 			ExamServiceExamResultDto examResultDto = new ExamServiceExamResultDto();
 			examResultDto.setExamResultId(tExamResult.getExamResultId());
 			examResultDto.setScore((double) tExamResult.getScore());
 			examResultDto.setDate(tExamResult.getFirstCreateDate());
-			examResultDto.setReply(tExamResult.getTExamResultDetailList().get(count).getReply());
 			examResultDto.setLmsUserId(tExamResult.getMLmsUser().getLmsUserId());
 			examResultDtoList.add(examResultDto);
-			// 現回転数更新
-			count++;
 		}
 
 		// 試験結果Dtoリストを返す
@@ -154,6 +152,13 @@ public class ExamService {
 		mLmsUser.setLmsUserId(form.getLmsUserId());
 		tExamResult.setMLmsUser(mLmsUser);
 		tExamResult.setAccountId(form.getAccountId());
+		tExamResult.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
+		tExamResult.setFirstCreateUser(form.getLmsUserId());
+		tExamResult
+		.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
+		tExamResult.setLastModifiedUser(form.getLmsUserId());
+		tExamResult
+		.setLastModifiedDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
 		// 時間が空でない場合、formから時間取得し、試験結果Entityにセット
 		if (form.getTime() != null) {
@@ -182,6 +187,13 @@ public class ExamService {
 			tExamResultDetail.setQuestionId(examServiceQuestionDto.getQuestionId());
 			tExamResultDetail.setTExamResult(tExamResult);
 			tExamResultDetail.setLmsUserId(form.getLmsUserId());
+			tExamResult.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
+			tExamResult.setFirstCreateUser(form.getLmsUserId());
+			tExamResult
+			.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
+			tExamResult.setLastModifiedUser(form.getLmsUserId());
+			tExamResult
+			.setLastModifiedDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
 			// 回答が空でない場合回答取得、空の場合0代入
 			if (answer != null && answer[i] != null && !answer[i].toString().isEmpty()) {
@@ -237,7 +249,7 @@ public class ExamService {
 	}
 
 	/**
-	 * 試験結果情報取得
+	 * 試験結果詳細情報取得
 	 * 
 	 * @param examResultId 試験結果ID
 	 * @return examResultDto 試験結果情報Dto
