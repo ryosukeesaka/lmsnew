@@ -237,6 +237,7 @@ public class StudentAttendanceService {
 		
 		// INSERT
 		if (errors == true ) {
+
 			// 現在時刻
 			TrainingTime trainingEndTime = new TrainingTime();
 			// zero paddingされた、HH:mm形式の文字列
@@ -356,7 +357,8 @@ public class StudentAttendanceService {
 	 * @return 更新完了メッセージ
 	 */
 	public String update(AttendanceForm form) {
-
+		//boolean delFlag = true;
+		
 		// 登録用リスト
 		List<TStudentAttendance> tStudentAttendanceList = new ArrayList<>();
 
@@ -397,7 +399,6 @@ public class StudentAttendanceService {
 
 			// LMSユーザIDとアカウントIDの項目をセット
 			tStudentAttendance.setLmsUserId(form.getLmsUserId());
-//			tStudentAttendance.setAccountId(loginUser.getAccountId());
 
 			// 出勤時刻を整形してセット
 			TrainingTime trainingStartTime = null;
@@ -416,14 +417,27 @@ public class StudentAttendanceService {
 			if (trainingStartTime != null || trainingEndTime != null) {
 				AttendanceStatusEnum attendanceStatusEnum = AttendanceUtil.getStatus(trainingStartTime,
 						trainingEndTime);
-				tStudentAttendance.setStatus(attendanceStatusEnum.code);
+				//if(attendanceStatusEnum.code == 0) {
+					tStudentAttendance.setStatus(attendanceStatusEnum.code);
+					//delFlag = false;
+				//}
+				//else{
+				//	tStudentAttendance.setStatus(attendanceStatusEnum.code);
+				//}
+					System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+					System.out.println(trainingStartTime);
+					System.out.println(trainingStartTime);
 			}
 
 			// 備考をセット
 			tStudentAttendance.setNote(attendanceForm.getNote());
-
+			
 			// 削除フラグをセット
-			tStudentAttendance.setDeleteFlg(Constants.DB_SCORE_FLG_FALSE);
+			//if(delFlag == false) {
+			//	tStudentAttendance.setDeleteFlg(null);
+			//}else {
+				tStudentAttendance.setDeleteFlg(Constants.DB_SCORE_FLG_FALSE);
+			//}
 
 			// 登録用リストへ追加
 			tStudentAttendanceList.add(tStudentAttendance);
