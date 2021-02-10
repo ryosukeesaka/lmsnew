@@ -188,12 +188,12 @@ public class ExamService {
 			tExamResultDetail.setQuestionId(examServiceQuestionDto.getQuestionId());
 			tExamResultDetail.setTExamResult(tExamResult);
 			tExamResultDetail.setLmsUserId(form.getLmsUserId());
-			tExamResult.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
-			tExamResult.setFirstCreateUser(form.getLmsUserId());
-			tExamResult
+			tExamResultDetail.setDeleteFlg(Constants.DB_FEEDBACK_FLG_FALSE);
+			tExamResultDetail.setFirstCreateUser(form.getLmsUserId());
+			tExamResultDetail
 			.setFirstCreateDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
-			tExamResult.setLastModifiedUser(form.getLmsUserId());
-			tExamResult
+			tExamResultDetail.setLastModifiedUser(form.getLmsUserId());
+			tExamResultDetail
 			.setLastModifiedDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString(), "yyyy/MM/dd HH:mm:ss"));
 
 			// 回答が空でない場合回答取得、空の場合0代入
