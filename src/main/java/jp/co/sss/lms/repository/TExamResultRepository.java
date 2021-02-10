@@ -54,21 +54,17 @@ public interface TExamResultRepository extends JpaRepository< TExamResult,  Inte
 		    + "   ter.delete_flg = 0", nativeQuery = true)
 	List<TExamResult> findByExamId(@Param("examId") int examId);
 	
-	@Query(value = "SELECT" + 
-			"    * " + 
-			"FROM" + 
-			"    t_exam_result ter " + 
-			"        INNER JOIN t_exam_result_detail terd" + 
-			"        on ter.exam_result_id = terd.exam_result_id" + 
-			"        inner join t_exam_section tes" + 
-			"        on ter.exam_section_id = tes.exam_section_id" + 
-			"        inner join m_exam me" + 
-			"        on tes.exam_id = me.exam_id " + 
-			"WHERE" + 
-			"    ter.exam_result_id = :examResultId AND" + 
-			"    ter.account_id = :accountId AND" + 
-			"    ter.delete_flg = 0", nativeQuery = true)
-	TExamResult findByExamResultId(@Param("examResultId") int examResultId, @Param("accountId") int accountId);
+	@Query(value = "SELECT *  FROM t_exam_result ter" + 
+			" INNER JOIN t_exam_result_detail terd" + 
+			" ON ter.exam_result_id = terd.exam_result_id" + 
+			" INNER JOIN t_exam_section tes" + 
+			" ON ter.exam_section_id = tes.exam_section_id" + 
+			" INNER JOIN m_exam me" + 
+			" ON tes.exam_id = me.exam_id" + 
+			" WHERE ter.exam_result_id = :examResultId" + 
+			" AND ter.account_id = :accountId" + 
+			" AND ter.delete_flg = 0", nativeQuery = true)
+	TExamResult findByExamResultIdANDAccountId(@Param("examResultId") Integer examResultId, @Param("accountId") Integer accountId);
 
 
 }

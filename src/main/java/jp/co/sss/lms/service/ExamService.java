@@ -41,6 +41,7 @@ public class ExamService {
 	TExamResultDetailRepository tExamResultDetailRepository;
 	@Autowired
 	DateUtil dateUtil;
+
 	/**
 	 * 試験情報取得
 	 * 
@@ -256,8 +257,7 @@ public class ExamService {
 	 */
 	public ExamServiceExamResultDto getExamResultWithQuestion(Integer examResultId, Integer accountId, Integer lmsUserId) {
 		// 試験結果IDを基に、試験結果情報を取得
-		TExamResult tExamResult = tExamResultRepository.findByExamResultId(examResultId,
-				accountId);
+		TExamResult tExamResult = tExamResultRepository.findByExamResultIdANDAccountId(examResultId,accountId);
 
 		// 試験結果情報Dtoに値を代入する
 		ExamServiceExamResultDto examResultDto = new ExamServiceExamResultDto();

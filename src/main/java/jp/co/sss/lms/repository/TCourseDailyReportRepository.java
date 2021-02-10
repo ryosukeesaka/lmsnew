@@ -19,4 +19,14 @@ public interface TCourseDailyReportRepository extends JpaRepository<TCourseDaily
 			+ " WHERE T3.courseId = :courseId"
 			+ " AND T1.deleteFlg = :deleteFlg")
 	public TCourseDailyReport findByCourseId(@Param("courseId")Integer courseId,@Param("deleteFlg")short deleteFlg); 
+	
+	@Query(value="SELECT * FROM t_course_daily_report T1 " +
+			"INNER JOIN m_daily_report T2 " + 
+			"ON T1.daily_report_id = T2.daily_report_id " + 
+			"INNER JOIN m_daily_report_detail T3 " + 
+			"ON T2.daily_report_id = T3.daily_report_id " + 
+			"WHERE T1.course_id = :courseId " + 
+			"AND T1.delete_flg = :deleteFlg " +
+			"ORDER BY T3.field_num ASC ",nativeQuery = true)
+	public TCourseDailyReport findByCourseIdANDDeleteFlg(@Param("courseId")Integer courseId,@Param("deleteFlg")short deleteFlg);
 }
