@@ -308,20 +308,16 @@ public class StudentAttendanceService {
 	public boolean validPunchOut(int lmsUserId, Date trainingDate, List<CourseServiceSectionDto> courseServiceSectionDtoList) {
 		boolean errors = true;
 		Date date = null;
-		///////////////////////////////////////////////////////
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		Date now = new Date();
 		String nowStr = sdf.format(now);
 		String dtoDate = "";
-		///////////////////////////////////////////////////////
 		//sectionの研修日取得
 		for (CourseServiceSectionDto dto : courseServiceSectionDtoList) {
-			/////////////////////////////////////////
 			dtoDate = sdf.format(dto.getDate());
 			if(nowStr.equals(dtoDate)) {
 				date = dto.getDate();
 			}
-			/////////////////////////////////////////
 		}
 		
 		String dateStr = sdf.format(date);
@@ -399,7 +395,8 @@ public class StudentAttendanceService {
 
 			// LMSユーザIDとアカウントIDの項目をセット
 			tStudentAttendance.setLmsUserId(form.getLmsUserId());
-
+			tStudentAttendance.setAccountId(form.getAccountId());
+			
 			// 出勤時刻を整形してセット
 			TrainingTime trainingStartTime = null;
 			trainingStartTime = new TrainingTime(attendanceForm.getTrainingStartTime());
@@ -414,19 +411,15 @@ public class StudentAttendanceService {
 			tStudentAttendance.setBlankTime(attendanceForm.getBlankTime());
 
 			// 出勤・退勤どちらか入力されている時のみステータスを設定
-			if (trainingStartTime != null || trainingEndTime != null) {
+			if((trainingStartTime == null && trainingEndTime == null) ||
+					(trainingStartTime.isEmpty() && trainingEndTime.isEmpty())) {
+				tStudentAttendance.setStatus(null);
+			}else if (trainingStartTime != null|| !(trainingStartTime.isEmpty()) ||
+				trainingEndTime != null ||!(trainingEndTime.isEmpty())) {
 				AttendanceStatusEnum attendanceStatusEnum = AttendanceUtil.getStatus(trainingStartTime,
-						trainingEndTime);
-				//if(attendanceStatusEnum.code == 0) {
-					tStudentAttendance.setStatus(attendanceStatusEnum.code);
-					//delFlag = false;
-				//}
-				//else{
-				//	tStudentAttendance.setStatus(attendanceStatusEnum.code);
-				//}
-					System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-					System.out.println(trainingStartTime);
-					System.out.println(trainingStartTime);
+					trainingEndTime);
+				tStudentAttendance.setStatus(attendanceStatusEnum.code);
+				//delFlag = false;
 			}
 
 			// 備考をセット

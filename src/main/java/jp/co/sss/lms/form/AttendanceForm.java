@@ -16,6 +16,7 @@ public class AttendanceForm {
 	
 	private Integer courseId; 
 	
+	private Integer accountId;
 	public Integer getLmsUserId() {
 		return lmsUserId;
 	}
@@ -38,6 +39,15 @@ public class AttendanceForm {
 
 	public void setAttendanceList(List<DailyAttendanceForm> attendanceList) {
 		this.attendanceList = attendanceList;
+	}
+	
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+
+	public Integer getAccountId() {
+		// TODO 自動生成されたメソッド・スタブ
+		return accountId;
 	}
 
 }

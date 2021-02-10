@@ -67,8 +67,6 @@ public class AttendanceUpdateController {
 	 * @return 勤怠情報直接編集画面の初期表示メソッドへ遷移
 	 */
 	@RequestMapping(path = "/update/complete", method = RequestMethod.POST)
-//	public ResponseEntity<String> complete(@RequestBody AttendanceForm attendanceForm,
-//			@RequestParam("courseId") Integer courseId, @RequestParam("lmsUserId") Integer lmsUserId) {
 	public ResponseEntity<String> complete(@RequestBody AttendanceForm attendanceForm) {
 
 		String message;
