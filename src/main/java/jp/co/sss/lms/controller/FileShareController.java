@@ -3,29 +3,40 @@ package jp.co.sss.lms.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import jp.co.sss.lms.dto.FileShareDto;
 import jp.co.sss.lms.dto.ShareUserDto;
+import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.service.FileShareService;
 
 /**
- * FileShareController<br>
- * ファイル共有コントローラ<br>
- * 
- * @author 杉本 将義
+ * FileShareController
+ * ファイル共有コントローラ
+ * @author 田中 和希
  */
 @RestController
 @RequestMapping("/fileshare/list")
 public class FileShareController {
+	
+	@Autowired
+	HttpSession session;
 
 	@Autowired
 	FileShareService fileShareService;
+	
+	@Autowired
+	LoginUserDto loginUserDto;
 
 	/** ダウンロード可能なファイルのリスト */
 	@Autowired
@@ -48,20 +59,40 @@ public class FileShareController {
 	}
 
 	/**
-	 * ファイルのアップロード（工数が足りず未実装）
+	 * ファイルのアップロード、現在未完成
 	 */
-//	@RequestMapping("/upload")
-//	public String upload() {
-//
-//	}
+	//@PostMapping(value="/upload")
+	//@ResponseBody
+	
+	@RequestMapping(value = "/upload", method = {RequestMethod.POST})
+	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile multipartFile) {
+		
+		boolean isUploadSuccess = fileShareService.uploadFile(multipartFile);
+		
+		if(!isUploadSuccess) {
+			//エラーメッセージを格納
+			//String message = "エラー";
+			return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>("", HttpStatus.OK);
+
+	}
 
 	/**
-	 * ファイルの削除（工数が足りず未実装）
+	 * ファイルの削除、現在未完成
 	 */
-//	@RequestMapping("/delete")
-//	public String delete() {
-//		
-//	}
+	@RequestMapping("/delete")
+	@Transactional
+	public ResponseEntity<String> delete(@RequestParam (name="fileId") String[] fileId) {
+		// セッションに登録してあるloginUserDtoを取得
+		loginUserDto = (LoginUserDto) session.getAttribute("loginUserDto");
+		
+		// 削除対象のファイルを削除する
+		fileShareService.delete(fileId, loginUserDto.getUserId());
+		
+		// ファイル一覧画面を再表示する
+		return new ResponseEntity<>("", HttpStatus.OK);
+	}
 
 	/**
 	 * ファイルの共有（工数が足りず未実装）
