@@ -8,6 +8,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
@@ -81,20 +83,16 @@ public class UserService {
 	 * パスワード変更(パスワード再設定用)
 	 *
 	 */
-	public void changePasswordOfResetPassword(LoginForm loginForm, Integer userId) {
-
-		// 変更後のパスワードと確認パスワードが不一致の場合のチェックはフロントで行う。
-
+	public void changePasswordOfResetPassword(LoginForm loginForm) {
 		// リポジトリから得た情報をエンティティに格納
-		MUser mUser = mUserRepository.getOne(userId);
+		MUser mUser = mUserRepository.getOne(loginForm.getUserId());
 
+		// パスワードとパスワード変更時間をセット
 		mUser.setPassword(passwordUtil.getSaltedAndStrechedPassword(loginForm.getPassword(), mUser.getLoginId()));
 		mUser.setPasswordChangeDate(dateUtil.stringToTimestamp(dateUtil.getCurrentDateString()));
-		// 更新作業
-		MUser newMUser = mUserRepository.save(mUser);
 		
-		// ログイン情報を取得しなおして画面に返す。
-
+		// リポジトリ更新
+		mUserRepository.save(mUser);
 	}
 
 	/**
@@ -105,47 +103,6 @@ public class UserService {
 	 */
 	public MUser getMUser(String mailaddress) {
 		return mUserRepository.findByMailAddress(mailaddress);
-	}
-
-	// パスワード変更情報を取得
-	public TTemporaryPassStorage getPassStorage(String mailaddress) {
-
-		MUser mUser = mUserRepository.findByMailAddress(mailaddress);
-		Integer UserId = mUser.getUserId();
-
-		return tTemporaryPassStorageRepository.findByUserId(UserId);
-	}
-
-	public TTemporaryPassStorage insertTTemporaryPassStorage(TTemporaryPassStorage tTemporarypassstorage) {
-		// TemporaryPassStorageを取得
-		TTemporaryPassStorage Temporarypassstorage = tTemporaryPassStorageRepository
-				.getOne(tTemporarypassstorage.getTemporaryPassStorageId());
-
-		// パスワード変更情報を作成・更新
-		if (Temporarypassstorage == null) {
-			TTemporaryPassStorage newTemporaryPassStorage = new TTemporaryPassStorage();
-			newTemporaryPassStorage.setChangeKey(tTemporarypassstorage.getChangeKey());
-			newTemporaryPassStorage.setTimeLimit(tTemporarypassstorage.getTimeLimit());
-			newTemporaryPassStorage.setUserId(tTemporarypassstorage.getUserId());
-			newTemporaryPassStorage.setDeleteFlg(tTemporarypassstorage.getDeleteFlg());
-			newTemporaryPassStorage.setLastModifiedUser(tTemporarypassstorage.getLastModifiedUser());
-			newTemporaryPassStorage.setLastModifiedDate(tTemporarypassstorage.getLastModifiedDate());
-			newTemporaryPassStorage.setFirstCreateDate(tTemporarypassstorage.getFirstCreateDate());
-			newTemporaryPassStorage.setFirstCreateUser(tTemporarypassstorage.getFirstCreateUser());
-
-			return tTemporaryPassStorageRepository.save(newTemporaryPassStorage);
-
-		} else {
-			Temporarypassstorage.setChangeKey(tTemporarypassstorage.getChangeKey());
-			Temporarypassstorage.setTimeLimit(tTemporarypassstorage.getTimeLimit());
-			Temporarypassstorage.setUserId(tTemporarypassstorage.getUserId());
-			Temporarypassstorage.setDeleteFlg(tTemporarypassstorage.getDeleteFlg());
-			Temporarypassstorage.setLastModifiedUser(tTemporarypassstorage.getLastModifiedUser());
-			Temporarypassstorage.setLastModifiedDate(tTemporarypassstorage.getLastModifiedDate());
-
-			return tTemporaryPassStorageRepository.save(Temporarypassstorage);
-		}
-
 	}
 
 	public MUser setMUser(MUser form) {
@@ -194,5 +151,51 @@ public class UserService {
 		// ※試験・レポート・成果物情報に関しては工数が足りないため削減 2020/12/29 naraoka
 
 		return userDetailDto;
+	}
+	
+	/**
+	 * パスワード再設定画面　ログインLMSユーザーDTOの処理
+	 * @author sasaki
+	 */
+	public LoginUserDto setLoginUserDto(MLmsUser mLmsUser) {
+		// ログインLMSユーザーDTOを作成
+		LoginUserDto loginUserDto = new LoginUserDto();
+		BeanUtils.copyProperties(mLmsUser, loginUserDto);
+		
+		// 単体テスト用の確認コード（前）（単体テスト完了後は削除）
+		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
+		System.out.println("ユーザーID：" + loginUserDto.getUserId());
+		System.out.println("企業ID: " + loginUserDto.getCompanyId());
+		System.out.println("会場ID: " + loginUserDto.getPlaceId());
+		System.out.println("コースID: " + loginUserDto.getCourseId());
+		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
+		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
+		
+		// ロールが受講生(0001)の場合、情報をセット
+		if (mLmsUser.getRole().equals("0001")) {
+		loginUserDto.setCompanyId((mLmsUser.getTUserCompany().getCompanyId()));
+		loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
+		loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
+		loginUserDto.setSupportAvailable(mLmsUser.getTUserPlace().getMPlace().getSupportAvailable());
+		// DB内のファイル共有フラグがnullの場合はエラーになるので注意
+		}
+		
+		// 講師権限(0002)以外かつ管理者権限(0004)以外の場合
+		if (!(mLmsUser.getRole().equals("0002")) && !(mLmsUser.getRole().equals("0004"))) {
+			// 企業マスタ情報からファイル共有フラグを取得
+			loginUserDto.setFileShareFlg(mLmsUser.getTUserCompany().getMCompany().getFileShareFlg());
+		}
+		
+		// 単体テスト用の確認コード（後）（単体テスト完了後は削除）
+		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
+		System.out.println("ユーザーID：" + loginUserDto.getUserId());
+		System.out.println("企業ID: " + loginUserDto.getCompanyId());
+		System.out.println("会場ID: " + loginUserDto.getPlaceId());
+		System.out.println("コースID: " + loginUserDto.getCourseId());
+		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
+		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		
+		return loginUserDto; 
 	}
 }

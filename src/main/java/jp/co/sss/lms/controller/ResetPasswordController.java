@@ -1,30 +1,39 @@
 package jp.co.sss.lms.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jp.co.sss.lms.dto.LoginUserDto;
+import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
 import jp.co.sss.lms.entity.TTemporaryPassStorage;
+import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.form.MailAddressForm;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
 import jp.co.sss.lms.service.InfoService;
 import jp.co.sss.lms.service.PasswordService;
 import jp.co.sss.lms.service.UserService;
+import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
-import jp.co.sss.lms.util.MessageUtil;
+import jp.co.sss.lms.util.MailUtil;
 
 /**
  * パスワード再設定用コントローラークラス
@@ -44,8 +53,6 @@ public class ResetPasswordController {
 	@Autowired
 	InfoService infoService;
 	@Autowired
-	private MessageUtil messageUtil;
-	@Autowired
 	HttpSession session;
 	@Autowired
 	MUserRepository mUserRepository;
@@ -53,171 +60,148 @@ public class ResetPasswordController {
 	TTemporaryPassStorageRepository tTemporaryPassStorageRepository;
 	@Autowired
 	protected PasswordService passwordService;
-	
+	@Autowired
+	MailUtil mailUtil;
+	@Autowired
+	MessageSource messagesource;
+		
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	// TODO 全体的に処理の見直しが必要。PasswordServiceについても同様
 	/**
-	 * resetPasswordからcompleteへの遷移 ※送信ボタン押下時
-	 * 
-	 * @return completeへの遷移
+	 * パスワード再設定用メールアドレス送信画面（初期表示）
+	 * 設定ファイル(Constants)のメール送信フラグの値を取得
 	 */
-	@RequestMapping(value = "/complete", method = RequestMethod.POST)
-	public ResponseEntity<Map<String, Object>> complete(@RequestBody MailAddressForm mailAddressForm) {
+	@RequestMapping(value="/getSendFlg", method = RequestMethod.POST)
+	public ResponseEntity<Short> getSendFlg(){		
+		Short sendFlg = Constants.SEND_FLG;
+		return new ResponseEntity<>(sendFlg, HttpStatus.OK);
+		}
+		
+	/**
+	 * パスワード再設定用メールアドレス送信
+	 * @param mailAddressForm
+	 * @return userName, timeLimit 
+	 * 
+	 * @author sasaki
+	 * @throws MessagingException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	@RequestMapping(value = "/send", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> send(@RequestBody MailAddressForm mailAddressForm, HttpServletRequest request) throws UnsupportedEncodingException, MessagingException {
 
 		// ユーザーマスタ情報の取得
 		String mailaddress = mailAddressForm.getMailAddress();
 		MUser mUser = userService.getMUser(mailaddress);
 		Map<String, Object> map = new HashMap<>();
-
-		// 入力されたメールアドレスが存在しない場合、次の処理を行わず、パスワード再設定画面1へ遷移。
+		
+		// 入力されたメールアドレスが存在しない場合
 		if (mUser == null) {
-			StringBuffer sb = new StringBuffer("パスワードリセット画面で入力されたメールアドレスは存在しません。");
+			StringBuffer sb = new StringBuffer("パスワードリセット画面で入力されたメールアドレスは存在しません。[" + mailaddress + "]");
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 
 			map.put("message", "そのメールアドレスは存在しません");
-
 			return new ResponseEntity<>(map, HttpStatus.OK);
-		}
-
-		// 取得した情報パラメータとしてサービスを呼び出しパスワード変更情報を取得する｡
-		TTemporaryPassStorage tTemporaryPassStorage = userService.getPassStorage(mailaddress);
-
-		// パスワード変更情報の登録・更新
-		userService.insertTTemporaryPassStorage(tTemporaryPassStorage);
-
-		// ユーザーマスタ情報を更新
-		userService.setMUser(mUser);
-
-		// 更新した状態でのユーザーマスタ情報を取得
-		MUser mUserUpdate = userService.getMUser(mailaddress);
-
-		// ユーザーマスタ情報が取得できなかった場合、ログ出力
-		if (mUserUpdate == null) {
-			StringBuffer sb = new StringBuffer("パスワードリセット画面で入力されたメールアドレスは存在しません。");
-			loggingUtil.appendLog(sb);
-			logger.info(sb.toString());
-
-			map.put("message", "そのメールアドレスは存在しません");
+		} 
+				
+		// パスワード一時テーブルの作成・変更
+		passwordService.registTemporaryPassStorage(mailaddress);
 			
-			return new ResponseEntity<>(map, HttpStatus.OK);
+		// 一時テーブルから変更キーの取得
+		TTemporaryPassStorage tTemporaryPassStorage = (TTemporaryPassStorage)tTemporaryPassStorageRepository.findByUserId(mUser.getUserId());	
+		if (tTemporaryPassStorage == null) {
+			StringBuffer sb = new StringBuffer("パスワード再設定で不正なアクセスがありました。");
+			loggingUtil.appendLog(sb);
+			logger.info(sb.toString());
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
+		String changeKey = tTemporaryPassStorage.getChangeKey();
 
-		// 更新した状態でのパスワード変更情報を取得
-		TTemporaryPassStorage tTemporaryPassStorageUpdate = userService.getPassStorage(mailaddress);
-
-		// パスワード変更情報が取得できなかった場合、ログ出力しパスワード再設定画面1へ遷移
-		if (tTemporaryPassStorageUpdate == null) {
+		// 変更キーのクエリ付き遷移先URLの作成
+		String pathroot = request.getHeader("REFERER");
+		String path = pathroot.replace("MailSend", "ChangePassword");
+		String url = path + "?key=" + changeKey;
+		
+		// メール送信		
+		String text = messagesource.getMessage("mail.resetpass.body", new String[] {url}, null);
+		String subject = messagesource.getMessage("mail.resetpass.subject", null, null);
+		mailUtil.sendMail(mailaddress, subject, text);
+	
+		// 取得した値をフロントに返却
+		map.put("userName", mUser.getUserName());
+		map.put("timeLimit", Constants.LIMIT_TIME);
+				
+		return new ResponseEntity<>(map, HttpStatus.OK);
+	}
+	
+	/**
+	 * パスワード再設定パスワード変更画面 初期表示
+	 * 取得したchangeKeyからログインIDを取得する処理
+	 * 
+	 * @param changeKey
+	 * @return map(loginUserDto, loginId)
+	 */
+	@RequestMapping(value = "/resetPasswordChangePasswordIndex", method = RequestMethod.POST)
+	public ResponseEntity<Map<String, Object>> resetPasswordChangePasswordIndex(@RequestParam("changeKey") String changeKey){		
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		// 変更キーからパスワード変更情報を取得
+		TTemporaryPassStorage tTemporaryPassStorage = passwordService.getfindByChangeKey(changeKey);
+		
+		// パスワード変更情報が取得できなかった場合、ログ出力
+		if (tTemporaryPassStorage == null) {
 			StringBuffer sb = new StringBuffer("パスワード再設定で不正なアクセスがありました。");
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 			
-			map.put("message", "パスワード再設定で不正なアクセスがありました。");
-
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		// URLの有効期限を確認
+		if (passwordService.isTimeLimitExpired(tTemporaryPassStorage) == false) {
+			// 旧設計書ではURL無効エラー画面に遷移していたので、暫定エラーログ＋ログイン画面リダイレクトで対応
+			StringBuffer sb = new StringBuffer("URL無効エラー");
+			loggingUtil.appendLog(sb);
+			logger.info(sb.toString());
+			
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		// LMSユーザー情報を取得
+		MLmsUser mLmsUser = passwordService.getfindByUserId(changeKey);
+		
+		// LMSユーザー情報が取得できなかった場合、フロント側でパスワードNGをカウント
+		if (mLmsUser == null) {	
+			// フロント側で処理するため、バックエンドは処理なしでOK（2020/2/3）
 			return new ResponseEntity<>(map, HttpStatus.OK);
 		}
 
-		// 宛先の設定
-		// String to = mailaddress;
+		// ログインLMSユーザーDTOに値をセット
+		LoginUserDto loginUserDto = userService.setLoginUserDto(mLmsUser);
+		map.put("loginUser", loginUserDto);
 
-		// 件名の設定
-		// String subject = messageUtil.getMessage(Constants.PROP_KEY_MAIL_RESETPASS_SUBJECT);
-
-		// 本文の設定
-		// ※本文の設定の処理は時間がなかったため、未実装。
-		//   本機能実装時にはメールが送信できる環境が整ってないため、それまでに実装すること。
-		//   2021/01/04 naraoka
-
-		// メール送信
-		// 現在は飛ばない為、コメントアウト
-		//	MailUtil.sendResetPasswordMail(to, subject, body);
-
-		// パスワード再設定画面2を表示
-		map.put("userName", mUserUpdate.getUserName());
-		map.put("timeLimit", tTemporaryPassStorageUpdate.getTimeLimit());
-
+		// ログインIDを取得
+		MUser mUser = mUserRepository.getOne(tTemporaryPassStorage.getUserId());
+		String loginId = mUser.getLoginId();
+		map.put("loginId", loginId);
+		
 		return new ResponseEntity<>(map, HttpStatus.OK);
 	}
+	
+	/**
+	 * 再設定用パスワード変更
+	 * @param loginForm
+	 */
+	
+	@RequestMapping(value = "/resetPasswordChangePassword", method = RequestMethod.POST)
+	public void resetPasswordChangePassword(@RequestBody LoginForm loginForm) {
+		
+		// パスワード変更
+		userService.changePasswordOfResetPassword(loginForm);
+		
+		// 一時テーブル情報の削除		
+		passwordService.deleteByTemporaryPassStorageId(loginForm);
 
-//	/**
-//	 * パスワード再設定用メールに添付されているアドレスをクリック後
-//	 * 
-//	 * @return
-//	 */
-//	@RequestMapping(value = "changePassword")
-//	public String changePassword(Model model, @ModelAttribute CheckPasswordForm form) {
-//
-//		// 変更キー取得（※設定箇所が無い為、保留）
-//		String changekey = "123";
-//
-//		// 変更キーをパラメータとしてパスワード変更情報を取得
-//		TTemporaryPassStorage tTemporaryPassStorage3 = passwordService.getfindByChangeKey(changekey);
-//
-//		// パスワード変更情報が取得できなかった場合、ログ出力
-//		// ログの出力は出来ない為、コメントアウト
-//		if (tTemporaryPassStorage3 == null) {
-//		//	logger.warning("パスワード再設定で不正なアクセスがありました。");
-//			return "/password/changePassword";
-//		}
-//
-//		// LMSユーザーマスタ情報を取得
-//		MLmsUser mLmsUser = passwordService.getfindByUserId(changekey);
-//
-//		// LMSユーザーマスタ情報の登録・更新
-//		passwordService.getfindByUserId5(mLmsUser);
-//
-//		// パスワード再設定用パスワード変更画面の表示
-//		model.addAttribute("resetPasswordUserId", mLmsUser.getUserId());
-//		return "/password/changePassword";
-//	}
-//
-//	/**
-//	 * changePasswordモーダルからの遷移
-//	 * 
-//	 * @return
-//	 */
-//	@RequestMapping(value = "index5", method = RequestMethod.POST)
-//	public String index(@ModelAttribute CheckPasswordForm form, BindingResult result, Model model) {
-//
-//		// パスワード照合
-//		String newPass = form.getNewPassword();
-//		String checkPass = form.getCheckPassword();
-//		if (!newPass.equals(checkPass)) {
-//			model.addAttribute("password", "新しいパスワードと確認パスワードが一致しません。");
-//			return "/password/changePassword";
-//		}
-//
-//		// ユーザーマスタ情報更新
-//		userService.getUserId(newPass);
-//
-//		// パスワード情報サービスの削除
-//		passwordService.deleteByTemporaryPassStorageId();
-//
-//		// セッション情報の削除
-//		session.removeAttribute("loginId");
-//
-//		// ログイン画面を表示
-//		return "redirect:/";
-//	}
-//	
-//	/**
-//	 * パスワード再設定用パスワード変更画面で変更ボタン押下
-//	 * 
-//	 * @return コース詳細画面
-//	 */
-//	@RequestMapping(value = "/changeOfResetPassword", method = RequestMethod.POST)
-//	public String changeOfResetPassword(@ModelAttribute LoginForm loginForm,
-//			BindingResult result, Model model) {
-//		// 変更後のパスワードと確認パスワードが一致してるかチェック
-//		// 不一致ならエラーにする。
-//
-//		// 相関チェック
-//		result = userService.changePasswordOfResetPassword(loginForm, result);
-//		if (result.hasErrors()) {
-//			return "/password/changePassword";
-//		}
-//
-//		return "redirect:/course/detail";
-//	}
-}
+	}
+}; 

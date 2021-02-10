@@ -4,8 +4,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -26,6 +29,14 @@ public class TTemporaryPassStorage {
 	 *
 	 */
 	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
+	@TableGenerator(
+		    name = "generator",
+		    table = "id_generator",
+		    pkColumnName = "pk",
+		    valueColumnName = "value",
+		    pkColumnValue = "T_TEMPORARY_PASS_STORAGE_ID",
+		    allocationSize = 1)
 	private Integer temporaryPassStorageId;
 	/**
 	 * ユーザーID
@@ -36,7 +47,7 @@ public class TTemporaryPassStorage {
 	 * 削除フラグ
 	 */
 	@Column
-	private Short deleteFlg;
+	private Integer deleteFlg;
 	/**
 	 * 変更キー
 	 */
@@ -80,10 +91,10 @@ public class TTemporaryPassStorage {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
-	public Short getDeleteFlg() {
+	public Integer getDeleteFlg() {
 		return deleteFlg;
 	}
-	public void setDeleteFlg(Short deleteFlg) {
+	public void setDeleteFlg(Integer deleteFlg) {
 		this.deleteFlg = deleteFlg;
 	}
 	public String getChangeKey() {

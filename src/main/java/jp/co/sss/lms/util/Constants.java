@@ -329,4 +329,12 @@ public interface Constants {
 	
 	/** 成果物アップロードファイル　最大値 */ //TODO アップロードサイズ指定されたものに変更
 	public static final String DELIVERABLES_UPLOAD_MAX_SIZE ="104857600";
-}
+	
+	// パスワード再設定用
+	/** メール送信フラグ	 */
+	public static final Short SEND_FLG = 1;
+	
+	/** パスワード再設定有効期限 */
+	public static final int LIMIT_TIME = 1;
+
+}		
