@@ -3,6 +3,7 @@ package jp.co.sss.lms.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -126,5 +127,19 @@ public interface TFssFileRepository extends JpaRepository<TFssFile, Integer>{
 			+ " AND delete_flg = 0",
 			nativeQuery = true)
 	List<TFssFile> findBySumFileSize(@Param("fssUserId")Integer fssUserId);
+	
+	/**
+	 * ファイルを削除する
+	 * @param fssFileId
+	 */
+	@Modifying
+	@Query(value = "UPDATE t_fss_file"
+			+ " SET delete_flg = 1,"
+			+ " last_modified_user = ?2,"
+			+ " last_modified_date = now()"
+			+ " WHERE fss_file_id = ?1",
+			nativeQuery = true)
+	void delete(@Param("fssFileId")Integer fssFileId,
+			   @Param("fssUserId")Integer fssUserId);
 	
 }

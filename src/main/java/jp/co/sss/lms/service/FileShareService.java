@@ -1,22 +1,25 @@
 package jp.co.sss.lms.service;
 
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.FileUtil;
-
 import jp.co.sss.lms.entity.MFssUser;
 import jp.co.sss.lms.entity.TFssFile;
 
 import jp.co.sss.lms.dto.FileShareDto;
-
+import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.repository.MFssGroupRepository;
 import jp.co.sss.lms.repository.MFssUserRepository;
 import jp.co.sss.lms.repository.TFssFileRepository;
@@ -45,6 +48,8 @@ public class FileShareService {
 	DateUtil dateUtil;
 	@Autowired
 	FileUtil fileUtil;
+	@Autowired
+	LoginUserDto loginUserDto;
 
 	/**
 	 * ユーザーIDから共有ユーザーIDを取得し、セッションに設定する
@@ -58,34 +63,59 @@ public class FileShareService {
 	}
 
 	/**
-	 * ファイルのアップロードを行う 初期表示機能ではないためコメントアウト
+	 * ファイルのアップロードを行う 現在未完成
 	 * 
 	 * @param uploadFile
 	 * @return boolean
 	 */
-	/*
-	 * public boolean uploadFile(FormFile uploadFile){ LoginUserUtil LoginuserUtil =
-	 * new LoginUserUtil(); List<MFssUser> mFssUser =
-	 * mFssUserRepository.findByUserId(LoginuserUtil.getLoginUserId());
-	 * 
-	 * 
-	 * //◆二重アップロード対策（共有ユーザーを行ロック）
-	 * mFssUserRepository.saveAll(mFssUserRepository.findByFssUserDetail(((MFssUser)
-	 * mFssUser).getFssUserId()));
-	 * 
-	 * TFssFile tFssFile = new TFssFile(); tFssFile.setFilePath(((MFssUser)
-	 * mFssUser).getFssUserId() + "/" + uploadFile.getFileName());
-	 * tFssFile.setFileSize((integer) uploadFile.getFileSize());
-	 * tFssFile.setOwnerFssUserId(((MFssUser) mFssUser).getFssUserId());
-	 * 
-	 * //◆二重アップロード対策 List<TFssFile> alreadyExistsCheck =
-	 * tFssFileRepository.findByFilePath(tFssFile.getFilePath()); if
-	 * (alreadyExistsCheck != null == !alreadyExistsCheck.isEmpty()) { return false;
-	 * } tFssFileRepository.insertWithCommonField(tFssFile);
-	 * AWSS3Util.upload(uploadFile, tFssFile.getFilePath()); return true;
-	 * 
-	 * }
-	 */
+	public boolean uploadFile(MultipartFile uploadFile){
+		
+		 //List<MFssUser> mFssUser = mFssUserRepository.findByUserId(loginUserDto.getLmsUserId());
+
+	     // 二重アップロード対策（共有ユーザーを行ロック）
+		 //mFssUserRepository.saveAll(mFssUserRepository.findByFssUserId(((MFssUser) mFssUser).getFssUserId()));
+
+	     TFssFile tFssFile = new TFssFile();
+	     
+	     //ファイル名
+	     //tFssFile.setFilePath(((MFssUser) mFssUser).getFssUserId() + "/" + uploadFile.getOriginalFilename());
+	     tFssFile.setFilePath(uploadFile.getOriginalFilename());
+	     
+	     //サイズ
+	     tFssFile.setFileSize((int) uploadFile.getSize());
+	     
+	     //所有者
+	     //tFssFile.setOwnerFssUserId(((MFssUser) mFssUser).getFssUserId());
+	     tFssFile.setOwnerFssUserId(25);
+
+	     //削除フラグ
+	     tFssFile.setDeleteFlg((short) 0);
+	     
+	     //共有ファイルID
+	     tFssFile.setFssFileId(14);
+	     
+	     //現在日時取得
+	     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+	     
+	     //作成日付
+	     tFssFile.setFirstCreateDate(timestamp);
+	     
+	     //更新日付
+	     tFssFile.setLastModifiedDate(timestamp);
+
+	     // 二重アップロード対策
+	     List<TFssFile> alreadyExistsCheck = tFssFileRepository.findByFilePath(tFssFile.getFilePath());
+	     if (alreadyExistsCheck != null == !alreadyExistsCheck.isEmpty()) {
+	         return false;
+	     }
+	     //DB更新
+	     tFssFileRepository.save(tFssFile);
+	     
+	     //ファイルアップロード
+	     //AWSのUtilクラスに関しては時間が足りなかったため未実装
+	     //AWSS3Util.upload(uploadFile, tFssFile.getFilePath());
+	     return true;
+	 }
 
 	/**
 	 * ファイルのリストを取得する
@@ -303,41 +333,54 @@ public class FileShareService {
 	 */
 
 	/**
-	 * 削除されているかチェック 初期表示機能ではないためコメントアウト
+	 * 削除されているかチェック 現在未完成
 	 * 
 	 * @param fileIdArr
 	 * @param fssUserId
 	 * @return boolean
 	 */
-	/*
-	 * public boolean isDeleteValid(String[] fileIdArr, Integer fssUserId){
-	 * List<TFssFile> tFssFileList = tFssFileRepository.findByFssUserId(fssUserId);
-	 * if (tFssFileList == null) { return false; }
-	 * 
-	 * Set<String> validFssFileIdSet = new HashSet<>(); for (TFssFile tFssFile :
-	 * tFssFileList) { validFssFileIdSet.add(tFssFile.getFssFileId().toString()); }
-	 * for (String fileId : fileIdArr) { if (!validFssFileIdSet.contains(fileId)) {
-	 * return false; } } return true; }
-	 */
+	public boolean isDeleteValid(String[] fileIdArr, Integer fssUserId){
+		List<TFssFile> tFssFileList = tFssFileRepository.findByFssUserId(fssUserId);
+		if (tFssFileList == null) { 
+			return false;
+		}
+		Set<String> validFssFileIdSet = new HashSet<>();
+		for (TFssFile tFssFile : tFssFileList){ 
+			validFssFileIdSet.add(tFssFile.getFssFileId().toString());
+		}
+		for (String fileId : fileIdArr) {
+			if (!validFssFileIdSet.contains(fileId)) {
+				return false;
+			} 
+		} 
+		return true;
+	}
+	 
 
 	/**
-	 * ファイルを削除する 初期表示機能ではないためコメントアウト
+	 * ファイルを削除する　現在未完成
 	 * 
 	 * @param fileIdArr
 	 */
-	/*
-	 * public void delete(String[] fileIdArr){ if (fileIdArr == null ||
-	 * fileIdArr.length == 0) { return ; } List<String> deleteFilePathList = new
-	 * ArrayList<>(); for (String fileId : fileIdArr) { Optional<TFssFile> tFssFile
-	 * = tFssFileRepository.findById(Integer.parseInt(fileId));
-	 * 
-	 * List<TFssFile> deleteTFssFileList =
-	 * tFssFileRepository.findByFilePath(tFssFile.get().getFilePath()); for
-	 * (TFssFile deleteTFssFile : deleteTFssFileList) {
-	 * tFssFileRepository.delete(deleteTFssFile); }
-	 * deleteFilePathList.add(tFssFile.get().getFilePath()); }
-	 * AWSS3Util.deleteMultipleFile(deleteFilePathList); }
-	 */
+	public void delete(String[] fileIdArr, Integer fssUserId){ 
+		if (fileIdArr == null || fileIdArr.length == 0) { 
+			  return ; 
+		} 
+	    //List<String> deleteFilePathList = new ArrayList<>();
+	    //◆共有ファイルIDを取得する
+	    for (String fileId : fileIdArr) { 
+	    	Optional<TFssFile> tFssFile =
+	    			tFssFileRepository.findById(Integer.parseInt(fileId));
+	    	//◆取得したファイルパスを基に共有ファイル情報リストを取得する
+			List<TFssFile> deleteTFssFileList =
+					tFssFileRepository.findByFilePath(tFssFile.get().getFilePath());
+			//◆ファイルの削除を実行する
+			for(TFssFile deleteTFssFile : deleteTFssFileList) {
+				tFssFileRepository.delete(deleteTFssFile.getFssFileId(), fssUserId); 
+			}
+			//deleteFilePathList.add(tFssFile.get().getFilePath());
+		}
+	}
 
 	/**
 	 * グループを登録する 初期表示機能ではないためコメントアウト
