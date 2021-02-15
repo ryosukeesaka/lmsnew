@@ -161,16 +161,7 @@ public class UserService {
 		// ログインLMSユーザーDTOを作成
 		LoginUserDto loginUserDto = new LoginUserDto();
 		BeanUtils.copyProperties(mLmsUser, loginUserDto);
-		
-		// 単体テスト用の確認コード（前）（単体テスト完了後は削除）
-		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
-		System.out.println("ユーザーID：" + loginUserDto.getUserId());
-		System.out.println("企業ID: " + loginUserDto.getCompanyId());
-		System.out.println("会場ID: " + loginUserDto.getPlaceId());
-		System.out.println("コースID: " + loginUserDto.getCourseId());
-		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
-		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
-		
+				
 		// ロールが受講生(0001)の場合、情報をセット
 		if (mLmsUser.getRole().equals("0001")) {
 		loginUserDto.setCompanyId((mLmsUser.getTUserCompany().getCompanyId()));
@@ -185,17 +176,7 @@ public class UserService {
 			// 企業マスタ情報からファイル共有フラグを取得
 			loginUserDto.setFileShareFlg(mLmsUser.getTUserCompany().getMCompany().getFileShareFlg());
 		}
-		
-		// 単体テスト用の確認コード（後）（単体テスト完了後は削除）
-		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
-		System.out.println("ユーザーID：" + loginUserDto.getUserId());
-		System.out.println("企業ID: " + loginUserDto.getCompanyId());
-		System.out.println("会場ID: " + loginUserDto.getPlaceId());
-		System.out.println("コースID: " + loginUserDto.getCourseId());
-		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
-		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		
+				
 		return loginUserDto; 
 	}
 }
