@@ -184,6 +184,7 @@ public class StudentAttendanceService {
 
 		boolean errors = validPunchIn(lmsUserId, trainingDate, courseId);
 		
+		
 		if(tStudentAttendance == null) {
 			// 存在しなければ、レコードを新規作成する
 			tStudentAttendance = new TStudentAttendance();
@@ -200,29 +201,33 @@ public class StudentAttendanceService {
 			tStudentAttendance.setNote("");
 			// accountIdをセット
 			tStudentAttendance.setAccountId(accountId);
-
+		} 				
 			// 現在時刻
 			TrainingTime trainingStartTime = new TrainingTime();
 			// zero paddingされた、HH:mm形式の文字列
 			String trainingStartTimeStr = trainingStartTime.toString();
 			// 出勤時間をセット
 			tStudentAttendance.setTrainingStartTime(trainingStartTimeStr);
+
+			// 退勤時間
+			TrainingTime endTime = null;
+			if (tStudentAttendance.getTrainingEndTime().length() != 0) {
+				endTime = new TrainingTime(tStudentAttendance.getTrainingEndTime());
+			}
+			
 			// ステータスを設定
 			AttendanceStatusEnum attendanceStatusEnum = AttendanceUtil.getStatus(
 					new TrainingTime(tStudentAttendance.getTrainingStartTime()),
-					new TrainingTime(tStudentAttendance.getTrainingEndTime())
-					);
+					endTime
+			);
 			tStudentAttendance.setStatus(attendanceStatusEnum.code);
-		}
-
-		// true レコードがある場合　更新を行う。共通項目も更新する。 
+			
+		// 情報を更新
 		if (errors == true) {
-			//　情報を保存
 			repository.save(tStudentAttendance);
 		}
-
 	}
-
+	
 	/**
 	 * 退勤情報登録
 	 * @param lmsUserId
@@ -252,9 +257,10 @@ public class StudentAttendanceService {
 			System.out.println(tStudentAttendance);
 
 			// 情報を保存
+			if (errors == true) {
 			repository.save(tStudentAttendance);
-		}
-;
+			}
+		};
 	}
 
 	/**
@@ -281,10 +287,9 @@ public class StudentAttendanceService {
 				date = dto.getDate();
 			}
 		}
-		
-		String dateStr = sdf.format(date);
+
 		//今日が研修日か
-		TStudentAttendance tStudentAttendance = repository.findByLmsUserIdAndTrainingDate(lmsUserId, trainingDate);
+		String dateStr = sdf.format(date);
 		String trainingDateStr = sdf.format(trainingDate);
 		
 		boolean errors = true;
@@ -292,10 +297,7 @@ public class StudentAttendanceService {
 		if (!dateStr.equals(trainingDateStr)) {
 			errors = false;
 		}
-		//既に登録済みの時
-		if(tStudentAttendance != null) {
-			errors = false;
-		}
+
 		return errors;
 	}
 	/**
@@ -384,6 +386,7 @@ public class StudentAttendanceService {
 
 				e.printStackTrace();
 			}
+					
 
 			// 勤怠情報の日付とエンティティの日付が一致した場合エンティティにコピー
 			for (TStudentAttendance entity : list) {
