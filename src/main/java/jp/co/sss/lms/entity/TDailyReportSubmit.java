@@ -30,10 +30,6 @@ public class TDailyReportSubmit {
         name = "generator",
         allocationSize = 1)
     private Integer dailyReportSubmitId;
-    
-    /** dailyReportIdプロパティ */
-    @Column
-    private Integer dailyReportId;
 
     /** dateプロパティ */
     @Column
@@ -67,9 +63,10 @@ public class TDailyReportSubmit {
     @JoinColumn(name = "lms_user_id", referencedColumnName = "lmsUserId")
     private MLmsUser mLmsUser; 
 
-    @OneToOne(mappedBy = "tDailyReportSubmit")
+    @ManyToOne
+    @JoinColumn(name="daily_report_id", referencedColumnName = "daily_report_id")
     private MDailyReport mDailyReport;
-    
+
     @OneToMany(mappedBy = "tDailyReportSubmit")
 	private List<TDailyReportSubmitDetail> tDailyReportSubmitDetailList;
 
@@ -84,8 +81,7 @@ public class TDailyReportSubmit {
 	
 	@OneToMany(mappedBy = "tDailyReportSubmit")
 	private List<TDailyReportSubmitDetail> SubmitDetail;
-	
-	
+
 	public List<TDailyReportSubmitDetail> getSubmitDetail() {
 		return SubmitDetail;
 	}
@@ -100,14 +96,6 @@ public class TDailyReportSubmit {
 
 	public void setDailyReportSubmitId(Integer dailyReportSubmitId) {
 		this.dailyReportSubmitId = dailyReportSubmitId;
-	}
-
-	public Integer getDailyReportId() {
-		return dailyReportId;
-	}
-
-	public void setDailyReportId(Integer dailyReportId) {
-		this.dailyReportId = dailyReportId;
 	}
 
 	public Timestamp getDate() {
