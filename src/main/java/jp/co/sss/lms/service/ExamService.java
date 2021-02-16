@@ -7,16 +7,19 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jp.co.sss.lms.dto.ExamDto;
 import jp.co.sss.lms.dto.ExamServiceExamDto;
 import jp.co.sss.lms.dto.ExamServiceExamResultDto;
 import jp.co.sss.lms.dto.ExamServiceQuestionDto;
 import jp.co.sss.lms.entity.MExam;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MQuestion;
+import jp.co.sss.lms.entity.TDailyReportFb;
 import jp.co.sss.lms.entity.TExamResult;
 import jp.co.sss.lms.entity.TExamResultDetail;
 import jp.co.sss.lms.form.ExamPlayForm;
 import jp.co.sss.lms.repository.MExamRepository;
+import jp.co.sss.lms.repository.ExamRepository;
 import jp.co.sss.lms.repository.TExamResultDetailRepository;
 import jp.co.sss.lms.repository.TExamResultRepository;
 import jp.co.sss.lms.util.Constants;
@@ -39,6 +42,8 @@ public class ExamService {
 	TExamResultRepository tExamResultRepository;
 	@Autowired
 	TExamResultDetailRepository tExamResultDetailRepository;
+	@Autowired
+	ExamRepository examRepository;
 	@Autowired
 	DateUtil dateUtil;
 
@@ -358,5 +363,44 @@ public class ExamService {
 		return examDto;
 
 	}
+	
+	
+	/**
+	 * ユーザー詳細画面の試験結果DTOを取得
+	 * 
+	 * @param lmsUserId LMSユーザーID
+	 * @return 試験結果のDTO
+	 */
+	public List<ExamDto> getExamDto(Integer lmsUserId) {
+		
+		// 試験情報を取得
+		List<TExamResult> tExamResultList = examRepository.findByExamResult(lmsUserId);
 
+		List<ExamDto> examDto = new ArrayList<ExamDto>();
+
+		// 試験Entityリストを試験DTOリストへ詰め替え
+		for (TExamResult tExamResult : tExamResultList) {
+			ExamDto examDtoSingle = new ExamDto();
+			List<MExam> mExam = mExamRepository.getMultiResultByExamId(tExamResult.getTExamSection().getExamId());
+			int count = 0;
+			
+			BeanUtils.copyProperties(tExamResult,examDtoSingle);
+			BeanUtils.copyProperties(tExamResult.getTExamSection().getMExam(),examDtoSingle);
+			
+			for (MExam mExamList : mExam) {
+				count++;
+			}
+			examDtoSingle.setNumOfQuestion(count);
+			
+			examDto.add(examDtoSingle);
+		}
+		
+		for (ExamDto examDtoList : examDto){
+			 System.out.println(examDtoList.getExamName());
+			System.out.println(examDtoList.getNumOfQuestion());
+		}
+
+		
+		return examDto;
+	}
 }

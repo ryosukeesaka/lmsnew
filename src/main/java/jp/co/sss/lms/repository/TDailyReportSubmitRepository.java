@@ -1,6 +1,8 @@
 package jp.co.sss.lms.repository;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +21,13 @@ public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReport
 			" AND tdrs.date = :date"+
 			" AND  tdrs.deleteFlg = 0 ")
 	TDailyReportSubmit findByLmsUserIdAndDate(@Param("loginLmsUserId")Integer lmsUserId,@Param("date")Timestamp date,@Param("dailyReportId")Integer dailyReportId);
+	
+	@Query("SELECT tdrs FROM  TDailyReportSubmit tdrs " + 
+			" LEFT OUTER JOIN tdrs.mLmsUser mlu " + 
+			" LEFT OUTER JOIN tdrs.mDailyReport mdr " +
+			" WHERE mlu.lmsUserId = :loginLmsUserId "+
+			" AND  tdrs.deleteFlg = 0 ")
+	List<TDailyReportSubmit> findByLmsUserId(@Param("loginLmsUserId")Integer lmsUserId);
 	
 /*	@Query("SELECT s FROM TDailyReportSubmit s"
 			+ " LEFT OUTER JOIN s.tDailyReportSubmitDetailList sd"

@@ -12,11 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jp.co.sss.lms.dto.DailyReportDto;
 import org.springframework.web.multipart.MultipartFile;
-
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
+import jp.co.sss.lms.dto.DeliverablesResultDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MLmsUser;
+import jp.co.sss.lms.entity.TDailyReportFb;
+import jp.co.sss.lms.entity.TDailyReportSubmit;
 import jp.co.sss.lms.entity.TDeliverablesResult;
 import jp.co.sss.lms.entity.TDeliverablesSection;
 import jp.co.sss.lms.repository.TDeliverablesResultRepository;
@@ -210,5 +213,28 @@ public class DeliverableService {
 		logger.info(sb.toString());
 		
 		return sb.toString();
+	}
+	
+	public List<DeliverablesResultDto> getDeliverablesResultDto(Integer lmsUserId) {
+
+		
+		// 成果物情報を取得
+		List<TDeliverablesResult> tDeliverablesResultList = tDeliverablesResultRepository.findByDeliverablesLmsUserId(lmsUserId);
+
+		List<DeliverablesResultDto> deliverablesResultDto = new ArrayList<DeliverablesResultDto>();
+
+		
+		// 試験Entityリストを試験DTOリストへ詰め替え
+		for (TDeliverablesResult tDeliverablesResult : tDeliverablesResultList) {
+			DeliverablesResultDto deliverablesResultDtoSingle = new DeliverablesResultDto();
+			
+			BeanUtils.copyProperties(tDeliverablesResult,deliverablesResultDtoSingle);
+			BeanUtils.copyProperties(tDeliverablesResult.gettDeliverablesSection().getMDeliverables(),deliverablesResultDtoSingle);
+			BeanUtils.copyProperties(tDeliverablesResult.gettDeliverablesSection().getMSection(),deliverablesResultDtoSingle);
+			
+			deliverablesResultDto.add(deliverablesResultDtoSingle);
+		}
+		
+		return deliverablesResultDto;
 	}
 }

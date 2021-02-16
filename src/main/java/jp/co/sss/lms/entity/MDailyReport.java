@@ -133,6 +133,10 @@ public class MDailyReport {
 
     @OneToMany(mappedBy = "mDailyReport")
     private List<TDailyReportSubmit> tDailyReportSubmitList;
+    
+    @OneToOne
+    @JoinColumn(name="daily_report_id", referencedColumnName = "daily_report_id")
+    public TDailyReportSubmit tDailyReportSubmit;
 
 
 	public Integer getDailyReportId() {

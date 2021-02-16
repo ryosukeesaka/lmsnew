@@ -201,5 +201,6 @@ public class TExamResult {
 	public void setTExamResultDetailList(List<TExamResultDetail> tExamResultDetailList) {
 		this.tExamResultDetailList = tExamResultDetailList;
 	}
+
 	
 }
