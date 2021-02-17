@@ -13,11 +13,6 @@ import jp.co.sss.lms.entity.TCourseTeachingMaterial;
 
 public interface TCourseTeachingMaterialRepository extends JpaRepository<TCourseTeachingMaterial, Integer> {
 
-	/**
-	 * コース・教材紐付けテーブルのコースID
-	 * 
-	 * @param courseId
-	 */
 	List<TCourseTeachingMaterial> findByCourseId(Integer courseId);
-
+	long countByCourseId(Integer courseId);
 }
