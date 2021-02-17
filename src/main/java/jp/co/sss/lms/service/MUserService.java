@@ -7,6 +7,7 @@ import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.entity.MUser;
 import jp.co.sss.lms.repository.MUserRepository;
 //import lombok.RequiredArgsConstructor;
+import jp.co.sss.lms.util.Constants;
 
 /**
  * ユーザーマスタサービス
@@ -31,4 +32,20 @@ public class MUserService {
 		mUserRepository.save(mUser);
 		loginUserDto.setSecurityAgreeFlg((short) 1);
 	}
+	
+	
+	   /**
+     * 識別子でエンティティを検索します。
+     *
+     * @param userId
+     *            識別子
+     * @return エンティティ
+     */
+    public MUser findById(Integer userId) {
+        //Where where = eq(deleteFlg(), Constants.DB_FLG_FALSE);
+       // return select().where(where).id(userId).getSingleResult()
+    	MUser m=new MUser();
+        		return m;
+    }
+	
 }

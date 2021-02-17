@@ -104,6 +104,22 @@ public class UserService {
 	public MUser getMUser(String mailaddress) {
 		return mUserRepository.findByMailAddress(mailaddress);
 	}
+	
+	
+	
+	/**
+	 * メールアドレスからユーザー情報を取得
+	 *   ついかーーーーーーーーーーーーーーーーーーーーーーーーーー
+	 * @param mailaddress
+	 * @return MUser
+	 */
+	public MUser getMUser(Integer userid) {
+		return mUserRepository.findByUserId(userid);
+	}
+	
+	
+	
+	
 
 	public MUser setMUser(MUser form) {
 		MUser muser = mUserRepository.getOne(form.getUserId());
@@ -179,4 +195,12 @@ public class UserService {
 				
 		return loginUserDto; 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
 }

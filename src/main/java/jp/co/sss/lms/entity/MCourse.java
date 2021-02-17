@@ -96,6 +96,10 @@ public class MCourse {
     
     @OneToMany(mappedBy = "mCourse")
     public List<TCourseDailyReport> tCourseDailyReport;
+    
+    @OneToMany(mappedBy = "mCourse")
+    public List<TCompanyCourse> tConpanyCourseList;
+    
 
 	public Integer getCourseId() {
 		return courseId;
@@ -239,6 +243,14 @@ public class MCourse {
 
 	public void setTCourseDailyReport(List<TCourseDailyReport> tCourseDailyReport) {
 		this.tCourseDailyReport = tCourseDailyReport;
+	}
+
+	public List<TCompanyCourse> gettConpanyCourseList() {
+		return tConpanyCourseList;
+	}
+
+	public void settConpanyCourseList(List<TCompanyCourse> tConpanyCourseList) {
+		this.tConpanyCourseList = tConpanyCourseList;
 	}
 
 	
