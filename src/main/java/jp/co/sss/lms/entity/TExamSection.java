@@ -1,6 +1,7 @@
 package jp.co.sss.lms.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -84,9 +86,9 @@ public class TExamSection {
 	    private MExam mExam;
 	    
 	    /** 試験結果 */
-	    @OneToOne
-	    @JoinColumn(name="exam_section_id", referencedColumnName = "exam_section_id")
-	    private TExamResult tExamResult;
+	    @OneToMany(mappedBy="tExamSection")
+//	    @JoinColumn(name="exam_section_id", referencedColumnName = "exam_section_id")
+	    private List<TExamResult> tExamResult;
 
 		public Integer getExamSectionId() {
 			return examSectionId;
@@ -184,11 +186,11 @@ public class TExamSection {
 			this.mExam = mExam;
 		}
 
-		public TExamResult getTExamResult() {
+		public List<TExamResult> getTExamResult() {
 			return tExamResult;
 		}
 
-		public void setTExamResult(TExamResult tExamResult) {
+		public void setTExamResult(List<TExamResult> tExamResult) {
 			this.tExamResult = tExamResult;
 		}
 
