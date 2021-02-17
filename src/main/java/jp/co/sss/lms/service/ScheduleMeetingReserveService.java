@@ -42,12 +42,13 @@ public class ScheduleMeetingReserveService {
 			MeetingScheduleDto meetingScheduleDto = new MeetingScheduleDto();
 
 			// MMeetingScheduleEntityとMPlaceをMeetingScheduleDtoに詰め替える
-			meetingScheduleDto.editLimit = tMeetingPlace.getmMeetingSchedule().getEditLimit();
-			meetingScheduleDto.meetingOpenDate = tMeetingPlace.getmMeetingSchedule() .getMeetingOpenDate();
-			meetingScheduleDto.meetingCloseDate = tMeetingPlace.getmMeetingSchedule().getMeetingCloseDate();
-			meetingScheduleDto.purpose = tMeetingPlace.getmMeetingSchedule().getPurpose();
-			meetingScheduleDto.placeName = tMeetingPlace.getmPlace().getPlaceName();
-
+			meetingScheduleDto.setEditLimit(tMeetingPlace.getmMeetingSchedule().getEditLimit());
+			meetingScheduleDto.setMeetingOpenDate(tMeetingPlace.getmMeetingSchedule() .getMeetingOpenDate());
+			meetingScheduleDto.setMeetingCloseDate(tMeetingPlace.getmMeetingSchedule().getMeetingCloseDate());
+			meetingScheduleDto.setPurpose(tMeetingPlace.getmMeetingSchedule().getPurpose());
+			meetingScheduleDto.setPlaceName(tMeetingPlace.getmPlace().getPlaceName());
+			meetingScheduleDto.setEditLimit(tMeetingPlace.getmMeetingSchedule().getEditLimit());
+			
 			meetingScheduleDtoList.add(meetingScheduleDto);
 		}
 		return meetingScheduleDtoList;	

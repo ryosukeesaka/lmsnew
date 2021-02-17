@@ -2,31 +2,99 @@ package jp.co.sss.lms.dto;
 
 import java.util.Date;
 
-//TODO private化
+/**
+ * MeetingScheduleDTOクラス
+ *@author 江坂亮典
+ */
+
 public class MeetingScheduleDto {
 	
 	/** ミーティングスケジュールID */
-    public Integer meetingScheduleId;
+    private Integer meetingScheduleId;
 
-    /**  邱ｨ髮�譛滄剞 */
-    public Date editLimit;
+    /**  予約編集期限 */
+    private Date editLimit;
 
-    /**  髱｢隲�髢句ｧ区律 */
-    public Date meetingOpenDate;
+    /** 面談開始日 */
+    private Date meetingOpenDate;
 
-    /**  髱｢隲�邨ゆｺ�譌･ */
-    public Date meetingCloseDate;
+    /**  面談終了日 */
+    private Date meetingCloseDate;
 
-    /**  逶ｮ逧� */
-    public String purpose;
+    /**  用途 */
+    private String purpose;
 
-    /** 蟇ｾ雎｡莨壼�ｴID */
-    public Integer meetingPlaceId;
+    /** 面談会場ID */
+    private Integer meetingPlaceId;
 
-    /** 莨壼�ｴ蜷� */
-    public String placeName;
+    /** 会場名 */
+    private String placeName;
 
-    /** 蜈ｬ髢九ヵ繝ｩ繧ｰ */
-    public Short publishedFlg;
+    /** 公開フラグ */
+    private Short publishedFlg;
+
+	public Integer getMeetingScheduleId() {
+		return meetingScheduleId;
+	}
+
+	public void setMeetingScheduleId(Integer meetingScheduleId) {
+		this.meetingScheduleId = meetingScheduleId;
+	}
+
+	public Date getEditLimit() {
+		return editLimit;
+	}
+
+	public void setEditLimit(Date editLimit) {
+		this.editLimit = editLimit;
+	}
+
+	public Date getMeetingOpenDate() {
+		return meetingOpenDate;
+	}
+
+	public void setMeetingOpenDate(Date meetingOpenDate) {
+		this.meetingOpenDate = meetingOpenDate;
+	}
+
+	public Date getMeetingCloseDate() {
+		return meetingCloseDate;
+	}
+
+	public void setMeetingCloseDate(Date meetingCloseDate) {
+		this.meetingCloseDate = meetingCloseDate;
+	}
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
+
+	public Integer getMeetingPlaceId() {
+		return meetingPlaceId;
+	}
+
+	public void setMeetingPlaceId(Integer meetingPlaceId) {
+		this.meetingPlaceId = meetingPlaceId;
+	}
+
+	public String getPlaceName() {
+		return placeName;
+	}
+
+	public void setPlaceName(String placeName) {
+		this.placeName = placeName;
+	}
+
+	public Short getPublishedFlg() {
+		return publishedFlg;
+	}
+
+	public void setPublishedFlg(Short publishedFlg) {
+		this.publishedFlg = publishedFlg;
+	}
 
 }
