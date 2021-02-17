@@ -47,6 +47,8 @@ public class ScheduleMeetingReserveService {
 			meetingScheduleDto.setMeetingCloseDate(tMeetingPlace.getmMeetingSchedule().getMeetingCloseDate());
 			meetingScheduleDto.setPurpose(tMeetingPlace.getmMeetingSchedule().getPurpose());
 			meetingScheduleDto.setPlaceName(tMeetingPlace.getmPlace().getPlaceName());
+			meetingScheduleDto.setMeetingPlaceId(tMeetingPlace.getmPlace().getPlaceId());
+			
 			meetingScheduleDto.setEditLimit(tMeetingPlace.getmMeetingSchedule().getEditLimit());
 			
 			meetingScheduleDtoList.add(meetingScheduleDto);
