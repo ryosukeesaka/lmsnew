@@ -26,9 +26,8 @@ public class ScheduleMeetingReserveService {
 	 * 関数概要 会場情報の取得
 	 * 
 	 * @param placeId 会場ID
-	 * @return meetingScheduleDtoList
+	 * @return meetingScheduleDtoList 面談・会場情報DTOリスト
 	 */
-
 	public List<MeetingScheduleDto> getMeetingPlaceListByPlaceId(Integer placeId){
 
 		// MeetingScheduleDtoListの作成

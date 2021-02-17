@@ -147,9 +147,4 @@ public class TMeetingPlace {
 	public void setmPlace(MPlace mPlace) {
 		this.mPlace = mPlace;
 	}
-
-   // @OneToMany(mappedBy = "tMeetingPlace")
-    //public List<TMeetingCompany> tMeetingCompanyList;
-    
-	
 }

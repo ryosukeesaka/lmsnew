@@ -2,6 +2,7 @@ package jp.co.sss.lms.dto;
 
 import java.util.Date;
 
+//TODO private化
 public class MeetingScheduleDto {
 	
 	/** ミーティングスケジュールID */
