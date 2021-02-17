@@ -154,7 +154,7 @@ public class ExamService {
 		// 取得したexamSectionId,lmsUserId,accountIdを、試験結果Entityにセット
 		TExamResult tExamResult = new TExamResult();
 		MLmsUser mLmsUser = new MLmsUser();
-		tExamResult.setExamSectionId(form.getExamSectionId());
+//		tExamResult.setExamSectionId(form.getExamSectionId());
 		mLmsUser.setLmsUserId(form.getLmsUserId());
 		tExamResult.setMLmsUser(mLmsUser);
 		tExamResult.setAccountId(form.getAccountId());
@@ -229,7 +229,7 @@ public class ExamService {
 		if (Constants.CODE_VAL_ROLL_STUDENT.equals(form.getRole())) {
 			// 検索結果を試験結果Entityリストに保存
 			List<TExamResult> tExamResultList = tExamResultRepository.findByExamSectionIdAndLmsUserIdAndAccountId(
-					tExamResult.getExamSectionId(), tExamResult.getMLmsUser().getLmsUserId(),
+					tExamResult.getTExamSection().getExamSectionId(), tExamResult.getMLmsUser().getLmsUserId(),
 					tExamResult.getAccountId());
 			// リストの件数が1の場合、評点フラグに1を代入
 			if (tExamResultList.size() == 1) {
