@@ -1,29 +1,26 @@
 package jp.co.sss.lms.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jp.co.sss.lms.dto.CategoryListDto;
-import jp.co.sss.lms.dto.CourseListDto;
 import jp.co.sss.lms.dto.CourseServiceCategoryDto;
 import jp.co.sss.lms.dto.CourseServiceCourseDto;
 import jp.co.sss.lms.dto.CourseServiceSectionDto;
-import jp.co.sss.lms.dto.CourseUserServiceDto;
+import jp.co.sss.lms.dto.CourseServiceCourseListDto;
 import jp.co.sss.lms.entity.MCategory;
 import jp.co.sss.lms.entity.MCourse;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MSection;
-import jp.co.sss.lms.entity.MUser;
-import jp.co.sss.lms.entity.TCompanyCourse;
-import jp.co.sss.lms.entity.TCourseTeachingMaterial;
 import jp.co.sss.lms.repository.MCourseRepository;
-import jp.co.sss.lms.repository.MUserRepository;
+import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.TCompanyCourseRepository;
 import jp.co.sss.lms.repository.TCourseTeachingMaterialRepository;
 import jp.co.sss.lms.util.Constants;
@@ -43,16 +40,17 @@ public class CourseService {
 	MCourseRepository courseRepository;
 
 	@Autowired
-	TCompanyCourseRepository tcourseRepository;
+	TCompanyCourseRepository tCompanyCourseRepository;
+	
+	@Autowired
+	MLmsUserRepository mLmsUserRepository;
 
 	@Autowired
 	private MessageUtil messageUtil;
 
 	@Autowired
-	private MUserRepository muserRepository;
-
-	@Autowired
-	private TCourseTeachingMaterialRepository tRepository;
+	private TCourseTeachingMaterialRepository tCourseTeachingMaterialRepository;
+	
 
 	/**
 	 * 関数概要 コースIDのエラーチェック
@@ -175,86 +173,100 @@ public class CourseService {
 		}
 		return courseServiceSectionDtoList;
 	}
-
+	
 	/**
-	 * 関数概要 ログインユーザ取得
 	 * 
-	 * @param userId　企業ID
-	 * @return errorMessege
+	 * @param userId ユーザID
+	 * @return courseViewDto コース情報リスト
 	 */
-
-	public CourseUserServiceDto getUser(Integer userId) {
-
-		//ユーザ情報取得
-		MUser Muser = muserRepository.findByUserId(userId);
-		CourseUserServiceDto user=new CourseUserServiceDto();
-		BeanUtils.copyProperties(Muser.getMLmsUser(), user);
-		user.setCompanyId(Muser.getMLmsUser().getTUserCompany().getCompanyId());
-
-		// ユーザ情報取得に失敗した場合
-		if (Muser.equals(null)) {
-			String[] values = { "courseId" };
-			messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
+	public List<CourseServiceCourseListDto> getCourseList(Integer userId) {
+		//Ⅰ.現在ログインしているLMSユーザの情報を取得する
+		MLmsUser mLmsUser = mLmsUserRepository.getUserWithCompany(userId);
+		
+		//コースリスト取得
+		List<MCourse> mCourseList = new ArrayList<MCourse>();
+		
+		//Ⅱ.取得したLMSユーザの権限が企業担当者、または育成担当者である場合			
+		//企業IDをパラメータとし、下記サービスを利用し、コース情報リストを取得する		
+		if(mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_COMPANY)|| mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_TRAINING)) {
+			mCourseList = courseRepository.findByCompanyId(mLmsUser.getTCourseUser().getMLmsUser().getTUserCompany().getCompanyId());
+		}else{
+			mCourseList = courseRepository.findByAccountId(mLmsUser.getAccountId());
 		}
-		return user;
-	}
-
-	/**
-	 * 関数概要 コース一覧取得
-	 * 
-	 * @param courseId　企業ID----------------------------------------------
-	 */
-	public List<CourseListDto> getCourseListByCompanyId(Integer companyId) {
-		// コース情報取得
-		List<TCompanyCourse> courselist = tcourseRepository.findByCompanyId(companyId);
-		System.out.println(courselist.get(0).getmCourse().getCourseName());
-		//コースのセット
-		for(int i=0;i<courselist.size();i++) {
-			System.out.println(courselist.get(i).getmCourse().getCourseName());
-		}
-
-		// CategoryEntityをCategoryDtoに詰め替える
-		List<CourseListDto> list=new ArrayList<CourseListDto>();
-		//BeanUtils.copyProperties(courselist,list);
-		// コース情報取得に失敗した場合
-		if (courselist == null) {
-			String[] values = { "companyId" };
-			messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
-		}
-		return list;
-	}
-
-
-	public List<CourseListDto> getCourseListByAccountCompanyId(Integer accountId) {
-		// コース情報取得
-		List<MCourse> courselist = courseRepository.findByAccountId(accountId);
-		// CategoryEntityをCategoryDtoに詰め替える
-		List<CourseListDto> list=new ArrayList<CourseListDto>();
-
-		//コースのセット
-		for(MCourse mCourse:courselist) {
-			CourseListDto courseList=new CourseListDto();
-			BeanUtils.copyProperties(mCourse,courseList);
-			List<CategoryListDto> cate=new ArrayList<CategoryListDto>();
-			//カテゴリーのセット
-			for(MCategory mCategory:mCourse.mCategoryList) {
-				CategoryListDto categoryList=new CategoryListDto();
-				BeanUtils.copyProperties(mCategory,categoryList);
-				cate.add(categoryList);
+		
+		//EntityをDTOに格納する
+		List<CourseServiceCourseDto> courseDtoList = this.convertToCourseDto(mCourseList);
+		
+		//画面表示に必要なパラメータをDTOを格納する
+		List<CourseServiceCourseListDto> courseListDtoList = new ArrayList<>();
+		
+		for(CourseServiceCourseDto courseDto: courseDtoList) {
+			CourseServiceCourseListDto courseList = new CourseServiceCourseListDto();
+			
+			BeanUtils.copyProperties(courseDto, courseList);
+			courseList.setCourseServiceCategoryDto(courseDto.getCourseServiceCategoryDtoList());
+			courseList.setTeachingMaterialCount(tCourseTeachingMaterialRepository.countByCourseId(courseDto.getCourseId()));
+			courseList.setOpenCourse(this.isOpen(courseDto.getOpenTime(),courseDto.getCloseTime()));
+			
+			courseListDtoList.add(courseList);
 			}
-			courseList.setCategoryDtoList(cate);
-			list.add(courseList);
-		}
-		// コース情報取得に失敗した場合
-		if (courselist == null) {
-			String[] values = { "courseId" };
-			messageUtil.getMessage(Constants.VALID_KEY_ALREADYDELETE, values);
-		} 
-			return list;
+		return courseListDtoList;
 	}
+	
+	
+	/**
+	 * コース情報エンティティをコース情報DTOリストに変換するメソッド
+	 * ※使用場所（コース一覧画面）
+	 * @param mCourseList コース情報リスト
+	 * @return courseDtoList コース情報DTOリスト
+	 */
+	public List<CourseServiceCourseDto> convertToCourseDto(List<MCourse> mCourseList) {
+		
+		List<CourseServiceCourseDto> courseDtoList = new ArrayList<>();
+		
+		for(MCourse mCourse : mCourseList) {
+			
+			CourseServiceCourseDto courseDto = new CourseServiceCourseDto();
+			BeanUtils.copyProperties(mCourse, courseDto);
+			
+			List<CourseServiceCategoryDto> categoryDtoList = new ArrayList<>();
+			for(MCategory mCategoy : mCourse.getMCategoryList()) {
+				
+				CourseServiceCategoryDto categoryDto = new CourseServiceCategoryDto();
+				BeanUtils.copyProperties(mCategoy, categoryDto);
+				categoryDtoList.add(categoryDto);
+			}
+			courseDto.setCourseServiceCategoryDtoList(categoryDtoList);
+			courseDtoList.add(courseDto);
+		}
+		return courseDtoList;
+	}
+	/**
+	 * 開催中であるか判断するメソッド
+	 * @param start 開始日
+	 * @param end 閉会日
+	 * @return　boolean 開催可否
+	 */
+	private boolean isOpen(Date start, Date end) {
+		if(start != null && end != null) {
+			Calendar now = Calendar.getInstance();
+			// 時分秒ミリ秒に0をセット
+            now.set(Calendar.HOUR_OF_DAY, 0);
+            now.set(Calendar.MINUTE, 0);
+            now.set(Calendar.SECOND, 0);
+            now.set(Calendar.MILLISECOND, 0);
+            
+            Calendar openDate = Calendar.getInstance();
+            openDate.setTime(start);
 
-	public long countByteachingMaterialCount(Integer courseId) {
-		// コース情報取得
-		return tRepository.countByCourseId(courseId);
+            Calendar closeDate = Calendar.getInstance();
+            closeDate.setTime(end);
+
+            boolean isAlreadyStart = now.after(openDate) || now.equals(openDate);
+            boolean isNotOver = now.before(closeDate) || now.equals(closeDate);
+
+            return isAlreadyStart && isNotOver;
+		}
+		return false;
 	}
 }

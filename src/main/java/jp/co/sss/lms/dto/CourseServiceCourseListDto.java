@@ -9,40 +9,37 @@ import java.util.List;
  * @author 高谷
  * 
  */
-
-
-public class CourseViewDto {
-
+public class CourseServiceCourseListDto {
 
 	/** 開講フラグ */
-	public boolean isOpenCourse;
+	private boolean isOpenCourse;
 
 	/** コースID */
-	public Integer courseId;
+	private Integer courseId;
 
 	/** コース名 */
-	public String courseName;
+	private String courseName;
 
 	/** コース説明 */
-	public String courseDescription;
+	private String courseDescription;
 
 	/** 開講日 */
-	public Date openTime;
+	private Date openTime;
 
 	/** 閉講日 */
-	public Date closeTime;
+	private Date closeTime;
 
 	/** コース種別 */
-	public Short courseType;
+	private Short courseType;
 
 	/** カテゴリーDtoリスト */
-	public List<CategoryListDto> CategoryDtoList;
+	private List<CourseServiceCategoryDto> courseServiceCategoryDto;
 
 	/** pass */
-	public String password;
+	private String password;
 	
 	/** コース教材数 */
-	public long teachingMaterialCount;
+	private long teachingMaterialCount;
 
 	public boolean isOpenCourse() {
 		return isOpenCourse;
@@ -116,11 +113,12 @@ public class CourseViewDto {
 		this.teachingMaterialCount = teachingMaterialCount;
 	}
 
-	public List<CategoryListDto> getCategoryDtoList() {
-		return CategoryDtoList;
+	public List<CourseServiceCategoryDto> getCourseServiceCategoryDto() {
+		return courseServiceCategoryDto;
 	}
 
-	public void setCategoryDtoList(List<CategoryListDto> categoryDtoList) {
-		CategoryDtoList = categoryDtoList;
+	public void setCourseServiceCategoryDto(List<CourseServiceCategoryDto> courseServiceCategoryDto) {
+		this.courseServiceCategoryDto = courseServiceCategoryDto;
 	}
+
 }

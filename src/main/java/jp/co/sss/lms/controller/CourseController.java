@@ -1,8 +1,6 @@
 package jp.co.sss.lms.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -15,16 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import jp.co.sss.lms.dto.CategoryListDto;
-import jp.co.sss.lms.dto.CourseListDto;
-import jp.co.sss.lms.dto.CourseServiceCategoryDto;
 import jp.co.sss.lms.dto.CourseServiceCourseDto;
-import jp.co.sss.lms.dto.CourseUserServiceDto;
-import jp.co.sss.lms.dto.CourseViewDto;
-import jp.co.sss.lms.dto.MovieCategoryDto;
+import jp.co.sss.lms.dto.CourseServiceCourseListDto;
 import jp.co.sss.lms.service.CourseService;
-import jp.co.sss.lms.service.MUserService;
-import jp.co.sss.lms.service.UserService;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
 
@@ -96,46 +87,18 @@ public class CourseController {
 		}
 	}
 
-
+	/**
+	 * 
+	 * @param userId ユーザID
+	 * @return courseServiceCourseListDto コース情報リスト
+	 */
 	@RequestMapping("/list")
-	public ResponseEntity<List<CourseViewDto>> index(@RequestParam("userId") Integer userId) {
-		//Ⅰ.現在ログインしているLMSユーザの情報を取得する
-		CourseUserServiceDto user=courseService.getUser(userId);
-		//コース一覧
-		List<CourseListDto> list = new ArrayList<CourseListDto>();
-		//Ⅱ.取得したLMSユーザの権限が企業担当者、または育成担当者である場合			
-		//企業IDをパラメータとし、下記サービスを利用し、コース情報リストを取得する		
-		if(user.getRole().equals(Constants.CODE_VAL_ROLL_COMPANY)||user.getRole().equals(Constants.CODE_VAL_ROLL_TRAINING)) {
-			//ひつよう？
-			list=courseService.getCourseListByCompanyId(user.getCompanyId());
-		}else {
-			list=courseService.getCourseListByCompanyId(user.getCompanyId());
-			//list=courseService.getCourseListByAccountCompanyId(user.getAccountId());
-		}
-
-		//	画面表示に必要な情報へと詰め替える
-		List<CourseViewDto> view=new ArrayList<CourseViewDto>();
-
-		//Ⅳ-1.コース情報リスト内にある各コース情報の開校日がNullでなく、かつ閉校日がNullでない場合	
-		//	開校日と閉校日のパラメータを利用し、コース情報DTOの開校可否（isOpenCourse）に値を格納する	
-		for(CourseListDto courselist:list) {
-			if(courselist.getOpenTime()!=null||courselist.getCloseTime()!=null) {
-				CourseViewDto courseview=new CourseViewDto();
-				courseview.isOpenCourse=true;
-				courseview.courseId = courselist.getCourseId();
-				courseview.courseName = courselist.getCourseName();
-				courseview.courseDescription = courselist.getCourseDescription();
-				courseview.openTime = courselist.getOpenTime();
-				courseview.closeTime =courselist.getCloseTime();
-				courseview.courseType =courselist.getCourseType();
-				courseview.CategoryDtoList=courselist.getCategoryDtoList();
-				courseview.password = courselist.getPassword();
-				courseview.teachingMaterialCount = courseService.countByteachingMaterialCount(courselist.getCourseId());
-
-				view.add(courseview);
-			}
-		}
+	public ResponseEntity<List<CourseServiceCourseListDto>> list(@RequestParam("userId") Integer userId) {
+		
+		//コース情報リストを取得する
+		List<CourseServiceCourseListDto> courseServiceCourseListDto = courseService.getCourseList(userId);
+		
 		//用意したデータをもとにコース一覧を表示する				
-		return new ResponseEntity<>(view, HttpStatus.OK);
+		return new ResponseEntity<>(courseServiceCourseListDto, HttpStatus.OK);
 	}
 }

@@ -10,9 +10,9 @@ import jp.co.sss.lms.entity.TCourseTeachingMaterial;
  * 
  * @author otake
  */
-
 public interface TCourseTeachingMaterialRepository extends JpaRepository<TCourseTeachingMaterial, Integer> {
 
 	List<TCourseTeachingMaterial> findByCourseId(Integer courseId);
+	
 	long countByCourseId(Integer courseId);
 }

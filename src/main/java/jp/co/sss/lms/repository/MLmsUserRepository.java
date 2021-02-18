@@ -28,5 +28,14 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 			+ " LEFT OUTER JOIN t7.mPlace t8"
 			+ " WHERE t1.lmsUserId = :lmsUserId AND t1.deleteFlg = 0")
 	public MLmsUser getUserDetailBasicInfo(@Param("lmsUserId") Integer lmsUserId);
-	 
+	
+	
+	/**
+	 * コース一覧画面
+	 * ユーザ情報取得処理
+	 */
+	@Query(value="SELECT t1 FROM MLmsUser t1 "
+				+ "LEFT OUTER JOIN t1.tUserCompany t2 "
+				+ "WHERE t1.userId = :userId")
+	 public MLmsUser getUserWithCompany(@Param("userId")Integer userId);
 }

@@ -13,7 +13,6 @@ import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
-import jp.co.sss.lms.entity.TTemporaryPassStorage;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
@@ -195,12 +194,4 @@ public class UserService {
 				
 		return loginUserDto; 
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 }
