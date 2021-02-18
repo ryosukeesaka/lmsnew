@@ -385,6 +385,7 @@ public class ExamService {
 			int count = 0;
 			
 			BeanUtils.copyProperties(tExamResult,examDtoSingle);
+			BeanUtils.copyProperties(tExamResult.getTExamSection(),examDtoSingle);
 			BeanUtils.copyProperties(tExamResult.getTExamSection().getMExam(),examDtoSingle);
 			
 			for (MExam mExamList : mExam) {
@@ -396,7 +397,7 @@ public class ExamService {
 		}
 		
 		for (ExamDto examDtoList : examDto){
-			 System.out.println(examDtoList.getExamName());
+			System.out.println(examDtoList.getExamName());
 			System.out.println(examDtoList.getNumOfQuestion());
 		}
 
