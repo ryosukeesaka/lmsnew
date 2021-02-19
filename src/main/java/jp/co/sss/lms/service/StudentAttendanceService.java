@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -355,7 +353,6 @@ public class StudentAttendanceService {
 	 * @return 更新完了メッセージ
 	 */
 	public String update(AttendanceForm form) {
-		//boolean delFlag = true;
 		
 		// 登録用リスト
 		List<TStudentAttendance> tStudentAttendanceList = new ArrayList<>();
@@ -429,11 +426,7 @@ public class StudentAttendanceService {
 			tStudentAttendance.setNote(attendanceForm.getNote());
 			
 			// 削除フラグをセット
-			//if(delFlag == false) {
-			//	tStudentAttendance.setDeleteFlg(null);
-			//}else {
 				tStudentAttendance.setDeleteFlg(Constants.DB_SCORE_FLG_FALSE);
-			//}
 
 			// 登録用リストへ追加
 			tStudentAttendanceList.add(tStudentAttendance);
