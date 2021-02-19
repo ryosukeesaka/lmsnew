@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
 import jp.co.sss.lms.entity.TDeliverablesSection;
 
 /**
@@ -42,4 +41,13 @@ public interface TDeliverablesSectionRepository extends JpaRepository<TDeliverab
 		public List<TDeliverablesSection> getDeliverablesSubmissionFlg
 		(@Param("sectionId") Integer sectionId,@Param("lmsUserId") Integer lmsUserId);
 		
+		@Query(value = "SELECT"
+				+" * "
+				+" FROM t_deliverables_section T1 "
+				+" INNER JOIN m_deliverables T2 "
+				+" ON T1.deliverables_id = T2.deliverables_id "
+				+" WHERE T1.section_id = :sectionId "
+				+" AND T1.delete_flg = 0 "
+				+" ORDER BY T2.deliverables_name ",nativeQuery = true)
+		public List<TDeliverablesSection> findBySectionId(@Param("sectionId") Integer sectionId);
 }
