@@ -79,6 +79,10 @@ public class MPlace {
 	/** リレーションテーブル */
 	@OneToMany(mappedBy = "mPlace")
 	private List<TMeetingPlace> tMeetingPlaceList;
+	
+	/** リレーションテーブル */
+	@OneToMany(mappedBy = "mPlace")
+	private List<TPresentationPlace> tPresentationPlaceList;
 
 	public Integer getPlaceId() {
 		return placeId;
@@ -199,7 +203,13 @@ public class MPlace {
 	public void settMeetingPlaceList(List<TMeetingPlace> tMeetingPlaceList) {
 		this.tMeetingPlaceList = tMeetingPlaceList;
 	}
-	
-	
+
+	public List<TPresentationPlace> gettPresentationPlaceList() {
+		return tPresentationPlaceList;
+	}
+
+	public void settPresentationPlaceList(List<TPresentationPlace> tPresentationPlaceList) {
+		this.tPresentationPlaceList = tPresentationPlaceList;
+	}
 	
 }
