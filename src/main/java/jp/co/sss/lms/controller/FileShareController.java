@@ -80,16 +80,26 @@ public class FileShareController {
 
 	/**
 	 * ファイルの削除、現在未完成
+	 * 変更　梶山卓　
 	 */
 	@RequestMapping("/delete")
 	@Transactional
-	public ResponseEntity<String> delete(@RequestParam (name="fileId") String[] fileId) {
+	public ResponseEntity<String> delete(@RequestParam (name="fileId") List<String> fileIdList,
+										@RequestParam(name="userId") List<Integer> userId) {
+		//fileIdListがlist形式のためString配列に変換する
+		String[] fileId = fileIdList.toArray(new String[fileIdList.size()]);
 		// セッションに登録してあるloginUserDtoを取得
-		loginUserDto = (LoginUserDto) session.getAttribute("loginUserDto");
+		//loginUserDto = (LoginUserDto) session.getAttribute("loginUserDto");
 		
+		//todo 書き足しあとでけす、おそらくsession登録がまだ未実装 かも
+		/*System.out.println("loginuserDto:"+loginUserDto+"\n**************************************\n");
+		if(this.loginUserDto == null) {
+			this.loginUserDto = new LoginUserDto();
+			this.loginUserDto.setUserId(25);
+		}
+		//*/
 		// 削除対象のファイルを削除する
-		fileShareService.delete(fileId, loginUserDto.getUserId());
-		
+		fileShareService.delete(fileId,userId.get(0));
 		// ファイル一覧画面を再表示する
 		return new ResponseEntity<>("", HttpStatus.OK);
 	}

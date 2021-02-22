@@ -175,7 +175,10 @@ public class FileShareService {
 							tFssFile.getMFssUserSharedFssUser().getTUserFssUserList().get(0).getMUser().getUserName());
 				}
 			}
-			fileList.add(dto);
+			//◆削除フラグ　変更：梶山卓
+			if(tFssFile.getDeleteFlg() == 0) {
+			fileList.add(dto);}
+
 
 			bfrTFssFile = tFssFile;
 		}
