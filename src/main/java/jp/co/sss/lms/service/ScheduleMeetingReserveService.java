@@ -2,17 +2,19 @@ package jp.co.sss.lms.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import jp.co.sss.lms.dto.MeetingScheduleDto;
 import jp.co.sss.lms.entity.TMeetingPlace;
 import jp.co.sss.lms.repository.TScheduleMeetingReserveRepository;
 
 /**
  * クラス名 ScheduleMeetingReserveService
- * 
+ *
  * クラス概要 面談スケジュール予約サービス
- * 
+ *
  * @author 江坂 亮典
  */
 
@@ -24,7 +26,7 @@ public class ScheduleMeetingReserveService {
 
 	/**
 	 * 関数概要 会場情報の取得
-	 * 
+	 *
 	 * @param placeId 会場ID
 	 * @return meetingScheduleDtoList 面談・会場情報DTOリスト
 	 */
@@ -48,11 +50,11 @@ public class ScheduleMeetingReserveService {
 			meetingScheduleDto.setPurpose(tMeetingPlace.getmMeetingSchedule().getPurpose());
 			meetingScheduleDto.setPlaceName(tMeetingPlace.getmPlace().getPlaceName());
 			meetingScheduleDto.setMeetingPlaceId(tMeetingPlace.getmPlace().getPlaceId());
-			
+
 			meetingScheduleDto.setEditLimit(tMeetingPlace.getmMeetingSchedule().getEditLimit());
-			
+
 			meetingScheduleDtoList.add(meetingScheduleDto);
 		}
-		return meetingScheduleDtoList;	
+		return meetingScheduleDtoList;
 	}
 }

@@ -22,7 +22,7 @@ public interface TScheduleMeetingReserveRepository extends JpaRepository<TMeetin
 			+ "LEFT JOIN t1.mPlace t3 "
 			+ "WHERE t3.placeId = :placeId "
 			+ "ORDER BY t2.meetingOpenDate ")
-	public List<TMeetingPlace> getByPlaceId(@Param("placeId") Integer placeId);
+	public List<TMeetingPlace> findByPlaceId(@Param("placeId") Integer placeId);
 
 
 
