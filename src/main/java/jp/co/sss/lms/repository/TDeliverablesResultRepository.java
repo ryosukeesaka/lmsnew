@@ -24,4 +24,16 @@ public interface TDeliverablesResultRepository extends JpaRepository<TDeliverabl
 			+ " And T3.lmsUserId = :lmsUserId")
 	public TDeliverablesResult findByDeliverablesSectionIdAndLmsUserId(@Param("deliverablesSectionId")Integer deliverablesSectionId,@Param("lmsUserId")Integer lmsUserId);
 	
+	
+	@Query("SELECT t1 FROM TDeliverablesResult t1 "
+			+ " INNER JOIN t1.tDeliverablesSection t2 "
+			+ " INNER JOIN t1.mLmsUser t3"
+			+ " INNER JOIN t2.mDeliverables t4 "
+			+ " INNER JOIN t2.mSection t5 "
+			+ " WHERE t3.lmsUserId = :lmsUserId "
+			+ " AND t1.deleteFlg = 0 "
+			+ " ORDER BY t5.date "
+			)
+	
+	List<TDeliverablesResult> findByDeliverablesLmsUserId(@Param("lmsUserId") Integer lmsUserId);
 }

@@ -130,10 +130,14 @@ public class MDailyReport {
     
     @OneToMany(mappedBy = "mDailyReport")
     public List<TCourseDailyReport> tCourseDailyReportList;
+
+    @OneToMany(mappedBy = "mDailyReport")
+    private List<TDailyReportSubmit> tDailyReportSubmitList;
     
     @OneToOne
     @JoinColumn(name="daily_report_id", referencedColumnName = "daily_report_id")
     public TDailyReportSubmit tDailyReportSubmit;
+
 
 	public Integer getDailyReportId() {
 		return dailyReportId;
@@ -351,12 +355,12 @@ public class MDailyReport {
 		this.mDailyReportDetailList = mDailyReportDetailList;
 	}
 
-	public TDailyReportSubmit getTDailyReportSubmit() {
-		return tDailyReportSubmit;
+	public List<TDailyReportSubmit> getTDailyReportSubmitList() {
+		return tDailyReportSubmitList;
 	}
 
-	public void setTDailyReportSubmit(TDailyReportSubmit tDailyReportSubmit) {
-		this.tDailyReportSubmit = tDailyReportSubmit;
+	public void setTDailyReportSubmitList(List<TDailyReportSubmit> tDailyReportSubmitList) {
+		this.tDailyReportSubmitList = tDailyReportSubmitList;
 	}
 	
 }

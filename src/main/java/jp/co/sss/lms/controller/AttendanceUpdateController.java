@@ -61,7 +61,7 @@ public class AttendanceUpdateController {
 	}
 
 	/**
-	 * 勤怠直接編集画面の更新(バックエンドの処理は完成、フロントエンドとの疎通は未実施)
+	 * 勤怠直接編集画面の更新
 	 * 
 	 * @param attendanceForm 勤怠情報のフォーム
 	 * @return 勤怠情報直接編集画面の初期表示メソッドへ遷移
@@ -73,7 +73,7 @@ public class AttendanceUpdateController {
 
 		// 不正な入力が場合に更新メソッド
 		message = studentAttendanceService.update(attendanceForm);
-		
+
 		// 更新成功メッセージを登録して返す
 		return new ResponseEntity<>(message, HttpStatus.OK);
 

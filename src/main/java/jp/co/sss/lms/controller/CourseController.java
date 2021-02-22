@@ -1,5 +1,7 @@
 package jp.co.sss.lms.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jp.co.sss.lms.dto.CourseServiceCourseDto;
+import jp.co.sss.lms.dto.CourseServiceCourseListDto;
 import jp.co.sss.lms.service.CourseService;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
@@ -44,12 +47,12 @@ public class CourseController {
 
 		CourseServiceCourseDto courseServiceCourseDto = new CourseServiceCourseDto();
 		HttpStatus httpStatus = HttpStatus.OK;
-		
+
 		//受講生権限の場合
 		if(Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 			// 入力パラメータのチェックを行い、問題があった場合はmessageにエラーメッセージを代入する
 			String message = courseService.getCourseInfo(courseId);
-			
+
 			if (!message.isEmpty()) {
 				StringBuffer sb = new StringBuffer(message);
 				loggingUtil.appendLog(sb);
@@ -57,17 +60,17 @@ public class CourseController {
 				//Reponseステータスの変更
 				httpStatus = HttpStatus.NOT_FOUND;
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
-	
+
 			} else {
 				// コース詳細関連情報の取得
 				courseServiceCourseDto = courseService.getCourseDetail(Integer.parseInt(courseId));
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
 			}
-		//受講生権限以外の場合
+			//受講生権限以外の場合
 		}else {
 			// 入力パラメータのチェックを行い、問題があった場合はmessageにエラーメッセージを代入する
 			String message = courseService.getCourseInfo(courseId);
-						
+
 			if (!message.isEmpty()) {
 				StringBuffer sb = new StringBuffer(message);
 				loggingUtil.appendLog(sb);
@@ -75,12 +78,27 @@ public class CourseController {
 				//Reponseステータスの変更
 				httpStatus = HttpStatus.NOT_FOUND;
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
-				
+
 			} else {
 				// コース詳細関連情報の取得
 				courseServiceCourseDto = courseService.getCourseDetail(Integer.parseInt(courseId));
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
 			}			
 		}
+	}
+
+	/**
+	 * 
+	 * @param userId ユーザID
+	 * @return courseServiceCourseListDto コース情報リスト
+	 */
+	@RequestMapping("/list")
+	public ResponseEntity<List<CourseServiceCourseListDto>> list(@RequestParam("userId") Integer userId) {
+		
+		//コース情報リストを取得する
+		List<CourseServiceCourseListDto> courseServiceCourseListDto = courseService.getCourseList(userId);
+		
+		//用意したデータをもとにコース一覧を表示する				
+		return new ResponseEntity<>(courseServiceCourseListDto, HttpStatus.OK);
 	}
 }

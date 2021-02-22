@@ -13,7 +13,6 @@ import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
-import jp.co.sss.lms.entity.TTemporaryPassStorage;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
@@ -104,6 +103,22 @@ public class UserService {
 	public MUser getMUser(String mailaddress) {
 		return mUserRepository.findByMailAddress(mailaddress);
 	}
+	
+	
+	
+	/**
+	 * メールアドレスからユーザー情報を取得
+	 *   ついかーーーーーーーーーーーーーーーーーーーーーーーーーー
+	 * @param mailaddress
+	 * @return MUser
+	 */
+	public MUser getMUser(Integer userid) {
+		return mUserRepository.findByUserId(userid);
+	}
+	
+	
+	
+	
 
 	public MUser setMUser(MUser form) {
 		MUser muser = mUserRepository.getOne(form.getUserId());
@@ -161,16 +176,7 @@ public class UserService {
 		// ログインLMSユーザーDTOを作成
 		LoginUserDto loginUserDto = new LoginUserDto();
 		BeanUtils.copyProperties(mLmsUser, loginUserDto);
-		
-		// 単体テスト用の確認コード（前）（単体テスト完了後は削除）
-		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
-		System.out.println("ユーザーID：" + loginUserDto.getUserId());
-		System.out.println("企業ID: " + loginUserDto.getCompanyId());
-		System.out.println("会場ID: " + loginUserDto.getPlaceId());
-		System.out.println("コースID: " + loginUserDto.getCourseId());
-		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
-		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
-		
+				
 		// ロールが受講生(0001)の場合、情報をセット
 		if (mLmsUser.getRole().equals("0001")) {
 		loginUserDto.setCompanyId((mLmsUser.getTUserCompany().getCompanyId()));
@@ -185,17 +191,7 @@ public class UserService {
 			// 企業マスタ情報からファイル共有フラグを取得
 			loginUserDto.setFileShareFlg(mLmsUser.getTUserCompany().getMCompany().getFileShareFlg());
 		}
-		
-		// 単体テスト用の確認コード（後）（単体テスト完了後は削除）
-		System.out.println("@@@@@@@@@@　ユーザーマスタ変更確認テスト　@@@@@@@@@");
-		System.out.println("ユーザーID：" + loginUserDto.getUserId());
-		System.out.println("企業ID: " + loginUserDto.getCompanyId());
-		System.out.println("会場ID: " + loginUserDto.getPlaceId());
-		System.out.println("コースID: " + loginUserDto.getCourseId());
-		System.out.println("サポート要否: " + loginUserDto.getSupportAvailable());
-		System.out.println("ファイル共有フラグ: " + loginUserDto.getFileShareFlg());
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		
+				
 		return loginUserDto; 
 	}
 }
