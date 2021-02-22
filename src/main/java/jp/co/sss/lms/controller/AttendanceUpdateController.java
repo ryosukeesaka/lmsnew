@@ -73,7 +73,7 @@ public class AttendanceUpdateController {
 
 		// 不正な入力が場合に更新メソッド
 		message = studentAttendanceService.update(attendanceForm);
-		
+
 		// 更新成功メッセージを登録して返す
 		return new ResponseEntity<>(message, HttpStatus.OK);
 
