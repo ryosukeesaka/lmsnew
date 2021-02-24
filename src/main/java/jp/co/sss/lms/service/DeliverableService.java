@@ -99,22 +99,32 @@ public class DeliverableService {
 	 * @return deliverablesSectionDtoList 成果物セクションDtoリスト
 	 */
 	public List<SectionServiceDeliverablesSectionDto> getDeliverablesSectionDtoList(Integer sectionId) {
+		
 		// セクションIdを使って値の取得
 		List<TDeliverablesSection> tDeliverablesSectionList = tDeliverablesSectionRepository.findBySectionId(sectionId);
 		
-		// SectionServiceDeliverablesSectionDtoの入れ物を用意
+		// SectionServiceDeliverablesSectionDtoリストの入れ物を用意
 		List<SectionServiceDeliverablesSectionDto> deliverablesSectionDtoList = new ArrayList<>();
 
+		// deliverablesSectionDtoリストへ詰め替え
 		for (TDeliverablesSection tDeliverablesSection : tDeliverablesSectionList) {
-			// DeliverablesSectionDtoの入れ物を用意
+			
+			// SectionServiceDeliverablesSectionDtoの入れ物を用意
 			SectionServiceDeliverablesSectionDto deliverablesSectionDto = new SectionServiceDeliverablesSectionDto();
+			
+			// deliverablesSectionDtoへ詰め替え
 			BeanUtils.copyProperties(tDeliverablesSection, deliverablesSectionDto);
 			SectionServiceDeliverablesDto deliverablesDto = new SectionServiceDeliverablesDto();
 			deliverablesDto.setDeliverablesId(tDeliverablesSection.getMDeliverables().getDeliverablesId());	
 			deliverablesDto.setDeliverablesName(tDeliverablesSection.getMDeliverables().getDeliverablesName());
 			deliverablesSectionDto.setDeliverablesDto(deliverablesDto);
+			
 			if (tDeliverablesSection.getTDeliverablesResultList() != null) {
+				
+				// DeliverablesResultDtoリストの入れ物を用意
 				List<DeliverablesResultDto> deliverablesResultDtoList = new ArrayList<>();
+				
+				// deliverablesResultDtoListへ詰め替え
 				for (TDeliverablesResult tDeliverablesResult : tDeliverablesSection.getTDeliverablesResultList()) {
 					DeliverablesResultDto deliverablesResultDto = new DeliverablesResultDto();
 					BeanUtils.copyProperties(tDeliverablesResult, deliverablesResultDto);

@@ -75,7 +75,6 @@ public class SectionController {
 				}
 			//講師の場合
 			else{
-				//sectionServiceSectionDto.setXXX(); //XXXは新しく作ったDTOの名前が入る
 				sectionServiceSectionDto.setDeliverablesDtoList(deliverableService.getDeliverablesSectionDtoList(Integer.parseInt(sectionForm.getSectionId())));
 			}
 		}
