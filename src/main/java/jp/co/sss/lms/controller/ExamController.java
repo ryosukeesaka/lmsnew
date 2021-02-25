@@ -53,16 +53,19 @@ private final Logger logger = LoggerFactory.getLogger(getClass());
 	 * 試験結果詳細画面 初期表示
 	 * 
 	 * @param model /exam/resultDetail 試験結果詳細画面に遷移
-	 * @return /error エラー画面へ遷移
+	 * @return 不正アクセス画面へ遷移
 	 */
 	@RequestMapping(path = "/exam/resultDetail", method = RequestMethod.POST)
 	public ResponseEntity<Map<String ,Object>> index(@RequestBody ExamPlayForm examPlayForm) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
+		// エラーメッセージを格納
+		String message = messageUtil.getMessage(Constants.VALID_KEY_AUTHORIZATION);				
+		
 		// 試験結果IDが数値でない場合、ログを出力しエラー画面へ遷移
 		String srtExamResultId = String.valueOf(examPlayForm.getExamResultId());
 		if (!isNumber(srtExamResultId)) {
-			StringBuffer sb = new StringBuffer("実行する権限がありません。");
+			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
@@ -76,7 +79,7 @@ private final Logger logger = LoggerFactory.getLogger(getClass());
 			
 			// 上で取得したLMSユーザIDとログイン情報．LMSユーザIDが一致しない場合
 			if (examResultDetailDto.get(0).getLmsUserId() != examPlayForm.getLmsUserId()){
-				StringBuffer sb = new StringBuffer("実行する権限がありません。");
+				StringBuffer sb = new StringBuffer(message);
 				loggingUtil.appendLog(sb);
 				logger.info(sb.toString());
 				return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
