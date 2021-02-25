@@ -1,5 +1,10 @@
 package jp.co.sss.lms.form;
 
+/**
+ * 成果報告会一覧フォーム
+ * 
+ * @author Yuna Kato
+ */
 public class PresentationForm {
 
 	/** 企業ID */

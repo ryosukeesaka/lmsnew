@@ -12,6 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+/**
+ * 成果報告会対象企業テーブルエンティティ
+ * 
+ * @author Takayuki Nomoto
+ */
 @Entity
 @Table(name = "t_presentation_company")
 public class TPresentationCompany {

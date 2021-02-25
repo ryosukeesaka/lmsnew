@@ -21,6 +21,11 @@ import jp.co.sss.lms.repository.TPresentationPlaceRepository;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.DateUtil;
 
+/**
+ * 成果報告会対象会場サービス
+ * 
+ * @author Takayuki Nomoto
+ */
 @Service
 public class SchedulePresentationService {
 
@@ -31,59 +36,10 @@ public class SchedulePresentationService {
 	TPresentationPlaceRepository tPresentationPlaceRepository;
 
 	/**
-	 * 成果報告会情報のDTO作成
+	 * 成果報告会対象会場情報取得
 	 * 
-	 * @param tPresentationPlace 成果報告会対象会場ENTITY
-	 * @return PresentationPlaceDto 成果報告会情報DTO
-	 */
-	private PresentationPlaceDto createPresentationPlaceDto(TPresentationPlace tPresentationPlace) {
-		PresentationPlaceDto presentationPlaceDto = new PresentationPlaceDto();
-		BeanUtils.copyProperties(tPresentationPlace, presentationPlaceDto);
-
-		// ◆会場
-		if (tPresentationPlace.getMPlace() != null) {
-			PlaceDto placeDto = new PlaceDto();
-			BeanUtils.copyProperties(tPresentationPlace.getMPlace(), placeDto);
-			presentationPlaceDto.setPlaceDto(placeDto);
-		}
-
-		// ◆成果報告会スケジュール
-		if (tPresentationPlace.getMPresentationSchedule() != null) {
-			MPresentationSchedule mPresentationSchedule = tPresentationPlace.getMPresentationSchedule();
-			PresentationScheduleDto presentationScheduleDto = new PresentationScheduleDto();
-			BeanUtils.copyProperties(mPresentationSchedule, presentationScheduleDto);
-
-			Timestamp editLimit = new Timestamp(mPresentationSchedule.getEditLimit().getTime());
-			Date now = dateUtil.getDateWithoutTime(new Date());
-			presentationScheduleDto.setEditLimitPast((now.getTime() - editLimit.getTime()) > 0);
-			presentationPlaceDto.setPresentationScheduleDto(presentationScheduleDto);
-
-			// ◆成果報告会スケジュール詳細 ★未編集
-//			if (mPresentationSchedule.mPresentationScheduleDetailList != null && !mPresentationSchedule.mPresentationScheduleDetailList.isEmpty()) {
-//				presentationPlaceDto.presentationScheduleDto.presentationScheduleDetailDtoList = new ArrayList<>();
-//				for (MPresentationScheduleDetail mPresentationScheduleDetail : mPresentationSchedule.mPresentationScheduleDetailList) {
-//					PresentationScheduleDetailDto presentationScheduleDetailDto = Beans.createAndCopy(PresentationScheduleDetailDto.class, mPresentationScheduleDetail).execute();
-//					presentationPlaceDto.presentationScheduleDto.presentationScheduleDetailDtoList.add(presentationScheduleDetailDto);
-//				}
-//			}
-
-//			// ◆受講中の受講生 ★未編集
-//			List<MLmsUser> mLmsUserList = mLmsUserService.findStudentByPlaceId(tPresentationPlace.placeId, mPresentationSchedule.presentationDate);
-//			presentationPlaceDto.studentLmsUserDtoList = new ArrayList<>();
-//			for (MLmsUser mLmsUser : mLmsUserList) {
-//				LmsUserDto lmsUserDto = Beans.createAndCopy(LmsUserDto.class, mLmsUser).execute();
-//				Beans.copy(mLmsUser.mUser, mLmsUser);
-//				presentationPlaceDto.studentLmsUserDtoList.add(lmsUserDto);
-//			}
-		}
-		return presentationPlaceDto;
-	}
-
-	/**
-	 * 成果報告会情報取得
-	 * 
-	 * @param presentationForm 成果報告会一覧FORM
-	 * @return List<PresentationPlaceDto> 成果報告会情報DTOリスト
+	 * @param presentationForm 成果報告会一覧フォーム
+	 * @return List<PresentationPlaceDto> 成果報告会対象会場DTOリスト
 	 */
 	public List<PresentationPlaceDto> getPresentationPlaceDtoList(PresentationForm presentationForm) {
 
@@ -129,5 +85,53 @@ public class SchedulePresentationService {
 		return presentationPlaceDtoList;
 	}
 
+	/**
+	 * 成果報告会対象会場DTO作成
+	 * 
+	 * @param tPresentationPlace 成果報告会対象会場エンティティ
+	 * @return PresentationPlaceDto 成果報告会対象会場DTO
+	 */
+	private PresentationPlaceDto createPresentationPlaceDto(TPresentationPlace tPresentationPlace) {
+		PresentationPlaceDto presentationPlaceDto = new PresentationPlaceDto();
+		BeanUtils.copyProperties(tPresentationPlace, presentationPlaceDto);
+
+		// ◆会場
+		if (tPresentationPlace.getMPlace() != null) {
+			PlaceDto placeDto = new PlaceDto();
+			BeanUtils.copyProperties(tPresentationPlace.getMPlace(), placeDto);
+			presentationPlaceDto.setPlaceDto(placeDto);
+		}
+
+		// ◆成果報告会スケジュール
+		if (tPresentationPlace.getMPresentationSchedule() != null) {
+			MPresentationSchedule mPresentationSchedule = tPresentationPlace.getMPresentationSchedule();
+			PresentationScheduleDto presentationScheduleDto = new PresentationScheduleDto();
+			BeanUtils.copyProperties(mPresentationSchedule, presentationScheduleDto);
+
+			Timestamp editLimit = new Timestamp(mPresentationSchedule.getEditLimit().getTime());
+			Date now = dateUtil.getDateWithoutTime(new Date());
+			presentationScheduleDto.setEditLimitPast((now.getTime() - editLimit.getTime()) > 0);
+			presentationPlaceDto.setPresentationScheduleDto(presentationScheduleDto);
+
+			// ◆成果報告会スケジュール詳細 ★未編集
+//			if (mPresentationSchedule.mPresentationScheduleDetailList != null && !mPresentationSchedule.mPresentationScheduleDetailList.isEmpty()) {
+//				presentationPlaceDto.presentationScheduleDto.presentationScheduleDetailDtoList = new ArrayList<>();
+//				for (MPresentationScheduleDetail mPresentationScheduleDetail : mPresentationSchedule.mPresentationScheduleDetailList) {
+//					PresentationScheduleDetailDto presentationScheduleDetailDto = Beans.createAndCopy(PresentationScheduleDetailDto.class, mPresentationScheduleDetail).execute();
+//					presentationPlaceDto.presentationScheduleDto.presentationScheduleDetailDtoList.add(presentationScheduleDetailDto);
+//				}
+//			}
+
+//			// ◆受講中の受講生 ★未編集
+//			List<MLmsUser> mLmsUserList = mLmsUserService.findStudentByPlaceId(tPresentationPlace.placeId, mPresentationSchedule.presentationDate);
+//			presentationPlaceDto.studentLmsUserDtoList = new ArrayList<>();
+//			for (MLmsUser mLmsUser : mLmsUserList) {
+//				LmsUserDto lmsUserDto = Beans.createAndCopy(LmsUserDto.class, mLmsUser).execute();
+//				Beans.copy(mLmsUser.mUser, mLmsUser);
+//				presentationPlaceDto.studentLmsUserDtoList.add(lmsUserDto);
+//			}
+		}
+		return presentationPlaceDto;
+	}
 
 }

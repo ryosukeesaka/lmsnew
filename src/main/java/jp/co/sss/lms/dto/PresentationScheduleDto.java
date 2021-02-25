@@ -2,8 +2,12 @@ package jp.co.sss.lms.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-//import java.util.List;
 
+/**
+ * 成果報告会スケジュールDTO
+ * 
+ * @author Takayuki Nomoto
+ */
 public class PresentationScheduleDto implements Serializable {
 	
 	/** */
@@ -23,12 +27,6 @@ public class PresentationScheduleDto implements Serializable {
 
 	/** 予約編集期限切れフラグ */
 	private boolean editLimitPast;
-
-//	/** 成果報告会スケジュール詳細DTO */
-//	private List<PresentationScheduleDetailDto> presentationScheduleDetailDtoList;
-//
-//	/** 成果報告会対象会場DTO */
-//	private List<PresentationPlaceDto> presentationPlaceDtoList;
 
 	public Integer getPresentationScheduleId() {
 		return presentationScheduleId;
@@ -69,22 +67,5 @@ public class PresentationScheduleDto implements Serializable {
 	public void setEditLimitPast(boolean editLimitPast) {
 		this.editLimitPast = editLimitPast;
 	}
-
-//	public List<PresentationScheduleDetailDto> getPresentationScheduleDetailDtoList() {
-//		return presentationScheduleDetailDtoList;
-//	}
-//
-//	public void setPresentationScheduleDetailDtoList(
-//			List<PresentationScheduleDetailDto> presentationScheduleDetailDtoList) {
-//		this.presentationScheduleDetailDtoList = presentationScheduleDetailDtoList;
-//	}
-//
-//	public List<PresentationPlaceDto> getPresentationPlaceDtoList() {
-//		return presentationPlaceDtoList;
-//	}
-//
-//	public void setPresentationPlaceDtoList(List<PresentationPlaceDto> presentationPlaceDtoList) {
-//		this.presentationPlaceDtoList = presentationPlaceDtoList;
-//	}
 
 }

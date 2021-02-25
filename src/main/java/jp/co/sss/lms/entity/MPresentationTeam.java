@@ -17,7 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * 成果報告会チームマスタテーブルエンティティクラス
+ * 成果報告会チームマスタテーブルエンティティ
  * 
  * @author Yuna Kato
  */

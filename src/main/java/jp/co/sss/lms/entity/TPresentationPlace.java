@@ -14,6 +14,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+/**
+ * 成果報告会対象会場テーブルエンティティ
+ * 
+ * @author Takayuki Nomoto
+ */
 @Entity
 @Table(name = "t_presentation_place")
 public class TPresentationPlace {

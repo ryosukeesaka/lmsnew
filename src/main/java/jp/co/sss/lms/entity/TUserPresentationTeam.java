@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * ユーザー・成果報告会チーム紐付けテーブルエンティティクラス
+ * ユーザー・成果報告会チーム紐付けテーブルエンティティ
  * 
  * @author Yuna Kato
  */
@@ -64,10 +64,6 @@ public class TUserPresentationTeam {
 	@ManyToOne
 	@JoinColumn(name = "presentation_team_id", referencedColumnName = "presentation_team_id")
 	private MPresentationTeam mPresentationTeam;
-
-//	@ManyToOne
-//	@JoinColumn(name = "lms_user_id", referencedColumnName = "lms_user_id")
-//	private MLmsUser  mLmsUser;
 
 	public Integer getUserPresentationTeamId() {
 		return userPresentationTeamId;
@@ -133,11 +129,4 @@ public class TUserPresentationTeam {
 		this.mPresentationTeam = mPresentationTeam;
 	}
 
-//	public MLmsUser getMLmsUser() {
-//		return mLmsUser;
-//	}
-//
-//	public void setMLmsUser(MLmsUser mLmsUser) {
-//		this.mLmsUser = mLmsUser;
-//	}
 }
