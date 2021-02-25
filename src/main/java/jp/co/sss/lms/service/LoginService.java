@@ -52,7 +52,7 @@ public class LoginService {
 			
 			LoginUserDto loginUserDto = setLoginUserDto(mLmsUser);
 			
-			// 講師且つ非表示フラグが立っていた場合
+			// 講師権限かつ会場が非表示である場合
 			if(loginUserDto.getRole().equals(Constants.CODE_VAL_ROLL_TEACHER)&&
 					loginUserDto.getHiddenFlg().equals(Constants.DB_HIDDEN_FLG_TRUE)) {
 				
@@ -90,11 +90,12 @@ public class LoginService {
 
 			if (mLmsUser.getTUserPlace() != null) {
 				loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
+				loginUserDto.setPlaceName(mLmsUser.getTUserPlace().getMPlace().getPlaceName());
 			}
 			//担当会場が非表示になっていたらログイン不可とする
 			if (mLmsUser.getTUserPlace().getMPlace().getHiddenFlg().equals(Constants.DB_HIDDEN_FLG_TRUE)) {
 				loginUserDto.setLmsUserId(null);
-				loginUserDto.setHiddenFlg(mLmsUser.getTUserPlace().getMPlace().getHiddenFlg());
+				loginUserDto.setHiddenFlg(Constants.DB_HIDDEN_FLG_TRUE);
 			}else {
 				loginUserDto.setHiddenFlg(Constants.DB_HIDDEN_FLG_FALSE);
 			}
