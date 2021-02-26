@@ -28,6 +28,10 @@ public class TDailyReportSubmit {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
     @TableGenerator(
         name = "generator",
+        table = "id_generator",
+        pkColumnName = "pk",
+        valueColumnName = "value",
+        pkColumnValue = "T_DAILY_REPORT_SUBMIT_DAILY_REPORT_SUBMIT_ID",
         allocationSize = 1)
     private Integer dailyReportSubmitId;
 
