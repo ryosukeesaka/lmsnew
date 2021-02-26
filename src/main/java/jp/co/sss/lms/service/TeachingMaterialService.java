@@ -11,6 +11,13 @@ import jp.co.sss.lms.entity.TCourseUser;
 import jp.co.sss.lms.repository.MCourseRepository;
 import jp.co.sss.lms.repository.TCourseTeachingMaterialRepository;
 import jp.co.sss.lms.repository.TCourseUserRepository;
+import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.util.IOUtils;
 
 /**
  * 教材ダウンロードサービス
@@ -20,7 +27,7 @@ import jp.co.sss.lms.repository.TCourseUserRepository;
 
 @Service
 public class TeachingMaterialService {
-
+		
 	@Autowired
 	TCourseTeachingMaterialRepository tCourseTeachingMaterialRepository;
 	@Autowired
@@ -29,6 +36,12 @@ public class TeachingMaterialService {
 	TCourseUserRepository tCourseUserRepository;
 	@Autowired
 	LoginUserDto loginUserDto;
+	
+	@Autowired
+	AmazonS3 amazonS3;
+	
+	@Value("${app.awsServices.bucketName}")
+	private String bucketName;
 
 	/**
 	 * コースIDの改竄チェック
@@ -65,8 +78,22 @@ public class TeachingMaterialService {
 	public List<TCourseTeachingMaterial> getCourseTeachingMaterialDownloadUrlDtoList(Integer courseId) {
 		return tCourseTeachingMaterialRepository.findByCourseId(courseId);
 	}
+	/**
+	 * リクエストされた教材ファイル名を取得、ダウンロード
+	 */
+	public byte[]  downloadFile(String fileName) {
+		S3Object s3Object = amazonS3.getObject(bucketName,fileName);
+		S3ObjectInputStream inputStream = s3Object.getObjectContent();
+		try {
+			byte[] content = IOUtils.toByteArray(inputStream);
+			return content;
+		}catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-//	    /**教材：ファイルの存在チェックの結果だけを取得(納期に間に合わないためファイルの存在チェックは未実装)*/
+//	    /**教材：ファイルの存在チェックの結果を取得(納期に間に合わないためファイルの存在チェックは未実装)*/
 //	    public boolean isFileExist() throws IOException {
 //	    	    
 //	    	boolean result = true;
@@ -74,6 +101,6 @@ public class TeachingMaterialService {
 //	    	
 //	    }
 
-	/** 現段階（2020年12月25日）でAWSが動いていないため、AWS関連の実装が不可（保留） */
+	/** 現段階（2021年02月26日） */
 
 }

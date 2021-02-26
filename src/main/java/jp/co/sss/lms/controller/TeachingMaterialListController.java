@@ -1,5 +1,5 @@
 package jp.co.sss.lms.controller;
-
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import jp.co.sss.lms.entity.MCourse;
 import jp.co.sss.lms.entity.TCourseTeachingMaterial;
 import jp.co.sss.lms.service.TeachingMaterialService;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.MessageUtil;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * 教材ダウンロードコントローラ
@@ -24,14 +28,18 @@ import jp.co.sss.lms.util.MessageUtil;
  */
 
 @RestController
+@RequestMapping("/download")
 public class TeachingMaterialListController {
 
 	@Autowired
 	TeachingMaterialService teachingMaterialService;
 	@Autowired
 	private MessageUtil messageUtil;
+	
+	@Autowired
+	private TeachingMaterialService downloadService;
 
-	@RequestMapping("/download/teachingMaterialList")
+	@RequestMapping("/teachingMaterialList")
 	public ResponseEntity<Model> showTeachingMaterialList(@RequestParam("courseId") Integer courseId,
 			@RequestParam("lmsUserId") Integer lmsUserId, Model model) {
 
@@ -62,5 +70,24 @@ public class TeachingMaterialListController {
 		// teachingMaterialList.htmlに遷移
 		return new ResponseEntity<>(model, HttpStatus.OK);
 	}
-
+	
+		@GetMapping("/teachingMaterialList/{fileName}")
+		public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName, HttpServletResponse response) throws IOException {	
+		//リクエストされたファイル名を取得、ダウンロードサービスで処理
+		byte [] data = downloadService.downloadFile(fileName);
+		ByteArrayResource resource = new ByteArrayResource (data);
+		//ダウンロードしたファイル名をUTF-8に設定
+		return ResponseEntity
+				.ok()
+				.contentLength(data.length)
+				.header("Content-type", "application/octet-stream")
+				.header("Content-disposition", "attachment; filename*=UTF-8\"" + fileName + "\"")
+				.body(resource);
+		
+	}
+	/**
+	 * 2021年02月26日でAWSS3 ダウンロード可、フォルダー以下のファイルはダウンロード不可
+	 * 納期に間に合わないため実装保留
+	 * @author kyaw soelin
+	 * */
 }
