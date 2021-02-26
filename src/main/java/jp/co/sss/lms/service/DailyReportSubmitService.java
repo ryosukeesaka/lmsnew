@@ -24,10 +24,6 @@ public class DailyReportSubmitService {
 	@Autowired
 	TDailyReportFbRepository fbRepository;
 	
-	public TDailyReportSubmit getTDailyReportSubmit(Integer dailyReportId, Integer lmsUserId, Timestamp date, Integer accountId) {
-		return repository.findByLmsUserIdAndDate(lmsUserId, date, dailyReportId);
-	}
-	
 	public List<DailyReportDto> getDailyReportDto(Integer lmsUserId) {
 
 		
@@ -48,6 +44,7 @@ public class DailyReportSubmitService {
 			BeanUtils.copyProperties(tDailyReportSubmit,dailyReportDtoSingle);
 			BeanUtils.copyProperties(tDailyReportSubmit.getMDailyReport(),dailyReportDtoSingle);
 			BeanUtils.copyProperties(tDailyReportSubmit.getMLmsUser(),dailyReportDtoSingle);
+			BeanUtils.copyProperties(tDailyReportSubmit.getTDailyReportSubmitDetailList(),dailyReportDtoSingle);
 	
 			for (TDailyReportFb tDailyReportFb : tDailyReportFbList) {
 				count++;

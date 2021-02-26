@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import jp.co.sss.lms.entity.TDailyReportSubmit;
+import jp.co.sss.lms.util.LoggingUtil;
 
 @Repository
 public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReportSubmit, Integer> {
@@ -25,6 +26,7 @@ public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReport
 	@Query("SELECT tdrs FROM  TDailyReportSubmit tdrs " + 
 			" LEFT OUTER JOIN tdrs.mLmsUser mlu " + 
 			" LEFT OUTER JOIN tdrs.mDailyReport mdr " +
+//			" LEFT OUTER JOIN tdrs.tDailyReportSubmitDetail tdrsd " + // TODO:2021/02/26 久岡 ユーザー詳細のDLボタン実装途中
 			" WHERE mlu.lmsUserId = :loginLmsUserId "+
 			" AND  tdrs.deleteFlg = 0 ")
 	List<TDailyReportSubmit> findByLmsUserId(@Param("loginLmsUserId")Integer lmsUserId);
@@ -103,5 +105,21 @@ public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReport
 //			@Param("date") Date Date,
 			@Param("account_id") Integer accountId,
 			@Param("deleteFlg")short deleteFlg);
+
+	// TODO:2021/02/26 久岡 ユーザー詳細のDLボタン実装途中
+//	@Query("SELECT s FROM TDailyReportSubmit s "
+//			+ "LEFT OUTER JOIN s.tDailyReportSubmitDetailList sd "
+//			+ "LEFT OUTER JOIN s.tIintelligibilityList i "
+//			+ "LEFT OUTER JOIN s.mLmsUser lu"
+//			+ "LEFT OUTER JOIN lu.mUser u "
+//			+ "LEFT OUTER JOIN s.tDailyReportFb fb "
+//			+ "LEFT OUTER JOIN fb.mLmsUser flu "
+//			+ "LEFT OUTER JOIN flu.mUser fu "
+//			+ "WHERE s.dailyReportSubmitId = :dailyReportSubmitId "
+////			+ "AND s.accountId, LoginUserUtil.LoginAccountId "
+//			+ "SND s.deleteFlg = 0 "
+//			+ "orderBy sd.fieldNum, i.fieldNum, fb..dailyReportFbId")
+//	TDailyReportSubmit findBySubmitId(@Param("dailyReportSubmitId")Integer dailyReportSubmitId);
+	
 
 }

@@ -17,5 +17,10 @@ public class TDailyReportSubmitService {
 		return tDailyReportSubmitRepository.findByLmsUserIdAndDate(loginLmsUserId,date,dailyReportId);
 				
 	}
+	
+	// TODO:2021/02/26 久岡 ユーザー詳細のDLボタン実装途中
+//	public TDailyReportSubmit findBySubmitId(Integer dailyReportSubmitId) {
+//		return tDailyReportSubmitRepository.findBySubmitId(dailyReportSubmitId);
+//	}
 
 }
