@@ -1,5 +1,7 @@
 package jp.co.sss.lms.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ import jp.co.sss.lms.dto.FileShareDto;
 import jp.co.sss.lms.dto.ShareUserDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.service.FileShareService;
+import jp.co.sss.lms.util.Constants;
+import jp.co.sss.lms.util.LoggingUtil;
+import jp.co.sss.lms.util.MessageUtil;
 
 /**
  * FileShareController
@@ -38,6 +43,14 @@ public class FileShareController {
 	@Autowired
 	LoginUserDto loginUserDto;
 
+	@Autowired
+	MessageUtil messageUtil;
+	
+	@Autowired
+	LoggingUtil loggingUtil;
+	
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	/** ダウンロード可能なファイルのリスト */
 	@Autowired
 	public List<ShareUserDto> shareUserDtoList;
@@ -45,7 +58,7 @@ public class FileShareController {
 	/**
 	 * 共有ファイルリストの表示<br>
 	 * 
-	 * @param model
+	 * @param userId
 	 * @return ファイル共有画面
 	 */
 	@RequestMapping(value = "")
@@ -59,28 +72,75 @@ public class FileShareController {
 	}
 
 	/**
-	 * ファイルのアップロード、現在未完成
+	 * ファイルのアップロード
+	 * userIdを追加（東　茉奈）
+	 * @param multipartFile
+	 * @param userId
 	 */
-	//@PostMapping(value="/upload")
-	//@ResponseBody
-	
 	@RequestMapping(value = "/upload", method = {RequestMethod.POST})
-	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile multipartFile) {
+	public ResponseEntity<String> upload(@RequestParam("file") MultipartFile multipartFile,
+											@RequestParam(name="userId") List<Integer> userId) {
 		
-		boolean isUploadSuccess = fileShareService.uploadFile(multipartFile);
+		boolean isUploadSuccess = true;
 		
+		//ファイルが空の場合
+		if(multipartFile.isEmpty() || multipartFile.getSize() == 0 ) {
+			
+			String[] msgParam = {"ファイル"};
+			
+			// エラーメッセージを格納
+			String message = messageUtil.getMessage(Constants.VALID_KEY_REQUIRED_SELECT,msgParam);
+								
+			// エラーメッセージをログに出力
+			StringBuffer sb = new StringBuffer(message);
+			loggingUtil.appendLog(sb);
+			logger.error(sb.toString());
+			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+		}
+		
+		//ファイルサイズが超過した場合
+		if(multipartFile.getSize() >= 100000) {
+			
+			String[] msgParam = {"100000"};
+			
+			// エラーメッセージを格納
+			String message = messageUtil.getMessage(Constants.VALID_KEY_MAXFILEAMOUNT_OVERLIMIT,msgParam);
+									
+			// エラーメッセージをログに出力
+			StringBuffer sb = new StringBuffer(message);
+			loggingUtil.appendLog(sb);
+			logger.error(sb.toString());
+			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+		}
+		
+		// 第二引数を追加（東　茉奈）
+		isUploadSuccess = fileShareService.uploadFile(multipartFile, userId.get(0));
+		
+		//アップロードファイルが重複した場合
 		if(!isUploadSuccess) {
-			//エラーメッセージを格納
-			//String message = "エラー";
-			return new ResponseEntity<>("", HttpStatus.NOT_FOUND);
+			
+			String[] msgParam = {multipartFile.getOriginalFilename()};
+			
+			// エラーメッセージを格納
+			String message = messageUtil.getMessage(Constants.VALID_KEY_ALREADY_FILESHARE,msgParam);
+						
+			// エラーメッセージをログに出力
+			StringBuffer sb = new StringBuffer(message);
+			loggingUtil.appendLog(sb);
+			logger.error(sb.toString());
+			return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>("", HttpStatus.OK);
-
 	}
 
 	/**
-	 * ファイルの削除、現在未完成
-	 * 変更　梶山卓　
+	 * ファイルの削除
+	 * 変更　梶山卓
+	 * @param fileIdList
+	 *   fileIdをリスト型で取得
+	 * @param userId
+	 *   userIdをリスト型で取得
+	 * @return ファイル共有画面
 	 */
 	@RequestMapping("/delete")
 	@Transactional
@@ -88,15 +148,9 @@ public class FileShareController {
 										@RequestParam(name="userId") List<Integer> userId) {
 		//fileIdListがlist形式のためString配列に変換する
 		String[] fileId = fileIdList.toArray(new String[fileIdList.size()]);
-		// セッションに登録してあるloginUserDtoを取得
+		// セッション登録未実装
 		//loginUserDto = (LoginUserDto) session.getAttribute("loginUserDto");
 		
-		//todo 書き足しあとでけす、おそらくsession登録がまだ未実装 かも
-		/*System.out.println("loginuserDto:"+loginUserDto+"\n**************************************\n");
-		if(this.loginUserDto == null) {
-			this.loginUserDto = new LoginUserDto();
-			this.loginUserDto.setUserId(25);
-		}
 		//*/
 		// 削除対象のファイルを削除する
 		fileShareService.delete(fileId,userId.get(0));

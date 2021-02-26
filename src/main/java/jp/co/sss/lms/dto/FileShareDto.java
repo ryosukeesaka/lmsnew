@@ -9,7 +9,7 @@ package jp.co.sss.lms.dto;
 public class FileShareDto {
 
 	/** ファイル共有ID */
-	private String fileId;
+	private Integer fileId;
 
 	/** ファイル名 */
 	private String fileName;
@@ -37,7 +37,7 @@ public class FileShareDto {
 	 * 
 	 * @return fileId
 	 */
-	public String getFileId() {
+	public Integer getFileId() {
 		return fileId;
 	}
 
@@ -46,7 +46,7 @@ public class FileShareDto {
 	 * 
 	 * @param fileId
 	 */
-	public void setFileId(String fileId) {
+	public void setFileId(Integer fileId) {
 		this.fileId = fileId;
 	}
 

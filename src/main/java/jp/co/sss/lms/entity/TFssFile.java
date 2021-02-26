@@ -25,51 +25,65 @@ public class TFssFile {
 	
 	/**共有ファイルID*/
 	@Id
-	@Column
-	//@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
-    //@TableGenerator(
-    //    name = "generator",
-    //    allocationSize = 1)
+	@Column(name = "fss_file_id")
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
+	@TableGenerator(
+		    name = "generator", 
+		    table = "id_generator",
+		    pkColumnName = "pk",
+		    valueColumnName = "value",
+		    pkColumnValue = "T_FSS_FILE_FSS_FILE_ID",
+		    allocationSize = 1
+		    )
 	private Integer fssFileId;
 	/**所有共有ユーザID*/
-	@Column(name = "owner_fss_user_id", insertable=false, updatable=false)
+	@Column(name = "owner_fss_user_id")
 	private Integer ownerFssUserId;
+	
 	/**共有先共有ユーザID*/
-	@Column(name = "shared_fss_user_id", insertable=false, updatable=false)
+	@Column(name = "shared_fss_user_id")
 	private Integer sharedFssUserId;
+	
 	/**ファイルパス*/
 	@Column
 	private String filePath;
+	
 	/**ファイルサイズ*/
 	@Column
 	private Integer fileSize;
+	
 	/**削除フラグ*/
 	@Column
 	private Short deleteFlg;
+	
 	/**初回作成者*/
 	@Column
 	private Integer firstCreateUser;
+	
 	/**初回作成日時*/
 	@Temporal(TemporalType.TIMESTAMP)
     private Date firstCreateDate;
+	
 	/**最終更新者*/
 	@Column
     private Integer lastModifiedUser;
+	
 	/**最終更新日時*/
 	@Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 	
 	/**共有ユーザマスタ*/
 	@ManyToOne
-	@JoinColumn(name = "owner_fss_user_id",referencedColumnName = "fssUserId")
+	@JoinColumn(name = "owner_fss_user_id",referencedColumnName = "fssUserId", insertable=false, updatable=false)
 	private MFssUser mFssUserOwnerFssUser;  
 	
 	/**共有ユーザマスタ*/
 	@ManyToOne
-	@JoinColumn(name = "shared_fss_user_id",referencedColumnName = "fssUserId")
+	@JoinColumn(name = "shared_fss_user_id",referencedColumnName = "fssUserId", insertable=false, updatable=false)
 	private MFssUser mFssUserSharedFssUser;
 	
 	/**以下、getter/setter*/
+	
 	public Integer getFssFileId() {
 		return fssFileId;
 	}

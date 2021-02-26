@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+//AWSのUtilに関してはテスト確認などできなかったため、コメントアウト
+//import jp.co.sss.lms.util.AWSS3Util;
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.FileUtil;
 import jp.co.sss.lms.entity.MFssUser;
@@ -27,7 +29,7 @@ import jp.co.sss.lms.repository.TFssShareAvailableRepository;
 import jp.co.sss.lms.repository.TFssUserGroupRepository;
 
 /**
- * ファイル一覧サービス ファイル共有画面のファイル一覧を取得するサービス ファイルアップロード、ダウンロードなど未実装
+ * ファイル一覧サービス ファイル共有画面のファイル一覧を取得するサービス 一部処理が未実装
  * 
  * @author 田中 和希
  */
@@ -63,36 +65,29 @@ public class FileShareService {
 	}
 
 	/**
-	 * ファイルのアップロードを行う 現在未完成
+	 * ファイルのアップロードを行う
 	 * 
 	 * @param uploadFile
+	 * @param fssUserId ファイル所有者のユーザーID（東　茉奈　追加）
 	 * @return boolean
 	 */
-	public boolean uploadFile(MultipartFile uploadFile){
+	public boolean uploadFile(MultipartFile uploadFile, Integer fssUserId){
 		
-		 //List<MFssUser> mFssUser = mFssUserRepository.findByUserId(loginUserDto.getLmsUserId());
-
-	     // 二重アップロード対策（共有ユーザーを行ロック）
-		 //mFssUserRepository.saveAll(mFssUserRepository.findByFssUserId(((MFssUser) mFssUser).getFssUserId()));
+		 List<MFssUser> mFssUser = mFssUserRepository.findByUserId(fssUserId);
 
 	     TFssFile tFssFile = new TFssFile();
 	     
 	     //ファイル名
-	     //tFssFile.setFilePath(((MFssUser) mFssUser).getFssUserId() + "/" + uploadFile.getOriginalFilename());
 	     tFssFile.setFilePath(uploadFile.getOriginalFilename());
 	     
 	     //サイズ
 	     tFssFile.setFileSize((int) uploadFile.getSize());
 	     
 	     //所有者
-	     //tFssFile.setOwnerFssUserId(((MFssUser) mFssUser).getFssUserId());
-	     tFssFile.setOwnerFssUserId(25);
+	     tFssFile.setOwnerFssUserId(mFssUser.get(0).getFssUserId());
 
 	     //削除フラグ
 	     tFssFile.setDeleteFlg((short) 0);
-	     
-	     //共有ファイルID
-	     tFssFile.setFssFileId(14);
 	     
 	     //現在日時取得
 	     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -108,11 +103,12 @@ public class FileShareService {
 	     if (alreadyExistsCheck != null == !alreadyExistsCheck.isEmpty()) {
 	         return false;
 	     }
+	     
 	     //DB更新
 	     tFssFileRepository.save(tFssFile);
 	     
 	     //ファイルアップロード
-	     //AWSのUtilクラスに関しては時間が足りなかったため未実装
+	     //AWSのUtilに関してはテスト確認などできなかったため、コメントアウト
 	     //AWSS3Util.upload(uploadFile, tFssFile.getFilePath());
 	     return true;
 	 }
@@ -140,7 +136,7 @@ public class FileShareService {
 			File file = new File(tFssFile.getFilePath());
 
 			// ◆ファイルID
-			dto.setFileId(Integer.toString(tFssFile.getFssFileId()));
+			dto.setFileId(tFssFile.getFssFileId());
 
 			// ◆ファイル名
 			dto.setFileName(file.getName());
@@ -186,7 +182,7 @@ public class FileShareService {
 	}
 
 	/**
-	 * フォルダの一覧を取得する
+	 * フォルダの一覧を取得する 時間が足りなかったため未実装
 	 * 
 	 * @param fssUserId
 	 * @param groupName
@@ -223,7 +219,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * 共有可能なユーザーIDを取得する
+	 * 共有可能なユーザーIDを取得する 時間が足りなかったため未実装
 	 * 
 	 * @param fssUserId
 	 * @return List<ShareUserDto>
@@ -268,7 +264,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * グループメンバーの取得
+	 * グループメンバーの取得 時間が足りなかったため未実装
 	 * 
 	 * @param fssUserId
 	 * @return List<MFssUser>
@@ -279,7 +275,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * グループメンバーの取得
+	 * グループメンバーの取得 時間が足りなかったため未実装
 	 * 
 	 * @param groupName
 	 * @param fssUserId
@@ -315,7 +311,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイルダウンロードのURLを取得 初期表示機能ではないためコメントアウト
+	 * ファイルダウンロードのURLを取得 時間が足りなかったため未実装
 	 * 
 	 * @param fileId
 	 * @param fssUserId
@@ -336,7 +332,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * 削除されているかチェック 現在未完成
+	 * 削除されているかチェック
 	 * 
 	 * @param fileIdArr
 	 * @param fssUserId
@@ -361,9 +357,12 @@ public class FileShareService {
 	 
 
 	/**
-	 * ファイルを削除する　現在未完成
+	 * ファイルを削除する
 	 * 
 	 * @param fileIdArr
+	 *   fileIdArrを配列で取得
+	 * @param fssUserId ユーザーID
+	 * 
 	 */
 	public void delete(String[] fileIdArr, Integer fssUserId){ 
 		if (fileIdArr == null || fileIdArr.length == 0) { 
@@ -383,10 +382,12 @@ public class FileShareService {
 			}
 			//deleteFilePathList.add(tFssFile.get().getFilePath());
 		}
+	    //AWSのUtilに関してはテスト確認などできなかったため、コメントアウト
+	    //AWSS3Util.deleteMultipleFile(deleteFilePathList);
 	}
 
 	/**
-	 * グループを登録する 初期表示機能ではないためコメントアウト
+	 * グループを登録する 時間が足りなかったため未実装
 	 * 
 	 * @param groupName
 	 * @param description
@@ -402,7 +403,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * グループを削除する 初期表示機能ではないためコメントアウト
+	 * グループを削除する 時間が足りなかったため未実装
 	 * 
 	 * @param groupId
 	 * @return integer
@@ -414,7 +415,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * グループを更新する 初期表示機能ではないためコメントアウト
+	 * グループを更新する 時間が足りなかったため未実装
 	 * 
 	 * @param groupId
 	 * @param groupName
@@ -430,7 +431,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイル共有ユーザーを登録する 初期表示機能ではないためコメントアウト
+	 * ファイル共有ユーザーを登録する 時間が足りなかったため未実装
 	 * 
 	 * @param nickname
 	 * @param maxAmount
@@ -455,7 +456,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイル共有ユーザーを削除する 初期表示機能ではないためコメントアウト
+	 * ファイル共有ユーザーを削除する 時間が足りなかったため未実装
 	 * 
 	 * @param fssUserId
 	 * @return integer
@@ -489,7 +490,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * 共有できるかチェック 初期表示機能ではないためコメントアウト
+	 * 共有できるかチェック 時間が足りなかったため未実装
 	 * 
 	 * @param shareFssFileIdArr
 	 * @param toFssUserIdArr
@@ -518,7 +519,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイルを共有する 初期表示機能ではないためコメントアウト
+	 * ファイルを共有する 時間が足りなかったため未実装
 	 * 
 	 * @param shareFssFileIdArr
 	 * @param toFssUserIdArr
@@ -549,7 +550,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイル所有者であるかチェック 初期表示機能ではないためコメントアウト
+	 * ファイル所有者であるかチェック 時間が足りなかったため未実装
 	 * 
 	 * @param fssUserId
 	 * @param fssFileIdArr
@@ -571,7 +572,7 @@ public class FileShareService {
 	 */
 
 	/**
-	 * ファイルの共有を削除する 初期表示機能ではないためコメントアウト
+	 * ファイルの共有を削除する 時間が足りなかったため未実装
 	 * 
 	 * @param fssFileIdArr
 	 */

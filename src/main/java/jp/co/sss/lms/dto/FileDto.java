@@ -8,7 +8,7 @@ package jp.co.sss.lms.dto;
 public class FileDto {
 	
 	/** ファイルID */
-	private String fileId;
+	private Integer fileId;
     
 	/** ファイル名 */
 	private String fileName;
@@ -24,7 +24,7 @@ public class FileDto {
 	 * ファイルIDのgetterメソッド
 	 * @return fileId
 	 */
-	public String getFileId() {
+	public Integer getFileId() {
 		return fileId;
 	}
 	
@@ -32,7 +32,7 @@ public class FileDto {
 	 * ファイルIDのsetterメソッド
 	 * @param fileId
 	 */
-	public void setFileId(String fileId) {
+	public void setFileId(Integer fileId) {
 		this.fileId = fileId;
 	}
 	
