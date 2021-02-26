@@ -1,16 +1,16 @@
 package jp.co.sss.lms.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import jp.co.sss.lms.dto.FileShareDto;
-import jp.co.sss.lms.dto.ShareUserDto;
 import jp.co.sss.lms.dto.LoginUserDto;
+import jp.co.sss.lms.dto.ShareUserDto;
 import jp.co.sss.lms.service.FileShareService;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
@@ -158,6 +158,31 @@ public class FileShareController {
 		return new ResponseEntity<>("", HttpStatus.OK);
 	}
 
+	/**  
+	 * ダウンロード （一部未実装）
+	 * 
+	 * 2021/02/26　
+	 * htmlやtxt、vueファイルのダウンロードは可能。
+	 * web上のデータ(直リンク)やバイナリデータのDLは未実装。
+	 * 
+	 * @param fileId
+	 */
+	@RequestMapping(value="/download", method = RequestMethod.GET)
+	public void download(@RequestParam("fileId") Integer fileId, HttpServletResponse response){
+		String filePath = fileShareService.getDownloadUrl(fileId);
+				
+		// ファイルが見つからない場合
+		if (filePath == null) {
+			return;
+		}	
+		
+		// ダウンロードファイルを出力
+		fileShareService.doDownload(response, filePath);
+		
+		// ヘッダー情報をセット
+		fileShareService.setHeaders(response, filePath);
+	}
+	
 	/**
 	 * ファイルの共有（工数が足りず未実装）
 	 */

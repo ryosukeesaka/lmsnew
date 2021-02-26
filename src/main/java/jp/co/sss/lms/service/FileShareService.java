@@ -1,6 +1,10 @@
 package jp.co.sss.lms.service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,25 +12,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-//AWSのUtilに関してはテスト確認などできなかったため、コメントアウト
-//import jp.co.sss.lms.util.AWSS3Util;
-import jp.co.sss.lms.util.DateUtil;
-import jp.co.sss.lms.util.FileUtil;
-import jp.co.sss.lms.entity.MFssUser;
-import jp.co.sss.lms.entity.TFssFile;
-
 import jp.co.sss.lms.dto.FileShareDto;
 import jp.co.sss.lms.dto.LoginUserDto;
+import jp.co.sss.lms.entity.MFssUser;
+import jp.co.sss.lms.entity.TFssFile;
 import jp.co.sss.lms.repository.MFssGroupRepository;
 import jp.co.sss.lms.repository.MFssUserRepository;
 import jp.co.sss.lms.repository.TFssFileRepository;
 import jp.co.sss.lms.repository.TFssShareAvailableRepository;
 import jp.co.sss.lms.repository.TFssUserGroupRepository;
+//AWSのUtilに関してはテスト確認などできなかったため、コメントアウト
+//import jp.co.sss.lms.util.AWSS3Util;
+import jp.co.sss.lms.util.DateUtil;
+import jp.co.sss.lms.util.FileUtil;
 
 /**
  * ファイル一覧サービス ファイル共有画面のファイル一覧を取得するサービス 一部処理が未実装
@@ -309,28 +317,72 @@ public class FileShareService {
 	 * searchTFssUserGroupList.get(i).getFssUserId()); } } return
 	 * mFssUserRepository.findByFssGroupIdArr(searchFssUserIdArr); }
 	 */
+	
+	/** 
+	 * ファイルパスの取得
+	*/
+	public String getDownloadUrl(Integer fileId){
+		TFssFile tFssFile = tFssFileRepository.getOne(fileId);
+		
+		// ファイルIDで見つからなければnullを返す
+		if (tFssFile == null) {
+			return null;
+		}
 
+		String filePath = tFssFile.getFilePath();
+	    return filePath;
+	    
+	// AWSUtilは確認不可のためコメントアウト
+	//	return AWSS3Util.makeDowloadUrl(tFssFile.getFilePath()); 
+
+	}
+	
 	/**
-	 * ファイルダウンロードのURLを取得 時間が足りなかったため未実装
+	 * ファイルをダウンロード　一部未実装
 	 * 
-	 * @param fileId
-	 * @param fssUserId
-	 * @return String
+	 * 2021/02/26　
+	 * htmlやtxt、vueファイルのダウンロードは可能。
+	 * web上のデータ(直リンク)やバイナリデータのDLは未実装。
+	 * 
+	 * @param response
+	 * @param filePath
 	 */
-	/*
-	 * public String getDownloadUrl(String fileId, Integer fssUserId){ if (fssUserId
-	 * == null) { return null; }
-	 * 
-	 * Optional<MFssUser> mFssUser = mFssUserRepository.findById(fssUserId);
-	 * TFssFile tFssFile =
-	 * tFssFileRepository.findByOwnerAndSharedUserAndId(Integer.parseInt(fileId),
-	 * mFssUser.get().getFssUserId());
-	 * 
-	 * if (tFssFile == null) { return null; }
-	 * 
-	 * return AWSS3Util.makeDowloadUrl(tFssFile.getFilePath()); }
+	public void doDownload(HttpServletResponse response, String filePath){
+		
+		try {
+			// 入力ストリームの生成
+			File file = new File(filePath);
+			InputStream in = new FileInputStream(file);
+				
+			// 取得したデータを出力ストリームにコピー
+			IOUtils.copy(in, response.getOutputStream());
+			in.close();
+	        
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * ダウンロード用レスポンスヘッダーの設定
+	 * @param response
+	 * @param filePath
 	 */
-
+	public void setHeaders(HttpServletResponse response, String filePath){
+		try {
+			// ファイルパスを取得
+			File file = new File(filePath);
+			Path path = file.toPath();
+			
+			// ヘッダー情報をセット
+			response.setHeader("Content-Type", Files.probeContentType(path));
+			response.setHeader("Content-Disposition", "attachment"); 
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * 削除されているかチェック
 	 * 
