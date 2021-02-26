@@ -38,8 +38,8 @@ public class TExamResult {
     private Integer examResultId;
 
     /** 試験・セクション紐付けID */
-    @Column(precision = 10, nullable = true, unique = false)
-    private Integer examSectionId;
+//    @Column(precision = 10, nullable = true, unique = false)
+//    private Integer examSectionId;
     
     /** 得点 */
     @Column(precision = 5, nullable = true, unique = false)
@@ -83,7 +83,8 @@ public class TExamResult {
     private MLmsUser mLmsUser;
     
     /** 試験・セクション紐付けエンティティ */
-    @OneToOne(mappedBy = "tExamResult")
+    @ManyToOne
+    @JoinColumn(name="exam_section_id",referencedColumnName="examSectionId")
     public TExamSection tExamSection;
     
     /** 試験結果詳細リスト */
@@ -98,13 +99,13 @@ public class TExamResult {
 		this.examResultId = examResultId;
 	}
 
-	public Integer getExamSectionId() {
-		return examSectionId;
-	}
-
-	public void setExamSectionId(Integer examSectionId) {
-		this.examSectionId = examSectionId;
-	}
+//	public Integer getExamSectionId() {
+//		return examSectionId;
+//	}
+//
+//	public void setExamSectionId(Integer examSectionId) {
+//		this.examSectionId = examSectionId;
+//	}
 
 	public Short getScore() {
 		return score;
@@ -201,5 +202,6 @@ public class TExamResult {
 	public void setTExamResultDetailList(List<TExamResultDetail> tExamResultDetailList) {
 		this.tExamResultDetailList = tExamResultDetailList;
 	}
+
 	
 }

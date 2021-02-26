@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import jp.co.sss.lms.entity.TDailyReportSubmitDetail;
+
 public class DailyReportDto implements Serializable {
 
 	/**
@@ -89,6 +91,10 @@ public class DailyReportDto implements Serializable {
 	private List<DailyReportFbDto> dailyReportFbDtoList;
 	//学習理解度DTO
 	private List<IntelligibilityDto> intelligibilityDtoList;
+	//レポート提出詳細ファーストID
+	private Integer tDailyReportSubmitDetailFirstId;
+	// 学習理解度ファーストID
+	private Integer intelligentFirstId;
 
 	public Integer getDailyReportId() {
 		return dailyReportId;
@@ -402,5 +408,22 @@ public class DailyReportDto implements Serializable {
 		this.intelligibilityDtoList = intelligibilityDtoList;
 	}
 
+	public Integer gettDailyReportSubmitDetailFirstId() {
+		return tDailyReportSubmitDetailFirstId;
+	}
+
+	public void settDailyReportSubmitDetailFirstId(Integer tDailyReportSubmitDetailFirstId) {
+		this.tDailyReportSubmitDetailFirstId = tDailyReportSubmitDetailFirstId;
+	}
+
+	public Integer getIntelligentFirstId() {
+		return intelligentFirstId;
+	}
+
+	public void setIntelligentFirstId(Integer intelligentFirstId) {
+		this.intelligentFirstId = intelligentFirstId;
+	}
+
+	
 
 }

@@ -71,7 +71,7 @@ public class ExamDetailController {
 			StringBuffer sb = new StringBuffer(message);
 			loggingUtil.appendLog(sb);
 			logger.error(sb.toString());
-			return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(map, HttpStatus.BAD_REQUEST);
 		}
 	}
 }

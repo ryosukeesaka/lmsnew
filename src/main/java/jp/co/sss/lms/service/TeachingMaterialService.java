@@ -13,7 +13,6 @@ import jp.co.sss.lms.repository.TCourseTeachingMaterialRepository;
 import jp.co.sss.lms.repository.TCourseUserRepository;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Value;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;

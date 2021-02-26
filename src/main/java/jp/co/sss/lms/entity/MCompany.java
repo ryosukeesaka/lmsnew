@@ -72,8 +72,17 @@ public class MCompany {
     private String workEndTime;
     @Column
     private Short fileShareFlg;
+    
+    
+    
     @OneToMany(mappedBy = "mCompany")
     private List<TUserCompany> tUserCompanyList;
+    
+    
+    @OneToMany(mappedBy = "mCompany")
+    private List<TCompanyCourse> tCompanyCourseList;
+    
+    
     
 	public Integer getCompanyId() {
 		return companyId;
@@ -255,5 +264,14 @@ public class MCompany {
 	public void setTUserCompanyList(List<TUserCompany> tUserCompanyList) {
 		this.tUserCompanyList = tUserCompanyList;
 	}
+	
+	public List<TCompanyCourse> gettCompanyCourseList() {
+		return tCompanyCourseList;
+	}
+	public void settCompanyCourseList(List<TCompanyCourse> tCompanyCourseList) {
+		this.tCompanyCourseList = tCompanyCourseList;
+	}
 
+	
+	
 }

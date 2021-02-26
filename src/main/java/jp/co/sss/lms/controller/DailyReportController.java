@@ -67,7 +67,7 @@ public class DailyReportController {
 			loggingUtil.appendLog(sb);
 			logger.info(sb.toString());
 
-			httpStatus = HttpStatus.BAD_REQUEST;
+			httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 		} else {
 			if (Constants.CODE_VAL_ROLL_STUDENT.equals(role)) {
 				// ログインユーザのLMSユーザIDチェック
@@ -78,12 +78,12 @@ public class DailyReportController {
 					loggingUtil.appendLog(sb);
 					logger.info(sb.toString());
 
-					httpStatus = HttpStatus.BAD_REQUEST;
+					httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 				}
 			}
 		}
 
-		if (httpStatus == HttpStatus.BAD_REQUEST) {
+		if (httpStatus == HttpStatus.INTERNAL_SERVER_ERROR) {
 			return new ResponseEntity<DailyReportDto>(new DailyReportDto(), httpStatus);
 		}
 

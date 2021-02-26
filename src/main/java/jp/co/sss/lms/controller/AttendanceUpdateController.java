@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.CourseServiceSectionDto;
 import jp.co.sss.lms.dto.StudentAttendanceDto;
+import jp.co.sss.lms.entity.MCourse;
 import jp.co.sss.lms.form.AttendanceForm;
+import jp.co.sss.lms.repository.MCourseRepository;
 import jp.co.sss.lms.service.CourseService;
 import jp.co.sss.lms.service.StudentAttendanceService;
 
@@ -32,6 +34,8 @@ public class AttendanceUpdateController {
 	private CourseService courseService;
 	@Autowired
 	private StudentAttendanceService studentAttendanceService;
+	@Autowired
+	private MCourseRepository courseRepository;
 
 	/**
 	 * 勤怠情報直接編集画面の初期表示
@@ -43,6 +47,10 @@ public class AttendanceUpdateController {
 	@RequestMapping(path = "/update", method = RequestMethod.GET)
 	public ResponseEntity<List<AttendanceManagementDto>> index(@RequestParam("courseId") Integer courseId,
 			@RequestParam("lmsUserId") Integer lmsUserId) {
+			
+		if(!courseService.getCourseInfo(String.valueOf(courseId)).isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
 
 		// コースに紐付くセクション情報を取得
 		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService.getSectionDtoList(courseId);
@@ -61,7 +69,7 @@ public class AttendanceUpdateController {
 	}
 
 	/**
-	 * 勤怠直接編集画面の更新(バックエンドの処理は完成、フロントエンドとの疎通は未実施)
+	 * 勤怠直接編集画面の更新
 	 * 
 	 * @param attendanceForm 勤怠情報のフォーム
 	 * @return 勤怠情報直接編集画面の初期表示メソッドへ遷移
@@ -73,7 +81,7 @@ public class AttendanceUpdateController {
 
 		// 不正な入力が場合に更新メソッド
 		message = studentAttendanceService.update(attendanceForm);
-		
+
 		// 更新成功メッセージを登録して返す
 		return new ResponseEntity<>(message, HttpStatus.OK);
 

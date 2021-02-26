@@ -4,8 +4,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.JoinColumn;
@@ -15,6 +18,15 @@ import javax.persistence.ManyToOne;
 @Table(name = "t_intelligibility")
 public class TIintelligibility {
 	@Id
+    @Column(name="intelligibility_id")
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
+    @TableGenerator(
+        name = "generator",
+        table = "id_generator",
+        pkColumnName = "pk",
+        valueColumnName = "value",
+        pkColumnValue = "T_INTELLIGIBILITY_INTELLIGIBILITY_ID",
+        allocationSize = 1)
 	private Integer intelligibilityId;
 	@Column
 	private Integer fieldNum;

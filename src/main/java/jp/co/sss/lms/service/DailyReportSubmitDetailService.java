@@ -11,7 +11,7 @@ public class DailyReportSubmitDetailService {
 	@Autowired
 	TDailyReportSubmitDetailRepository repository;
 	
-	public TDailyReportSubmitDetail getTDailyReportSubmitDetail(Integer dailyReportSubmitId, Integer accountId) {
-		return repository.findBydailyReportSubmitIdANDaccountd(dailyReportSubmitId, accountId);
-	}
+//	public TDailyReportSubmitDetail getTDailyReportSubmitDetail(Integer dailyReportSubmitId, Integer accountId) {
+//		return repository.findBydailyReportSubmitIdANDaccountd(dailyReportSubmitId, accountId);
+//	}
 }

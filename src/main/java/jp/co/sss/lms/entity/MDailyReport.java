@@ -134,7 +134,6 @@ public class MDailyReport {
     @OneToMany(mappedBy = "mDailyReport")
     private List<TDailyReportSubmit> tDailyReportSubmitList;
 
-
 	public Integer getDailyReportId() {
 		return dailyReportId;
 	}

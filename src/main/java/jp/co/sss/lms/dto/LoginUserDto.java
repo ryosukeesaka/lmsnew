@@ -49,6 +49,8 @@ public class LoginUserDto implements Serializable {
 	private Timestamp leaveDate;
     // ファイル共有フラグ
 	private Short fileShareFlg;
+    // 非表示フラグ
+	private Short hiddenFlg;
 	
 	public Integer getAccountId() {
 		return accountId;
@@ -154,6 +156,12 @@ public class LoginUserDto implements Serializable {
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+	public Short getHiddenFlg() {
+		return hiddenFlg;
+	}
+	public void setHiddenFlg(Short hiddenFlg) {
+		this.hiddenFlg = hiddenFlg;
 	}
 
 }

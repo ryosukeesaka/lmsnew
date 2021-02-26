@@ -131,6 +131,7 @@ public interface TFssFileRepository extends JpaRepository<TFssFile, Integer>{
 	/**
 	 * ファイルを削除する
 	 * @param fssFileId
+	 * @param fssUserId
 	 */
 	@Modifying
 	@Query(value = "UPDATE t_fss_file"
