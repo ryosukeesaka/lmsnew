@@ -21,7 +21,7 @@ import jp.co.sss.lms.util.LoggingUtil;
 
 /**
  * CourseController コース詳細画面への画面遷移を行うコントローラー
- * 
+ *
  * @author 大串清
  */
 @RestController
@@ -39,7 +39,7 @@ public class CourseController {
 
 	/**
 	 * ログインしているユーザーの権限、コースIDの状態に応じて 画面遷移とログ出力を行う行うメソッド
-	 * 
+	 *
 	 * @return コース詳細情報
 	 */
 	@RequestMapping("/detail")
@@ -58,7 +58,7 @@ public class CourseController {
 				loggingUtil.appendLog(sb);
 				logger.info(sb.toString());
 				//Reponseステータスの変更
-				httpStatus = HttpStatus.NOT_FOUND;
+				httpStatus = HttpStatus.BAD_REQUEST;
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
 
 			} else {
@@ -76,29 +76,29 @@ public class CourseController {
 				loggingUtil.appendLog(sb);
 				logger.info(sb.toString());
 				//Reponseステータスの変更
-				httpStatus = HttpStatus.NOT_FOUND;
+				httpStatus = HttpStatus.BAD_REQUEST;
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
 
 			} else {
 				// コース詳細関連情報の取得
 				courseServiceCourseDto = courseService.getCourseDetail(Integer.parseInt(courseId));
 				return new ResponseEntity<CourseServiceCourseDto>(courseServiceCourseDto, httpStatus);
-			}			
+			}
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * @param userId ユーザID
 	 * @return courseServiceCourseListDto コース情報リスト
 	 */
 	@RequestMapping("/list")
 	public ResponseEntity<List<CourseServiceCourseListDto>> list(@RequestParam("userId") Integer userId) {
-		
+
 		//コース情報リストを取得する
 		List<CourseServiceCourseListDto> courseServiceCourseListDto = courseService.getCourseList(userId);
-		
-		//用意したデータをもとにコース一覧を表示する				
+
+		//用意したデータをもとにコース一覧を表示する
 		return new ResponseEntity<>(courseServiceCourseListDto, HttpStatus.OK);
 	}
 }
