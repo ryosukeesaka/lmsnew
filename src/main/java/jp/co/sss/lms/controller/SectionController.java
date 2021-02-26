@@ -20,6 +20,7 @@ import jp.co.sss.lms.dto.SectionServiceSectionDto;
 import jp.co.sss.lms.form.SectionForm;
 import jp.co.sss.lms.service.DeliverableService;
 import jp.co.sss.lms.service.SectionService;
+import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.LoggingUtil;
 
 /**
@@ -62,12 +63,23 @@ public class SectionController {
 			httpStatus = HttpStatus.BAD_REQUEST;
 			
 		} else {
+			//20210212_Nishijima_Add_Start
+			//ログインユーザのロールを取り出す
+			String userRole = sectionForm.getRole();
 			sectionServiceSectionDto = sectionService.getSectionDto(sectionForm);
-			List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList = deliverableService
-					.getDeliverableWithSubmissionFlgDto(Integer.parseInt(sectionForm.getSectionId()), sectionForm.getLmsUserId());
-			
-			sectionServiceSectionDto.setDeliverablesWithSubmissionFlgDtoList(deliverablesWithSubmissionFlgDtoList);
+			//受講生の場合
+			if(userRole.equals(Constants.CODE_VAL_ROLL_STUDENT)) {
+				List<DeliverableServiceDeliverablesWithSubmissionFlgDto> deliverablesWithSubmissionFlgDtoList = deliverableService
+						.getDeliverableWithSubmissionFlgDto(Integer.parseInt(sectionForm.getSectionId()), sectionForm.getLmsUserId());
+				sectionServiceSectionDto.setDeliverablesWithSubmissionFlgDtoList(deliverablesWithSubmissionFlgDtoList);
+				}
+			//講師の場合
+			else{
+				sectionServiceSectionDto.setDeliverablesDtoList(deliverableService.getDeliverablesSectionDtoList(Integer.parseInt(sectionForm.getSectionId())));
+			}
 		}
+		//20210212_Nishijima_Add_End
+		
 		return new ResponseEntity<>(sectionServiceSectionDto, httpStatus);
 	}
 

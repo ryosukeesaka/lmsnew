@@ -13,7 +13,6 @@ import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
-import jp.co.sss.lms.entity.TTemporaryPassStorage;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
@@ -104,6 +103,22 @@ public class UserService {
 	public MUser getMUser(String mailaddress) {
 		return mUserRepository.findByMailAddress(mailaddress);
 	}
+	
+	
+	
+	/**
+	 * メールアドレスからユーザー情報を取得
+	 *   ついかーーーーーーーーーーーーーーーーーーーーーーーーーー
+	 * @param mailaddress
+	 * @return MUser
+	 */
+	public MUser getMUser(Integer userid) {
+		return mUserRepository.findByUserId(userid);
+	}
+	
+	
+	
+	
 
 	public MUser setMUser(MUser form) {
 		MUser muser = mUserRepository.getOne(form.getUserId());

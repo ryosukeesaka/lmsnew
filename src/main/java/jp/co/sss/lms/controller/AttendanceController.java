@@ -1,33 +1,24 @@
 package jp.co.sss.lms.controller;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import jp.co.sss.lms.dto.AttendanceManagementDto;
 import jp.co.sss.lms.dto.CourseServiceSectionDto;
-import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.StudentAttendanceDto;
-import jp.co.sss.lms.entity.TStudentAttendance;
+import jp.co.sss.lms.repository.MCourseRepository;
 import jp.co.sss.lms.service.CourseService;
 import jp.co.sss.lms.service.StudentAttendanceService;
 import jp.co.sss.lms.util.AttendanceUtil;
-import jp.co.sss.lms.util.Constants;
-import jp.co.sss.lms.util.MessageUtil;
 
 /**
  * 勤怠管理コントローラ
@@ -43,9 +34,9 @@ public class AttendanceController {
 
 	@Autowired
 	private StudentAttendanceService studentAttendanceService;
-
+	
 	@Autowired
-	private HttpSession session;
+	private MCourseRepository courseRepository;
 	
 
 	/**
@@ -57,6 +48,10 @@ public class AttendanceController {
 	@RequestMapping(value = "/detail", method = RequestMethod.GET)
 	public ResponseEntity<List<AttendanceManagementDto>> index(@RequestParam("courseId") Integer courseId,
 			@RequestParam("lmsUserId") Integer lmsUserId){
+		
+		if(!courseService.getCourseInfo(String.valueOf(courseId)).isEmpty()) {
+			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+		}
 		
 		// コースに紐付くセクション情報を取得
 		List<CourseServiceSectionDto> courseServiceSectionDtoList = courseService.getSectionDtoList(courseId);
@@ -72,17 +67,10 @@ public class AttendanceController {
 		return new ResponseEntity<>(attendanceManagementDtoList, HttpStatus.OK);
 	}
 	
+	
 	/**
-	 * 勤怠情報直接変更 ※画面遷移のみ実装
-	 * @return
-	 */
-//	@RequestMapping(path = "/update")
-//	public String update() {
-//		return "attendance/update";
-//	}
-
-	/**
-	 *納期に間に合わず、出勤ボタン押下後の処理は未実装
+	 *出勤ボタン押下後の処理
+	 *@return 勤怠管理画面への遷移
 	 */
 	@RequestMapping(value="/punchIn", method = RequestMethod.GET)
 	public String punchIn(int lmsUserId, int courseId, int accountId) {
@@ -96,7 +84,8 @@ public class AttendanceController {
 	}
 	
 	/**
-	 *納期に間に合わず、退勤ボタン押下後の処理は未実装
+	 *退勤ボタン押下後の処理
+	 *@return 勤怠管理画面への遷移
 	 */
 	@RequestMapping(value = "/punchOut", method = RequestMethod.GET)
 	public String punchOut(int lmsUserId, int courseId) {

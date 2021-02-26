@@ -13,9 +13,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import jp.co.sss.lms.dto.DeliverableServiceDeliverablesWithSubmissionFlgDto;
+import jp.co.sss.lms.dto.DeliverablesResultDto;
 import jp.co.sss.lms.dto.LoginUserDto;
+import jp.co.sss.lms.dto.SectionServiceDeliverablesDto;
+import jp.co.sss.lms.dto.SectionServiceDeliverablesSectionDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.TDeliverablesResult;
 import jp.co.sss.lms.entity.TDeliverablesSection;
@@ -89,6 +91,52 @@ public class DeliverableService {
 
 		return deliverableWithSubmissionFlgDtoList;
 	}
+	
+	/**
+	 * 成果物提出情報リスト取得
+	 * 
+	 * @param sectionId セクションID
+	 * @return deliverablesSectionDtoList 成果物セクションDtoリスト
+	 */
+	public List<SectionServiceDeliverablesSectionDto> getDeliverablesSectionDtoList(Integer sectionId) {
+		
+		// セクションIdを使って値の取得
+		List<TDeliverablesSection> tDeliverablesSectionList = tDeliverablesSectionRepository.findBySectionId(sectionId);
+		
+		// SectionServiceDeliverablesSectionDtoリストの入れ物を用意
+		List<SectionServiceDeliverablesSectionDto> deliverablesSectionDtoList = new ArrayList<>();
+
+		// deliverablesSectionDtoリストへ詰め替え
+		for (TDeliverablesSection tDeliverablesSection : tDeliverablesSectionList) {
+			
+			// SectionServiceDeliverablesSectionDtoの入れ物を用意
+			SectionServiceDeliverablesSectionDto deliverablesSectionDto = new SectionServiceDeliverablesSectionDto();
+			
+			// deliverablesSectionDtoへ詰め替え
+			BeanUtils.copyProperties(tDeliverablesSection, deliverablesSectionDto);
+			SectionServiceDeliverablesDto deliverablesDto = new SectionServiceDeliverablesDto();
+			deliverablesDto.setDeliverablesId(tDeliverablesSection.getMDeliverables().getDeliverablesId());	
+			deliverablesDto.setDeliverablesName(tDeliverablesSection.getMDeliverables().getDeliverablesName());
+			deliverablesSectionDto.setDeliverablesDto(deliverablesDto);
+			
+			if (tDeliverablesSection.getTDeliverablesResultList() != null) {
+				
+				// DeliverablesResultDtoリストの入れ物を用意
+				List<DeliverablesResultDto> deliverablesResultDtoList = new ArrayList<>();
+				
+				// deliverablesResultDtoListへ詰め替え
+				for (TDeliverablesResult tDeliverablesResult : tDeliverablesSection.getTDeliverablesResultList()) {
+					DeliverablesResultDto deliverablesResultDto = new DeliverablesResultDto();
+					BeanUtils.copyProperties(tDeliverablesResult, deliverablesResultDto);
+					deliverablesResultDtoList.add(deliverablesResultDto);
+				}
+				deliverablesSectionDto.setDeliverablesResultDtoList(deliverablesResultDtoList);
+			}
+			deliverablesSectionDtoList.add(deliverablesSectionDto);
+		}
+		return deliverablesSectionDtoList;
+	}
+
 	
 	/**
 	 * 成果物提出情報登録
@@ -210,5 +258,28 @@ public class DeliverableService {
 		logger.info(sb.toString());
 		
 		return sb.toString();
+	}
+	
+	public List<DeliverablesResultDto> getDeliverablesResultDto(Integer lmsUserId) {
+
+		
+		// 成果物情報を取得
+		List<TDeliverablesResult> tDeliverablesResultList = tDeliverablesResultRepository.findByDeliverablesLmsUserId(lmsUserId);
+
+		List<DeliverablesResultDto> deliverablesResultDto = new ArrayList<DeliverablesResultDto>();
+
+		
+		// 試験Entityリストを試験DTOリストへ詰め替え
+		for (TDeliverablesResult tDeliverablesResult : tDeliverablesResultList) {
+			DeliverablesResultDto deliverablesResultDtoSingle = new DeliverablesResultDto();
+			
+			BeanUtils.copyProperties(tDeliverablesResult,deliverablesResultDtoSingle);
+			BeanUtils.copyProperties(tDeliverablesResult.gettDeliverablesSection().getMDeliverables(),deliverablesResultDtoSingle);
+			BeanUtils.copyProperties(tDeliverablesResult.gettDeliverablesSection().getMSection(),deliverablesResultDtoSingle);
+			
+			deliverablesResultDto.add(deliverablesResultDtoSingle);
+		}
+		
+		return deliverablesResultDto;
 	}
 }

@@ -1,6 +1,8 @@
 package jp.co.sss.lms.repository;
 
 import java.sql.Timestamp;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,14 +13,30 @@ import jp.co.sss.lms.entity.TDailyReportSubmit;
 @Repository
 public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReportSubmit, Integer> {
 	
+	/**
+	 * 日報提出情報を取得
+	 * 
+	 * @param lmsUserId
+	 * @param date
+	 * @param dailyReportId
+	 * @param deleteFlg
+	 * @return TDailyReportSubmit
+	 * */
 	@Query("SELECT tdrs FROM  TDailyReportSubmit tdrs " + 
 			" LEFT OUTER JOIN tdrs.mLmsUser mlu " + 
 			" LEFT OUTER JOIN tdrs.mDailyReport mdr" + 
 			" WHERE mlu.lmsUserId = :loginLmsUserId"+
 			" AND mdr.dailyReportId = :dailyReportId"+
 			" AND tdrs.date = :date"+
+			" AND  tdrs.deleteFlg = :deleteFlg ")
+	TDailyReportSubmit findByLmsUserIdAndDate(@Param("loginLmsUserId")Integer lmsUserId,@Param("date")Timestamp date,@Param("dailyReportId")Integer dailyReportId,@Param("deleteFlg")short dbFlgFalse);
+	
+	@Query("SELECT tdrs FROM  TDailyReportSubmit tdrs " + 
+			" LEFT OUTER JOIN tdrs.mLmsUser mlu " + 
+			" LEFT OUTER JOIN tdrs.mDailyReport mdr " +
+			" WHERE mlu.lmsUserId = :loginLmsUserId "+
 			" AND  tdrs.deleteFlg = 0 ")
-	TDailyReportSubmit findByLmsUserIdAndDate(@Param("loginLmsUserId")Integer lmsUserId,@Param("date")Timestamp date,@Param("dailyReportId")Integer dailyReportId);
+	List<TDailyReportSubmit> findByLmsUserId(@Param("loginLmsUserId")Integer lmsUserId);
 	
 /*	@Query("SELECT s FROM TDailyReportSubmit s"
 			+ " LEFT OUTER JOIN s.tDailyReportSubmitDetailList sd"
@@ -52,6 +70,16 @@ public interface TDailyReportSubmitRepository extends JpaRepository<TDailyReport
 			@Param("lmsUserId") Integer lmsUserId,
 			@Param("accountId") Integer accountId);*/
 	
+	
+	/**
+	 * 日報提出情報の登録数を取得
+	 * 
+	 * @param dailyReoprtId
+	 * @param lmsUserId
+	 * @param date
+	 * @param deleteFlg
+	 * @return count
+	 * */
 	@Query(value="Select" 
 			+ "		count(*)" 
 			+ "	FROM"
