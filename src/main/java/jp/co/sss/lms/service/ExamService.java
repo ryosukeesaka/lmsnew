@@ -392,6 +392,7 @@ public class ExamService {
 				count++;
 			}
 			examDtoSingle.setNumOfQuestion(count);
+			examDtoSingle.setFirstCreateDate(tExamResult.getFirstCreateDate());
 			
 			examDto.add(examDtoSingle);
 		}
