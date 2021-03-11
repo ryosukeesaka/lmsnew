@@ -1,11 +1,16 @@
 package jp.co.sss.lms.repository;
 
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import jp.co.sss.lms.entity.MLmsUser;
+
 
 @Repository
 public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
@@ -29,7 +34,6 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 			+ " WHERE t1.lmsUserId = :lmsUserId AND t1.deleteFlg = 0")
 	public MLmsUser getUserDetailBasicInfo(@Param("lmsUserId") Integer lmsUserId);
 	
-	
 	/**
 	 * コース一覧画面
 	 * ユーザ情報取得処理
@@ -38,4 +42,24 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 				+ "LEFT OUTER JOIN t1.tUserCompany t2 "
 				+ "WHERE t1.userId = :userId")
 	 public MLmsUser getUserWithCompany(@Param("userId")Integer userId);
+	
+	@Query("SELECT t1 FROM MLmsUser t1"
+			+ " INNER JOIN t1.mUser t2"
+			+ " INNER JOIN t1.tUserCompany t3"
+			+ " INNER JOIN t3.mCompany t4"
+			+ " INNER JOIN t1.tCourseUser t5"
+			+ " INNER JOIN t5.mCourse t6"
+			+ " INNER JOIN t1.tUserPlace t7"
+			+ " INNER JOIN t7.mPlace t8"
+			+ " WHERE t8.placeId = :placeId"
+			+ " AND t6.openTime <= :courseDate"
+			+ " AND t6.closeTime >= :courseDate"
+			+ " AND t2.deleteFlg = 0"
+			+ " AND t3.deleteFlg = 0"
+			+ " AND t4.deleteFlg = 0"
+			+ " AND t5.deleteFlg = 0"
+			+ " AND t6.deleteFlg = 0"
+			+ " AND t7.deleteFlg = 0"
+			+ " AND t8.deleteFlg = 0")
+	public List<MLmsUser> findStudentByPlaceId(@Param("placeId") Integer placeId, @Param("courseDate") Date courseDate);
 }

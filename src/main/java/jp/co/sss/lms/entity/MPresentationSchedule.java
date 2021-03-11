@@ -26,7 +26,7 @@ public class MPresentationSchedule {
 
 	/** 成果報告会スケジュールID */
 	@Id
-	@Column(name = "presentation_schedule_id")
+	//@Column(name = "presentation_schedule_id")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
 	@TableGenerator(
 			name = "generator",
@@ -39,11 +39,11 @@ public class MPresentationSchedule {
 
 	/** 予約編集期限 */
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date editLimit;
+	public Date editLimit;
 
 	/** 成果報告会開催日 */
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date presentationDate;
+	public Date presentationDate;
 
 	/** 用途 */
 	@Column
@@ -73,7 +73,7 @@ public class MPresentationSchedule {
 	private List<TPresentationPlace> tPresentationPlaceList;
 
 	@OneToMany(mappedBy ="mPresentationSchedule")
-	private  List<MPresentationScheduleDetail> mPresentationScheduleDetailList ;
+	public  List<MPresentationScheduleDetail> mPresentationScheduleDetailList ;
 
 	public Integer getPresentationScheduleId() {
 		return presentationScheduleId;

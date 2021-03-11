@@ -39,7 +39,7 @@ public class MLmsUser {
     
     /** 削除フラグ */
     @Column
-    private Short deleteFlg;
+	public Short deleteFlg;
     
     /** 初回作成者 */
     @Column
@@ -65,10 +65,10 @@ public class MLmsUser {
     @Column
     private Short programmingExperience;
     @OneToOne(mappedBy = "mLmsUser")
-    private MUser mUser;
+    public MUser mUser;
     @OneToOne
     @JoinColumn(name  = "lms_user_id", referencedColumnName = "lms_user_id")
-    private TUserCompany tUserCompany;
+    public TUserCompany tUserCompany;
     @OneToOne
     @JoinColumn(name = "lms_user_id", referencedColumnName = "lms_user_id")
     private TUserPlace tUserPlace;

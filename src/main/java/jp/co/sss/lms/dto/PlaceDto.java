@@ -1,13 +1,9 @@
 package jp.co.sss.lms.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-/**
- * 会場DTO
- * 
- * @author Takayuki Nomoto
- */
-public class PlaceDto implements Serializable {
+public class PlaceDto{
 	
 	/** */
 	private static final long serialVersionUID = 1L;
@@ -29,6 +25,12 @@ public class PlaceDto implements Serializable {
 
 	/** 備考 */
 	private String placeNote;
+
+	/** 会場アサインリスト */
+	private List<AssignDto> assignDtoList;
+
+	/** 会場アサインリスト */
+	private List<CourseServiceCourseListDto> courseServiceCourseListDto;
 
 	public Integer getPlaceId() {
 		return placeId;
@@ -78,4 +80,20 @@ public class PlaceDto implements Serializable {
 		this.placeNote = placeNote;
 	}
 
+	public List<AssignDto> getAssignDtoList() {
+		return assignDtoList;
+	}
+
+	public void setAssignDtoList(List<AssignDto> assignDtoList) {
+		this.assignDtoList = assignDtoList;
+	}
+
+	public List<CourseServiceCourseListDto> getCourseServiceCourseListDto() {
+		return courseServiceCourseListDto;
+	}
+
+	public void setCourseServiceCourseListDto(List<CourseServiceCourseListDto> courseServiceCourseListDto) {
+		this.courseServiceCourseListDto = courseServiceCourseListDto;
+	}
 }
+

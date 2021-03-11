@@ -1,31 +1,36 @@
 package jp.co.sss.lms.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-/**
- * 成果報告会対象会場DTO
- * 
- * @author Takayuki Nomoto
- */
 public class PresentationPlaceDto implements Serializable {
 	
 	/** */
 	private static final long serialVersionUID = -1727870799872014754L;
 
-	/** 成果報告会対象会場ID */
+	/** 成果報告会会場ID */
 	private Integer presentationPlaceId;
 
 	/** チーム確定フラグ */
 	private Short confirmFlg;
 
 	/** 成果報告会スケジュールDTO */
-	private PresentationScheduleDto presentationScheduleDto;
+	public PresentationScheduleDto presentationScheduleDto;
 
 	/** 会場DTO */
-	private PlaceDto placeDto;
+	public PlaceDto placeDto;
+
+	/** 対象受講生DTOリスト */
+	public List<LmsUserDto> studentLmsUserDtoList;
+
+	/** 成果報告会チームDTOリスト */
+	public List<PresentationTeamDto> presentationTeamDtoList;
+
+	/** コース名 */
+	private CourseServiceCourseListDto courseServiceCorseListDto;
 
 	/** 予約状況 */
-	private boolean isReserve;
+	public boolean isReserve;
 
 	/** 企業名 */
 	private String companyName;
@@ -68,6 +73,30 @@ public class PresentationPlaceDto implements Serializable {
 		this.placeDto = placeDto;
 	}
 
+	public List<LmsUserDto> getStudentLmsUserDtoList() {
+		return studentLmsUserDtoList;
+	}
+
+	public void setStudentLmsUserDtoList(List<LmsUserDto> studentLmsUserDtoList) {
+		this.studentLmsUserDtoList = studentLmsUserDtoList;
+	}
+
+	public List<PresentationTeamDto> getPresentationTeamDtoList() {
+		return presentationTeamDtoList;
+	}
+
+	public void setPresentationTeamDtoList(List<PresentationTeamDto> presentationTeamDtoList) {
+		this.presentationTeamDtoList = presentationTeamDtoList;
+	}
+
+	public CourseServiceCourseListDto getCourseServiceCourseListDto() {
+		return courseServiceCorseListDto;
+	}
+
+	public void setCourseServiceCourseListDto(CourseServiceCourseListDto courseServiceCorseListDto) {
+		this.courseServiceCorseListDto = courseServiceCorseListDto;
+	}
+
 	public boolean isReserve() {
 		return isReserve;
 	}
@@ -99,5 +128,4 @@ public class PresentationPlaceDto implements Serializable {
 	public void setCompanyAddress(String companyAddress) {
 		this.companyAddress = companyAddress;
 	}
-
 }

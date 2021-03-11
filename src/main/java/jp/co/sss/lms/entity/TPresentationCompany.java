@@ -12,11 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-/**
- * 成果報告会対象企業テーブルエンティティ
- * 
- * @author Takayuki Nomoto
- */
 @Entity
 @Table(name = "t_presentation_company")
 public class TPresentationCompany {
@@ -30,7 +25,7 @@ public class TPresentationCompany {
 
 	/** 参加可能フラグ */
 	@Column
-	private Short joinAbleFlg;
+	public Short joinAbleFlg;
 
 	/** 参加人数 */
 	@Column
@@ -61,7 +56,7 @@ public class TPresentationCompany {
 	private String joinName;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_team_id", referencedColumnName = "presentation_team_id")
+	@JoinColumn(name = "presentation_team_id", referencedColumnName = "presentationTeamId")
 	private MPresentationTeam mPresentationTeam;
 
 	@ManyToOne

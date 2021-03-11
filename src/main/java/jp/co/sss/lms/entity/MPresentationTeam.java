@@ -17,7 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * 成果報告会チームマスタテーブルエンティティ
+ * 成果報告会チームマスタテーブルエンティティクラス
  * 
  * @author Yuna Kato
  */
@@ -28,7 +28,7 @@ public class MPresentationTeam {
 
 	/** 成果報告会チームID */
 	@Id
-	@Column(name = "presentation_team_id")
+	//@Column(name = "presentation_team_id")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
 	@TableGenerator(
 			name = "generator",
@@ -64,18 +64,18 @@ public class MPresentationTeam {
 	private Date lastModifiedDate;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_place_id", referencedColumnName = "presentation_place_id")
+	@JoinColumn(name = "presentation_place_id", referencedColumnName = "presentationPlaceId")
 	private TPresentationPlace tPresentationPlace;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_schedule_detail_id", referencedColumnName = "presentation_schedule_detail_id")
+	@JoinColumn(name = "presentation_schedule_detail_id", referencedColumnName = "presentationScheduleDetailId")
 	private MPresentationScheduleDetail mPresentationScheduleDetail;
 
 	@OneToMany(mappedBy = "mPresentationTeam")
-	private  List<TUserPresentationTeam> tUserPresentationTeamList;
+	public  List<TUserPresentationTeam> tUserPresentationTeamList;
 
 	@OneToMany(mappedBy = "mPresentationTeam")
-	private List<TPresentationCompany> tPresentationCompanyList;
+	public List<TPresentationCompany> tPresentationCompanyList;
 
 	public Integer getPresentationTeamId() {
 		return presentationTeamId;

@@ -28,7 +28,7 @@ public class MPresentationScheduleDetail {
 
 	/** 成果報告会スケジュール詳細ID */
 	@Id
-	@Column(name = "presentation_schedule_detail_id")
+	//@Column(name = "presentation_schedule_detail_id")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
 	@TableGenerator(
 			name = "generator",
@@ -64,7 +64,7 @@ public class MPresentationScheduleDetail {
 	private Date lastModifiedDate;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_schedule_id", referencedColumnName = "presentation_schedule_id")
+	@JoinColumn(name = "presentation_schedule_id", referencedColumnName = "presentationScheduleId")
 	private MPresentationSchedule mPresentationSchedule;
 
 	@OneToMany(mappedBy = "mPresentationScheduleDetail")

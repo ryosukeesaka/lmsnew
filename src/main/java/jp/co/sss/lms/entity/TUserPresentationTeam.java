@@ -15,7 +15,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * ユーザー・成果報告会チーム紐付けテーブルエンティティ
+ * ユーザー・成果報告会チーム紐付けテーブルエンティティクラス
  * 
  * @author Yuna Kato
  */
@@ -38,8 +38,8 @@ public class TUserPresentationTeam {
 	private Integer userPresentationTeamId;
 
 	/** LMSユーザID */
-	@Column
-	private Integer lmsUserId;
+	//@Column
+	//private Integer lmsUserId;
 
 	/** 削除フラグ */
 	@Column
@@ -62,8 +62,12 @@ public class TUserPresentationTeam {
 	private Date lastModifiedDate;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_team_id", referencedColumnName = "presentation_team_id")
+	@JoinColumn(name = "presentation_team_id", referencedColumnName = "presentationTeamId")
 	private MPresentationTeam mPresentationTeam;
+
+	@ManyToOne
+	@JoinColumn(name = "lms_user_id", referencedColumnName = "lmsUserId")
+	public MLmsUser  mLmsUser;
 
 	public Integer getUserPresentationTeamId() {
 		return userPresentationTeamId;
@@ -73,13 +77,13 @@ public class TUserPresentationTeam {
 		this.userPresentationTeamId = userPresentationTeamId;
 	}
 
-	public Integer getLmsUserId() {
-		return lmsUserId;
-	}
+	//public Integer getLmsUserId() {
+	//	return lmsUserId;
+	//}
 
-	public void setLmsUserId(Integer lmsUserId) {
-		this.lmsUserId = lmsUserId;
-	}
+	//public void setLmsUserId(Integer lmsUserId) {
+	//	this.lmsUserId = lmsUserId;
+	//}
 
 	public short getDeleteFlg() {
 		return deleteFlg;
@@ -129,4 +133,11 @@ public class TUserPresentationTeam {
 		this.mPresentationTeam = mPresentationTeam;
 	}
 
+//	public MLmsUser getMLmsUser() {
+//		return mLmsUser;
+//	}
+//
+//	public void setMLmsUser(MLmsUser mLmsUser) {
+//		this.mLmsUser = mLmsUser;
+//	}
 }

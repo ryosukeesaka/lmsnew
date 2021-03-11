@@ -28,6 +28,7 @@ public class TUserCompany {
     private Short deleteFlg;
     @Column
     private Integer firstCreateUser;
+    
     @Temporal(TemporalType.TIMESTAMP)
     private Date firstCreateDate;
     @Column
@@ -38,7 +39,7 @@ public class TUserCompany {
     private MLmsUser mLmsUser;
     @ManyToOne
     @JoinColumn(name = "companyId", referencedColumnName = "companyId", insertable = false, updatable = false)
-    private MCompany mCompany;
+	public MCompany mCompany;
     
 	public Integer getUserCompanyId() {
 		return userCompanyId;

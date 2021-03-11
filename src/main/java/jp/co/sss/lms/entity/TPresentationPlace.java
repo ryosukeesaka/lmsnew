@@ -14,18 +14,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-/**
- * 成果報告会対象会場テーブルエンティティ
- * 
- * @author Takayuki Nomoto
- */
 @Entity
 @Table(name = "t_presentation_place")
 public class TPresentationPlace {
 
 	/** 成果報告会対象会場ID */
 	@Id
-	@Column(name = "presentation_place_id")
+	//@Column(name = "presentation_place_id")
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
 	@TableGenerator(name = "generator", allocationSize = 1)
 	private Integer presentationPlaceId;
@@ -57,17 +52,20 @@ public class TPresentationPlace {
 	/** 公開フラグ */
 	@Column
 	private Short publishedFlg;
+	
+	//@Column
+    //public Integer placeId;
 
 	@ManyToOne
 	@JoinColumn(name = "place_id", referencedColumnName = "placeId")
 	private MPlace mPlace;
 
 	@ManyToOne
-	@JoinColumn(name = "presentation_schedule_id", referencedColumnName = "presentation_schedule_id")
-	private MPresentationSchedule mPresentationSchedule;
+	@JoinColumn(name = "presentation_schedule_id", referencedColumnName = "presentationScheduleId")
+	public MPresentationSchedule mPresentationSchedule;
 
 	@OneToMany(mappedBy ="tPresentationPlace")
-	private  List<MPresentationTeam> mPresentationTeamList;
+	public  List<MPresentationTeam> mPresentationTeamList;
 
 	public Integer getPresentationPlaceId() {
 		return presentationPlaceId;
