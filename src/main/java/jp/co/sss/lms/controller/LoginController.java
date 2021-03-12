@@ -23,6 +23,7 @@ public class LoginController {
 	public ResponseEntity<LoginUserDto> login(@RequestBody LoginForm loginForm) {
 		
 		LoginUserDto loginUserDto = loginService.getLoginInfo(loginForm);
+		
 		return new ResponseEntity<>(loginUserDto, HttpStatus.OK);
 		
 	}

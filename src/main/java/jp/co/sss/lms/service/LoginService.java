@@ -78,8 +78,10 @@ public class LoginService {
 		BeanUtils.copyProperties(mLmsUser, loginUserDto);
 		BeanUtils.copyProperties(mLmsUser.getMUser(), loginUserDto);
 
-		// 受講生の情報をDTOに格納
-		if (mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_STUDENT)) {
+		// 受講生もしくは企業担当者の情報をDTOに格納
+		if (mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_STUDENT)
+				|| mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_COMPANY)
+				) {
 			loginUserDto.setCompanyId(mLmsUser.getTUserCompany().getCompanyId());
 			loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
 			loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
@@ -100,7 +102,6 @@ public class LoginService {
 				loginUserDto.setHiddenFlg(Constants.DB_HIDDEN_FLG_FALSE);
 			}
 		}
-
 		//パスワードに変更日がある場合
 		if (mLmsUser.getMUser().getPasswordChangeDate() != null) {
 			loginUserDto.setPasswordChangeDate(new Timestamp(mLmsUser.getMUser().getPasswordChangeDate().getTime()));
