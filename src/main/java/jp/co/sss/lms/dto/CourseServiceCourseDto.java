@@ -22,9 +22,13 @@ public class CourseServiceCourseDto {
 
 	/** 閉校日 */
 	private Date closeTime;
+	
+	/** 講師権限のコースパスワード取得 */
+	private String password;
 
 	/** カテゴリDtoリスト */
 	private List<CourseServiceCategoryDto> CourseServiceCategoryDtoList;
+
 
 	public Integer getCourseId() {
 		return courseId;
@@ -65,6 +69,10 @@ public class CourseServiceCourseDto {
 	public void setCourseServiceCategoryDtoList(List<CourseServiceCategoryDto> courseServiceCategoryDtoList) {
 		CourseServiceCategoryDtoList = courseServiceCategoryDtoList;
 	}
+	public String getPassword() {
+		return password;
+	}
 
-	
+	public void setPassword(String password) {
+		this.password = password;
 }
