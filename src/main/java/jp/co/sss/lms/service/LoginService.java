@@ -78,10 +78,8 @@ public class LoginService {
 		BeanUtils.copyProperties(mLmsUser, loginUserDto);
 		BeanUtils.copyProperties(mLmsUser.getMUser(), loginUserDto);
 
-		// 受講生もしくは企業担当者の情報をDTOに格納
-		if (mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_STUDENT)
-				|| mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_COMPANY)
-				) {
+		// 受講生の情報をDTOに格納
+		if (mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_STUDENT)) {
 			loginUserDto.setCompanyId(mLmsUser.getTUserCompany().getCompanyId());
 			loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
 			loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
@@ -101,6 +99,17 @@ public class LoginService {
 			}else {
 				loginUserDto.setHiddenFlg(Constants.DB_HIDDEN_FLG_FALSE);
 			}
+		}
+		//企業担当者情報をDTOに格納
+		/**
+		 * @author梶山
+		 * */	
+		else if(mLmsUser.getRole().equals(Constants.CODE_VAL_ROLL_COMPANY)) {
+			loginUserDto.setCompanyId(mLmsUser.getTUserCompany().getCompanyId());
+			loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
+			loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
+			loginUserDto.setSupportAvailable(mLmsUser.getTUserPlace().getMPlace().getSupportAvailable());
+			System.out.println("aaa");
 		}
 		//パスワードに変更日がある場合
 		if (mLmsUser.getMUser().getPasswordChangeDate() != null) {
