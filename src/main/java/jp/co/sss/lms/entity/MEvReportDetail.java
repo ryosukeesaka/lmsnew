@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.annotation.Generated;
+//import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-//import jp.co.sss.lms.entity.MEvReport;
+import jp.co.sss.lms.entity.MEvReport;
 //import jp.co.sss.lms.entity.TEvReportResultDetail;
 
 /**
@@ -24,7 +24,7 @@ import javax.persistence.TableGenerator;
  *
  */
 @Entity
-@Table(name = "mev_report")
+@Table(name = "m_ev_report_detail")
 //@Generated(value = {"S2JDBC-Gen 2.4.46", "org.seasar.extension.jdbc.gen.internal.model.EntityModelFactoryImpl"}, date = "2015/03/16 23:57:28")
 public class MEvReportDetail implements Serializable {
 
@@ -40,7 +40,7 @@ public class MEvReportDetail implements Serializable {
     public Integer evReportDetailId;
 
     /** evReportIdプロパティ */
-    @Column(precision = 10, nullable = true, unique = false)
+    @Column(name="ev_report_id", precision = 10, nullable = true, unique = false)
     public Integer evReportId;
 
     /** fieldNameプロパティ */
@@ -115,9 +115,9 @@ public class MEvReportDetail implements Serializable {
     @Column(precision = 10, nullable = true, unique = false)
     public Integer deliverablesId;
 
-    //@ManyToOne
-    //@JoinColumn(name="ev_report_id", referencedColumnName = "evReportId")
-    //public MEvReport mEvReport;
+    @ManyToOne
+    @JoinColumn(name="ev_report_id", referencedColumnName = "evReportId", insertable=false, updatable=false)
+    public MEvReport mEvReport;
 
     @OneToMany(mappedBy = "mEvReportDetail")
     public List<TEvReportResultDetail> tEvReportResultDetailList;

@@ -13,14 +13,12 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.springframework.stereotype.Component;
 
 /**
  * MCourseエンティティクラス
  *@author 眞鍋 美佳
  */
 @Entity
-@Component
 @Table(name = "m_course")
 public class MCourse {
  
@@ -85,7 +83,7 @@ public class MCourse {
     
 
   	@OneToMany(mappedBy = "mCourse")
-      private List<TCourseUser> tCourseUserList;
+  	private List<TCourseUser> tCourseUserList;
 
     @OneToMany(mappedBy = "mCourse")
     public List<MCategory> mCategoryList;
@@ -96,6 +94,9 @@ public class MCourse {
     
     @OneToMany(mappedBy = "mCourse")
     public List<TCourseDailyReport> tCourseDailyReport;
+    
+    @OneToMany(mappedBy = "mCourse")
+    private List<TEvCourse> tEvCourseList;
     
     @OneToMany(mappedBy = "mCourse")
     public List<TCompanyCourse> tConpanyCourseList;
@@ -243,6 +244,14 @@ public class MCourse {
 
 	public void setTCourseDailyReport(List<TCourseDailyReport> tCourseDailyReport) {
 		this.tCourseDailyReport = tCourseDailyReport;
+	}
+
+	public List<TEvCourse> gettEvCourseList() {
+		return tEvCourseList;
+	}
+
+	public void settEvCourseList(List<TEvCourse> tEvCourseList) {
+		this.tEvCourseList = tEvCourseList;
 	}
 
 	public List<TCompanyCourse> gettConpanyCourseList() {

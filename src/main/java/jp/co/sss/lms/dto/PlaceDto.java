@@ -3,7 +3,10 @@ package jp.co.sss.lms.dto;
 import java.io.Serializable;
 import java.util.List;
 
-public class PlaceDto{
+import org.springframework.stereotype.Component;
+
+@Component
+public class PlaceDto implements Serializable{
 	
 	/** */
 	private static final long serialVersionUID = 1L;
@@ -35,7 +38,7 @@ public class PlaceDto{
 	public Integer getPlaceId() {
 		return placeId;
 	}
-
+	
 	public void setPlaceId(Integer placeId) {
 		this.placeId = placeId;
 	}

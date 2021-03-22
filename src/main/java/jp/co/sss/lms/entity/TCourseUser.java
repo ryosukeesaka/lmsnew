@@ -18,7 +18,7 @@ public class TCourseUser {
 	/** コース・ユーザー紐付けID */
 	@Id
     private Integer courseUserId;
-    @Column(name = "course_id", insertable = false, updatable = false)
+    @Column(name = "course_id")
     private Integer courseId;
 	/** LMSユーザID */
     @Column
@@ -44,7 +44,7 @@ public class TCourseUser {
     @OneToOne(mappedBy = "tCourseUser")
     private MLmsUser mLmsUser;
     @ManyToOne
-    @JoinColumn(name = "course_id", referencedColumnName = "course_id")
+    @JoinColumn(name = "course_id", referencedColumnName = "course_id", insertable=false, updatable=false)
     private MCourse mCourse;
     
 	public Integer getCourseUserId() {

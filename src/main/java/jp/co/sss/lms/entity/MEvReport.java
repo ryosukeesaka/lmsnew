@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.annotation.Generated;
+//import javax.annotation.Generated;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 /**
@@ -18,7 +19,8 @@ import javax.persistence.TableGenerator;
  *
  */
 @Entity
-@Generated(value = {"S2JDBC-Gen 2.4.46", "org.seasar.extension.jdbc.gen.internal.model.EntityModelFactoryImpl"}, date = "2015/03/15 19:04:15")
+@Table(name = "m_ev_report")
+//@Generated(value = {"S2JDBC-Gen 2.4.46", "org.seasar.extension.jdbc.gen.internal.model.EntityModelFactoryImpl"}, date = "2015/03/15 19:04:15")
 public class MEvReport implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -88,11 +90,11 @@ public class MEvReport implements Serializable {
     @Column(precision = 5, nullable = true, unique = false)
     public Short hiddenFlg;
 
-//    @OneToMany(mappedBy = "mEvReport")
-//    public List<MEvReportDetail> mEvReportDetailList;
-//
-//    @OneToMany(mappedBy = "mEvReport")
-//    public List<TEvCourse> tEvCourseList;
+    @OneToMany(mappedBy = "mEvReport")
+    public List<MEvReportDetail> mEvReportDetailList;
+
+    @OneToMany(mappedBy = "mEvReport")
+    public List<TEvCourse> tEvCourseList;
 //
 //    @OneToMany(mappedBy = "mEvReport")
 //    public List<TEvReportResult> tEvReportResultList;
