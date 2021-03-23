@@ -251,7 +251,7 @@ public class UserService {
 			if(!Objects.isNull(form.getPlaceId())) {
 				//mPlace.setPlaceId(form.getPlaceId());
 				//placeName = form.getPlaceName();
-				placeId = form.getPlaceId();
+				placeId = Integer.parseInt(form.getPlaceId());
 			}
 			if(!StringUtils.isEmpty(form.getUserName())) {
 				//mUser.setUserName(form.getUserName());

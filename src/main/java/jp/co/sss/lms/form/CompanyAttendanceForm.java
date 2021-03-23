@@ -13,7 +13,7 @@ public class CompanyAttendanceForm {
 	
 	private String placeName;
 	
-	private Integer placeId;
+	private String placeId;
 	
 	private String companyName;
 	
@@ -43,8 +43,12 @@ public class CompanyAttendanceForm {
 		return userId;
 	}
 	
-	public Integer getPlaceId() {
+	public String getPlaceId() {
 		return placeId;
+	}
+	
+	public void setPlaceId(String placeId) {
+		this.placeId = placeId;
 	}
 	
 	public String getRole() {
