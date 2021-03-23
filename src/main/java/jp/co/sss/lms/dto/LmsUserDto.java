@@ -82,5 +82,17 @@ public class LmsUserDto extends LmsUserDtoBase {
     public String getLoginId() {
         return loginId;
     }
+    
+    public CompanyDto getCompanyDto() {
+    	return companyDto;
+    }
+    
+    public void setCompanyDto(CompanyDto companyDto) {
+    	this.companyDto = companyDto;
+    }
+    
+    public void setPlaceDto(PlaceDto placeDto) {
+    	this.placeDto = placeDto;
+    }
 
 }
