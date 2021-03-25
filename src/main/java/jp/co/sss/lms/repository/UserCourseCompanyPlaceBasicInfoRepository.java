@@ -11,6 +11,7 @@ import jp.co.sss.lms.entity.UserCourseCompanyPlaceInfo;
 
 /**
  * @author 梶山
+ * 
  * */
 @Repository
 public interface UserCourseCompanyPlaceBasicInfoRepository extends JpaRepository<UserCourseCompanyPlaceInfo, Integer> {

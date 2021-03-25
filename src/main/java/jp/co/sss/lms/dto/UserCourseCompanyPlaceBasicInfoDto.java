@@ -6,6 +6,7 @@ import java.util.List;
 /*
  * ユーザー、企業、コース、会場情報
  * @author 梶山
+ * 
  * */
 
 public class UserCourseCompanyPlaceBasicInfoDto {

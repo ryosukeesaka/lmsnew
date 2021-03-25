@@ -23,7 +23,7 @@ public class UserCourseCompanyPlaceInfo {
 	@Column
 	private String role; 
 	//退校フラグ
-	//flgのため、shortにしたかったがnullになる可能性があるためIntegerにしてある。
+	//flgのため、shortにしたかったがnullになる可能性があるためIntegerにしてある
 	//
 	@Column
 	private Integer leaveFlg;

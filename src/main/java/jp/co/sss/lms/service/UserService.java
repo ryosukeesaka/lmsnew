@@ -41,16 +41,8 @@ import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.MessageUtil;
 import jp.co.sss.lms.util.PasswordUtil;
 
-//import jp.co.sss.lms.util.SettingUtil;
-
-
-
-
 import jp.co.sss.lms.dto.UserCourseCompanyPlaceBasicInfoDto;
-
 import jp.co.sss.lms.entity.UserCourseCompanyPlaceInfo;
-
-
 import jp.co.sss.lms.repository.UserCourseCompanyPlaceBasicInfoRepository;
 
 /**
