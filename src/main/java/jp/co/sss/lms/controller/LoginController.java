@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.service.LoginService;
-
 @RestController
 @RequestMapping("")
 public class LoginController {
@@ -19,11 +18,11 @@ public class LoginController {
 	@Autowired
 	private LoginService loginService;
 	
+	
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public ResponseEntity<LoginUserDto> login(@RequestBody LoginForm loginForm) {
 		
 		LoginUserDto loginUserDto = loginService.getLoginInfo(loginForm);
-		
 		return new ResponseEntity<>(loginUserDto, HttpStatus.OK);
 		
 	}

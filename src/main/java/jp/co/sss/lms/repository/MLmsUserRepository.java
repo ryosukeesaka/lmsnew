@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import jp.co.sss.lms.entity.MLmsUser;
 
-
 @Repository
 public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 
@@ -62,4 +61,5 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 			+ " AND t7.deleteFlg = 0"
 			+ " AND t8.deleteFlg = 0")
 	public List<MLmsUser> findStudentByPlaceId(@Param("placeId") Integer placeId, @Param("courseDate") Date courseDate);
+	
 }

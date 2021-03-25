@@ -1,7 +1,9 @@
 package jp.co.sss.lms.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
@@ -9,14 +11,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jp.co.sss.lms.dto.LmsUserDto;
 import jp.co.sss.lms.dto.LoginUserDto;
+import jp.co.sss.lms.dto.UserCourseCompanyPlaceBasicInfoDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
+import jp.co.sss.lms.entity.TUserPlace;
+import jp.co.sss.lms.entity.UserCourseCompanyPlaceInfo;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
+import jp.co.sss.lms.repository.TUserPlaceRepository;
+import jp.co.sss.lms.repository.UserCourseCompanyPlaceBasicInfoRepository;
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.MessageUtil;
 import jp.co.sss.lms.util.PasswordUtil;
@@ -42,12 +50,13 @@ public class UserService {
 	@Autowired
 	private MLmsUserRepository mLmsUserRepository;
 	@Autowired
+	private UserCourseCompanyPlaceBasicInfoRepository userCourseCompanyPlaceBasicInfoRepository;;
+	@Autowired
 	private DateUtil dateUtil;
 	@Autowired
 	private MessageUtil messageUtil;
 	@Autowired
 	private PasswordUtil passwordUtil;
-
 	/**
 	 * パスワード変更
 	 *
@@ -194,4 +203,29 @@ public class UserService {
 				
 		return loginUserDto; 
 	}
+	
+	/**
+	 * ユーザー一覧リストの取得	
+	 * @author 梶山
+	 * @param placeId 会場Id
+	 * @return List <UserCourseCompanyPlaceBasicInfoDto> ユーザ、コース、企業、会場情報のdto List
+	 * */
+	public List<UserCourseCompanyPlaceBasicInfoDto> getList(Integer placeId) {
+		List<UserCourseCompanyPlaceBasicInfoDto> list = new ArrayList<>();
+		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.
+																				getUserCourseCompanyPlaceInfoListByPlaceId(placeId);
+
+		System.out.println(userCourseCompanyPlaceInfoList.size() );
+		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	
+				//nullチェック
+				if(null == info.getCompanyId() || null== info.getCourseId() || null == info.getPlaceId()) {
+					continue;
+				}
+				UserCourseCompanyPlaceBasicInfoDto userInfoDto = new UserCourseCompanyPlaceBasicInfoDto();
+				BeanUtils.copyProperties(info,userInfoDto);
+				list.add(userInfoDto);
+		}
+		return list;
+	}
+	
 }

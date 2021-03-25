@@ -70,7 +70,67 @@ public class CompanyDto implements Serializable {
         return true;
     }
 
-    /**
+    public String getCompanyNameAndAddress() {
+		return companyNameAndAddress;
+	}
+
+	public void setCompanyNameAndAddress(String companyNameAndAddress) {
+		this.companyNameAndAddress = companyNameAndAddress;
+	}
+
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public void setWorkStartTime(TrainingTime workStartTime) {
+		this.workStartTime = workStartTime;
+	}
+
+	public void setWorkEndTime(TrainingTime workEndTime) {
+		this.workEndTime = workEndTime;
+	}
+
+	public void setRestStartTime(TrainingTime restStartTime) {
+		this.restStartTime = restStartTime;
+	}
+
+	public void setRestEndTime(TrainingTime restEndTime) {
+		this.restEndTime = restEndTime;
+	}
+
+	public void setHoliday(String holiday) {
+		this.holiday = holiday;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public void setPhoneNumber1(String phoneNumber1) {
+		this.phoneNumber1 = phoneNumber1;
+	}
+
+	public void setPhoneNumber2(String phoneNumber2) {
+		this.phoneNumber2 = phoneNumber2;
+	}
+
+	public void setPhoneNumber3(String phoneNumber3) {
+		this.phoneNumber3 = phoneNumber3;
+	}
+
+	public void setRepresentativeName(String representativeName) {
+		this.representativeName = representativeName;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	/**
      * 企業IDを取得します。
      * @return 企業ID
      */

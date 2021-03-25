@@ -27,6 +27,8 @@ public class UserDetailDto {
 	private Integer courseId;
 	/** コース名 */
 	private String courseName;
+	/** 会場Id */
+	private Integer placeId;
 	/** 会場名 */
 	private String placeName;
 	/** 備考 */
@@ -111,5 +113,11 @@ public class UserDetailDto {
 	}
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+	public Integer getPlaceId() {
+		return placeId;
+	}
+	public void setPlaceId(Integer placeId) {
+		this.placeId = placeId;
 	}
 }

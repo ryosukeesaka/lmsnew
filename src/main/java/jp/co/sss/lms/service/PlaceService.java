@@ -37,4 +37,9 @@ public class PlaceService {
 
         return placeDto;
     }
+
+	public PlaceDto getPlaceDto(Integer lmsUserId, Integer placeId) {
+		//todo: add
+		return null;
+	}
 }
