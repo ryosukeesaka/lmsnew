@@ -28,7 +28,7 @@ import jp.co.sss.lms.util.MessageUtil;
 
 /**
  * @author 梶山
- * 
+ * \
  * */
 
 @RestController
@@ -46,15 +46,21 @@ public class UserListController {
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	/**
-	 * lmsUserId,placeidをパラメータとして会場Idに紐づくユーザー情報リストを取得する
+	 * lmsUserId、入力パラメーターから紐づくユーザー情報リストを取得する
 	 * @author 梶山
 	 * @param lmsuserId Integer
 	 * @param String placeId
+	 * @param String UserName
+	 * @param String courseName
+	 * @param String companyName
 	 * @return ResponseEntity<>
 	 * */
 	@RequestMapping("")
 	public ResponseEntity<Map<String, Object>> userList(@RequestParam("lmsUserId") Integer lmsUserId,
-			@RequestParam("placeId") String placeId) {
+			@RequestParam("placeId") String placeId,
+			@RequestParam("userName") String userName,
+			@RequestParam("courseName") String courseName,
+			@RequestParam("companyName") String companyName) {
 		Map <String,Object> map = new HashMap<>();
 		
 		//placeIdが数値かどうか判定
@@ -90,9 +96,13 @@ public class UserListController {
 			PlaceDto placeDto = placeService.getPlaceDto(Integer.parseInt(placeId) );
 			map.put("placeDto", placeDto);
 		
-		//placeIdをパラメータとしてコース、企業、会場紐づけdtoを取得する
-		
-		List <UserCourseCompanyPlaceBasicInfoDto> userCourseCompanyPlaceBasicInfoDtoList = userService.getList(Integer.parseInt(placeId) );
+		//検索条件からユーザー情報を取得
+			Map<String,String> searchMap= new HashMap<>();
+			map.put("placeId",placeId);
+			map.put("userName",userName);
+			map.put("companyName",companyName);
+			map.put("courseName",courseName);
+		List <UserCourseCompanyPlaceBasicInfoDto> userCourseCompanyPlaceBasicInfoDtoList = userService.getList(searchMap );
 		map.put("userCourseCompanyPlaceBasicInfoDto", userCourseCompanyPlaceBasicInfoDtoList);
 		
 		return new ResponseEntity<>(map, HttpStatus.OK);

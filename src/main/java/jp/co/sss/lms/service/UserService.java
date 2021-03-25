@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
@@ -321,13 +322,18 @@ public class UserService {
 	/**
 	 * ユーザー一覧リストの取得	
 	 * @author 梶山
-	 * @param placeId 会場Id
+	 * @param map<string,string>
 	 * @return List <UserCourseCompanyPlaceBasicInfoDto> ユーザ、コース、企業、会場情報のdto List
 	 * */
-	public List<UserCourseCompanyPlaceBasicInfoDto> getList(Integer placeId) {
+	public List<UserCourseCompanyPlaceBasicInfoDto> getList(Map<String,String>map) {
 		List<UserCourseCompanyPlaceBasicInfoDto> list = new ArrayList<>();
+		String placeId = map.get("placeId") ;
+		String userName = map.get("userName");
+		String companyName = map.get("companyName");
+		String courseName = map.get("courseName");
 		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.
-																				getUserCourseCompanyPlaceInfoListByPlaceId(placeId);
+																				searchUserCourseCompanyPlaceInfoListByForm
+																				(userName,courseName,companyName,placeId);
 
 		System.out.println(userCourseCompanyPlaceInfoList.size() );
 		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	

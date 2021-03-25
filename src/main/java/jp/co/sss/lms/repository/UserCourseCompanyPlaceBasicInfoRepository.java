@@ -46,8 +46,16 @@ public interface UserCourseCompanyPlaceBasicInfoRepository extends JpaRepository
 			      +"   ON tUP.lms_user_id = mLU.lms_user_id " 
 			      +" LEFT JOIN m_place mP " 
 			      +"   ON mP.place_id = tUP.place_id" 
-			      +" WHERE tUP.place_id = :placeId",
+			      +"  WHERE  mU.user_name LIKE %:userName%"
+			      +"      AND mCourse.course_name LIKE %:courseName% "
+			      +"      AND  mCompany.company_name LIKE %:companyName%"
+			      +"      AND  mP.place_id = :placeId ",
 			      nativeQuery = true)
-	List<UserCourseCompanyPlaceInfo> getUserCourseCompanyPlaceInfoListByPlaceId(@Param("placeId")Integer placeId);
+	List<UserCourseCompanyPlaceInfo> searchUserCourseCompanyPlaceInfoListByForm( 
+			@Param("userName")String userName,
+			@Param("courseName")String courseName, 
+			@Param("companyName")String companyName,
+			@Param("placeId")String placeId);
+			
 
 }

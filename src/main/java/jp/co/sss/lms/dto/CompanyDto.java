@@ -78,13 +78,6 @@ public class CompanyDto implements Serializable {
 		this.companyNameAndAddress = companyNameAndAddress;
 	}
 
-	public void setCompanyId(Integer companyId) {
-		this.companyId = companyId;
-	}
-
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
 
 	public void setWorkStartTime(TrainingTime workStartTime) {
 		this.workStartTime = workStartTime;
