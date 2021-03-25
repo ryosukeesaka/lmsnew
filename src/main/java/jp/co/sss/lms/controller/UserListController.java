@@ -98,10 +98,10 @@ public class UserListController {
 		
 		//検索条件からユーザー情報を取得
 			Map<String,String> searchMap= new HashMap<>();
-			map.put("placeId",placeId);
-			map.put("userName",userName);
-			map.put("companyName",companyName);
-			map.put("courseName",courseName);
+			searchMap.put("placeId",placeId);
+			searchMap.put("userName",userName);
+			searchMap.put("companyName",companyName);
+			searchMap.put("courseName",courseName);
 		List <UserCourseCompanyPlaceBasicInfoDto> userCourseCompanyPlaceBasicInfoDtoList = userService.getList(searchMap );
 		map.put("userCourseCompanyPlaceBasicInfoDto", userCourseCompanyPlaceBasicInfoDtoList);
 		
