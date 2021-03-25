@@ -335,7 +335,6 @@ public class UserService {
 																				searchUserCourseCompanyPlaceInfoListByForm
 																				(userName,courseName,companyName,placeId);
 
-		System.out.println(userCourseCompanyPlaceInfoList.size() );
 		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	
 				//nullチェック
 				if(null == info.getCompanyId() || null== info.getCourseId() || null == info.getPlaceId()) {

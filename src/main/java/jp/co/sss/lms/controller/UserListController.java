@@ -28,7 +28,7 @@ import jp.co.sss.lms.util.MessageUtil;
 
 /**
  * @author 梶山
- * \
+ * 
  * */
 
 @RestController
@@ -67,7 +67,7 @@ public class UserListController {
 		boolean placeIdIsNumber = true;
 		try {
 			Integer.parseInt(placeId);
-		}catch(Exception e){
+		}catch(NumberFormatException e){
 			placeIdIsNumber = false;
 			String arr[] = {"placeName"};
 			String message = messageUtil.getMessage(Constants.VALID_KEY_INVALID,arr);
@@ -86,8 +86,8 @@ public class UserListController {
 				placeId = ""+loginUser.getPlaceId();
 				Integer.parseInt(placeId);
 			}
-			catch(Exception e) {
-				//ログインユーザーの会場Idがなかった場合
+			catch(NumberFormatException e) {
+				//ログインユーザーの会場Idがなかった場合,
 				return new ResponseEntity<>(map, HttpStatus.OK);
 			}
 		}
