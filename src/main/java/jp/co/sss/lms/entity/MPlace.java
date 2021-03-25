@@ -83,6 +83,10 @@ public class MPlace {
 	/** リレーションテーブル */
 	@OneToMany(mappedBy = "mPlace")
 	private List<TPresentationPlace> tPresentationPlaceList;
+	
+	/** リレーションテーブル */
+	@OneToMany(mappedBy = "mPlace")
+	public List<TPlaceAssign> tPlaceAssignList;
 
 	public Integer getPlaceId() {
 		return placeId;

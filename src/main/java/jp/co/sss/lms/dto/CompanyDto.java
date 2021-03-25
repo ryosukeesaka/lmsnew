@@ -137,6 +137,10 @@ public class CompanyDto implements Serializable {
     public Integer getCompanyId() {
         return companyId;
     }
+    
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
+    }
 
     /**
      * 企業名を取得します。
@@ -144,6 +148,10 @@ public class CompanyDto implements Serializable {
      */
     public String getCompanyName() {
         return companyName;
+    }
+    
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     /**

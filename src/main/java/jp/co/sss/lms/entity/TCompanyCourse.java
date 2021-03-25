@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -56,6 +57,9 @@ public class TCompanyCourse {
 	@ManyToOne
 	@JoinColumn(name = "course_id",referencedColumnName = "course_id")
 	private MCourse mCourse;
+	
+	@OneToMany(mappedBy="tCompanyCourse")
+	public List<TPlaceAssign> tPlaceAssignList;
 
 	public Integer getCompanycourseid() {
 		return companyCourseId;

@@ -1,5 +1,7 @@
 package jp.co.sss.lms.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,5 +38,8 @@ public interface MPlaceRepository extends JpaRepository<MPlace, Integer> {
 			+ " WHERE T1.placeId = :placeId"
 			+ " AND T1.deleteFlg = 0")
 	MPlace getMPlaceById(@Param("placeId") Integer placeId);
-
+	
+	@Query("SELECT T1 FROM MPlace T1 WHERE T1.accountId = :accountId AND T1.deleteFlg = 0 "
+			+ "ORDER BY T1.placeId ASC")
+	List<MPlace> findByAccountId(Integer accountId);
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import jp.co.sss.lms.entity.MLmsUser;
 
+
 @Repository
 public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 
@@ -62,4 +63,22 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 			+ " AND t8.deleteFlg = 0")
 	public List<MLmsUser> findStudentByPlaceId(@Param("placeId") Integer placeId, @Param("courseDate") Date courseDate);
 	
+	@Query(value="SELECT * FROM m_lms_user as t1 LEFT OUTER JOIN t_course_user as t2 ON t1.lms_user_id = t2.lms_user_id "
+			+ "LEFT OUTER JOIN m_course as t3 ON t2.course_id = t3.course_id "
+			+ "LEFT OUTER JOIN t_user_company as t4 ON t1.lms_user_id = t4.lms_user_id "
+			+ "LEFT OUTER JOIN m_company as t5 ON t4.company_id = t5.company_id "
+			+ "LEFT OUTER JOIN t_user_place as t6 ON t1.lms_user_id = t6.lms_user_id "
+			+ "LEFT OUTER JOIN m_place as t7 ON t6.place_id = t7.place_id "
+			+ "LEFT OUTER JOIN m_user as t8 ON t8.user_id = t1.user_id "
+			+ "WHERE t3.course_name ILIKE %:courseName% "
+			+ "AND t5.company_name ILIKE %:companyName% "
+			+ "AND t6.place_id = :placeId "
+			+ "AND t8.user_name ILIKE %:userName% "
+			+ "AND t1.role = :role "
+			+ "AND t1.account_id = :accountId "
+			+ "AND t1.delete_flg = 0", nativeQuery = true
+			)
+	public List<MLmsUser> findByStudentWithAddress(@Param("courseName") String courseName,
+			@Param("companyName") String companyName, @Param("placeId") Integer placeId, @Param("userName") String userName, 
+			@Param("role") String role, @Param("accountId") Integer accountId);
 }
