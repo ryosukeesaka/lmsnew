@@ -13,153 +13,159 @@ import javax.persistence.TableGenerator;
 
 /**
  * MMeetingScheduleエンティティクラス
- *@author 江坂 亮典
+ * 
+ * @author 江坂 亮典
  */
 
 @Entity
 @Table(name = "m_meeting_schedule")
-public class MMeetingSchedule {	
+public class MMeetingSchedule {
 
-	    /** 面談スケジュールID */
-	    @Id
-	    @GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
-	    @TableGenerator(
-	        name = "generator",
-	        allocationSize = 1)
-	    private Integer meetingScheduleId;
+	/** 面談スケジュールID */
+	@Id
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "generator")
+	@TableGenerator(name = "generator", allocationSize = 1)
+	private Integer meetingScheduleId;
 
-	    /** 予約編集期限 */
-	    @Column(nullable = true, unique = false)
-	    private Timestamp editLimit;
+	/** 予約編集期限 */
+	@Column(nullable = true, unique = false)
+	private Timestamp editLimit;
 
-	    /** 面談開始日 */
-	    @Column(nullable = true, unique = false)
-	    private Timestamp meetingOpenDate;
+	/** 面談開始日 */
+	@Column(nullable = true, unique = false)
+	private Timestamp meetingOpenDate;
 
-	    /** 面談終了日 */
-	    @Column(nullable = true, unique = false)
-	    private Timestamp meetingCloseDate;
+	/** 面談終了日 */
+	@Column(nullable = true, unique = false)
+	private Timestamp meetingCloseDate;
 
-	    /** 用途 */
-	    @Column(length = 100, nullable = true, unique = false)
-	    private String purpose;
+	/** 用途 */
+	@Column(length = 100, nullable = true, unique = false)
+	private String purpose;
 
-	    /**  削除フラグ */
-	    @Column(precision = 5, nullable = true, unique = false)
-	    private Short deleteFlg;
+	/** 削除フラグ */
+	@Column(precision = 5, nullable = true, unique = false)
+	private Short deleteFlg;
 
-	    /**  初回作成者 */
-	    @Column(precision = 10, nullable = true, unique = false)
-	    private Integer firstCreateUser;
+	/** 初回作成者 */
+	@Column(precision = 10, nullable = true, unique = false)
+	private Integer firstCreateUser;
 
-	    /** 初回作成日時 */
-	    @Column(nullable = true, unique = false)
-	    private Timestamp firstCreateDate;
+	/** 初回作成日時 */
+	@Column(nullable = true, unique = false)
+	private Timestamp firstCreateDate;
 
-	    /** 最終更新者 */
-	    @Column(precision = 10, nullable = true, unique = false)
-	    private Integer lastModifiedUser;
+	/** 最終更新者 */
+	@Column(precision = 10, nullable = true, unique = false)
+	private Integer lastModifiedUser;
 
-	    /** 最終更新日時 */
-	    @Column(nullable = true, unique = false)
-	    private Timestamp lastModifiedDate;
+	/** 最終更新日時 */
+	@Column(nullable = true, unique = false)
+	private Timestamp lastModifiedDate;
 
-	    //@OneToMany(mappedBy = "mMeetingSchedule")
-	    //現実装段階では不使用のためコメントアウト
-	    //public List<MMeetingScheduleDetail> mMeetingScheduleDetailList;
+	/** リレーションテーブル */
+	@OneToMany(mappedBy = "mMeetingSchedule")
+	private List<MMeetingScheduleDetail> mMeetingScheduleDetailList;
 
-	    /** リレーションテーブル */
-	    @OneToMany(mappedBy = "mMeetingSchedule")
-	    private  List<TMeetingPlace> tMeetingPlaceList;
 
-		public Integer getMeetingScheduleId() {
-			return meetingScheduleId;
-		}
+	/** リレーションテーブル */
+	@OneToMany(mappedBy = "mMeetingSchedule")
+	private List<TMeetingPlace> tMeetingPlaceList;
 
-		public void setMeetingScheduleId(Integer meetingScheduleId) {
-			this.meetingScheduleId = meetingScheduleId;
-		}
+	public Integer getMeetingScheduleId() {
+		return meetingScheduleId;
+	}
 
-		public Timestamp getEditLimit() {
-			return editLimit;
-		}
+	public void setMeetingScheduleId(Integer meetingScheduleId) {
+		this.meetingScheduleId = meetingScheduleId;
+	}
 
-		public void setEditLimit(Timestamp editLimit) {
-			this.editLimit = editLimit;
-		}
+	public Timestamp getEditLimit() {
+		return editLimit;
+	}
 
-		public Timestamp getMeetingOpenDate() {
-			return meetingOpenDate;
-		}
+	public void setEditLimit(Timestamp editLimit) {
+		this.editLimit = editLimit;
+	}
 
-		public void setMeetingOpenDate(Timestamp meetingOpenDate) {
-			this.meetingOpenDate = meetingOpenDate;
-		}
+	public Timestamp getMeetingOpenDate() {
+		return meetingOpenDate;
+	}
 
-		public Timestamp getMeetingCloseDate() {
-			return meetingCloseDate;
-		}
+	public void setMeetingOpenDate(Timestamp meetingOpenDate) {
+		this.meetingOpenDate = meetingOpenDate;
+	}
 
-		public void setMeetingCloseDate(Timestamp meetingCloseDate) {
-			this.meetingCloseDate = meetingCloseDate;
-		}
+	public Timestamp getMeetingCloseDate() {
+		return meetingCloseDate;
+	}
 
-		public String getPurpose() {
-			return purpose;
-		}
+	public void setMeetingCloseDate(Timestamp meetingCloseDate) {
+		this.meetingCloseDate = meetingCloseDate;
+	}
 
-		public void setPurpose(String purpose) {
-			this.purpose = purpose;
-		}
+	public String getPurpose() {
+		return purpose;
+	}
 
-		public Short getDeleteFlg() {
-			return deleteFlg;
-		}
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
 
-		public void setDeleteFlg(Short deleteFlg) {
-			this.deleteFlg = deleteFlg;
-		}
+	public Short getDeleteFlg() {
+		return deleteFlg;
+	}
 
-		public Integer getFirstCreateUser() {
-			return firstCreateUser;
-		}
+	public void setDeleteFlg(Short deleteFlg) {
+		this.deleteFlg = deleteFlg;
+	}
 
-		public void setFirstCreateUser(Integer firstCreateUser) {
-			this.firstCreateUser = firstCreateUser;
-		}
+	public Integer getFirstCreateUser() {
+		return firstCreateUser;
+	}
 
-		public Timestamp getFirstCreateDate() {
-			return firstCreateDate;
-		}
+	public void setFirstCreateUser(Integer firstCreateUser) {
+		this.firstCreateUser = firstCreateUser;
+	}
 
-		public void setFirstCreateDate(Timestamp firstCreateDate) {
-			this.firstCreateDate = firstCreateDate;
-		}
+	public Timestamp getFirstCreateDate() {
+		return firstCreateDate;
+	}
 
-		public Integer getLastModifiedUser() {
-			return lastModifiedUser;
-		}
+	public void setFirstCreateDate(Timestamp firstCreateDate) {
+		this.firstCreateDate = firstCreateDate;
+	}
 
-		public void setLastModifiedUser(Integer lastModifiedUser) {
-			this.lastModifiedUser = lastModifiedUser;
-		}
+	public Integer getLastModifiedUser() {
+		return lastModifiedUser;
+	}
 
-		public Timestamp getLastModifiedDate() {
-			return lastModifiedDate;
-		}
+	public void setLastModifiedUser(Integer lastModifiedUser) {
+		this.lastModifiedUser = lastModifiedUser;
+	}
 
-		public void setLastModifiedDate(Timestamp lastModifiedDate) {
-			this.lastModifiedDate = lastModifiedDate;
-		}
+	public Timestamp getLastModifiedDate() {
+		return lastModifiedDate;
+	}
 
-		public List<TMeetingPlace> gettMeetingPlaceList() {
-			return tMeetingPlaceList;
-		}
+	public void setLastModifiedDate(Timestamp lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
 
-		public void settMeetingPlaceList(List<TMeetingPlace> tMeetingPlaceList) {
-			this.tMeetingPlaceList = tMeetingPlaceList;
-		}
-	    
-	   
+	public List<MMeetingScheduleDetail> getmMeetingScheduleDetailList() {
+		return mMeetingScheduleDetailList;
+	}
+
+	public void setmMeetingScheduleDetailList(List<MMeetingScheduleDetail> mMeetingScheduleDetailList) {
+		this.mMeetingScheduleDetailList = mMeetingScheduleDetailList;
+	}
+
+	public List<TMeetingPlace> gettMeetingPlaceList() {
+		return tMeetingPlaceList;
+	}
+
+	public void settMeetingPlaceList(List<TMeetingPlace> tMeetingPlaceList) {
+		this.tMeetingPlaceList = tMeetingPlaceList;
+	}
 
 }
