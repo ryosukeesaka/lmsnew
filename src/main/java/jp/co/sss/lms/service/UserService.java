@@ -271,6 +271,7 @@ public class UserService {
         }
         if (!Objects.isNull(mLmsUser.getTCourseUser())) {
             lmsUserDto.courseName = mLmsUser.getTCourseUser().getMCourse().getCourseName();
+            lmsUserDto.courseId = mLmsUser.getTCourseUser().getMCourse().getCourseId();
         }
         if (!Objects.isNull(mLmsUser.getTUserCompany()) && 
         		mLmsUser.getTUserCompany().getDeleteFlg().equals(Constants.DB_FLG_FALSE)) {
