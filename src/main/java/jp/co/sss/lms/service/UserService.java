@@ -17,9 +17,11 @@ import jp.co.sss.lms.dto.CompanyDto;
 import jp.co.sss.lms.dto.LmsUserDto;
 import jp.co.sss.lms.dto.LoginUserDto;
 import jp.co.sss.lms.dto.PlaceDto;
+import jp.co.sss.lms.dto.UserCourseCompanyPlaceBasicInfoDto;
 import jp.co.sss.lms.dto.UserDetailDto;
 import jp.co.sss.lms.entity.MLmsUser;
 import jp.co.sss.lms.entity.MUser;
+import jp.co.sss.lms.entity.UserCourseCompanyPlaceInfo;
 import jp.co.sss.lms.form.CompanyAttendanceForm;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
@@ -282,4 +284,31 @@ public class UserService {
         //lmsユーザー情報を格納したDtoを返す
         return lmsUserDto;
     }
+	/**
+	 * ユーザー一覧リストの取得	
+	 * @author 梶山
+	 * @param map<string,string>
+	 * @return List <UserCourseCompanyPlaceBasicInfoDto> ユーザ、コース、企業、会場情報のdto List
+	 * */
+	public List<UserCourseCompanyPlaceBasicInfoDto> getList(Map<String,String>map) {
+		List<UserCourseCompanyPlaceBasicInfoDto> list = new ArrayList<>();
+		String placeId = map.get("placeId") ;
+		String userName = map.get("userName");
+		String companyName = map.get("companyName");
+		String courseName = map.get("courseName");
+		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.
+																				searchUserCourseCompanyPlaceInfoListByForm
+																				(userName,courseName,companyName,placeId);
+
+		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	
+				//nullチェック
+				if(null == info.getCompanyId() || null== info.getCourseId() || null == info.getPlaceId()) {
+					continue;
+				}
+				UserCourseCompanyPlaceBasicInfoDto userInfoDto = new UserCourseCompanyPlaceBasicInfoDto();
+				BeanUtils.copyProperties(info,userInfoDto);
+				list.add(userInfoDto);
+		}
+		return list;
+	}
 }
