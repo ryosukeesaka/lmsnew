@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
@@ -27,6 +28,7 @@ import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
+import jp.co.sss.lms.repository.UserCourseCompanyPlaceBasicInfoRepository;
 import jp.co.sss.lms.util.Constants;
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.MessageUtil;
@@ -49,6 +51,8 @@ public class UserService {
 	HttpSession session;
 	@Autowired
 	TTemporaryPassStorageRepository tTemporaryPassStorageRepository;
+	@Autowired
+	private UserCourseCompanyPlaceBasicInfoRepository userCourseCompanyPlaceBasicInfoRepository;
 	@Autowired
 	private MLmsUserRepository mLmsUserRepository;
 	@Autowired
@@ -296,9 +300,7 @@ public class UserService {
 		String userName = map.get("userName");
 		String companyName = map.get("companyName");
 		String courseName = map.get("courseName");
-		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.
-																				searchUserCourseCompanyPlaceInfoListByForm
-																				(userName,courseName,companyName,placeId);
+		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.searchUserCourseCompanyPlaceInfoListByForm(userName,courseName,companyName,placeId);
 
 		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	
 				//nullチェック
