@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,7 +27,6 @@ public class TCompanyCourse {
 	@Id
 	@Column(name="company_course_id")
 	private Integer companyCourseId;
-
 	/**削除フラグ*/
 	@Column
 	private Integer entryId;
@@ -49,7 +49,6 @@ public class TCompanyCourse {
 	@Temporal(TemporalType.TIMESTAMP)
     private Date invoiceOutputDate;
 	
-	
 	@ManyToOne
 	@JoinColumn(name ="company_id",referencedColumnName = "companyId")
 	private MCompany mCompany;
@@ -57,16 +56,20 @@ public class TCompanyCourse {
 	@ManyToOne
 	@JoinColumn(name = "course_id",referencedColumnName = "course_id")
 	private MCourse mCourse;
-	
+
 	@OneToMany(mappedBy="tCompanyCourse")
 	public List<TPlaceAssign> tPlaceAssignList;
+	
+	@OneToOne
+	@JoinColumn(name ="company_course_id",referencedColumnName = "company_course_id")
+	private TAgreementConsent tAgreementConsent;
 
-	public Integer getCompanycourseid() {
+	public Integer getCompanyCourseId() {
 		return companyCourseId;
 	}
 
-	public void setCompanycourseid(Integer companycourseId) {
-		this.companyCourseId = companycourseId;
+	public void setCompanyCourseId(Integer companyCourseId) {
+		this.companyCourseId = companyCourseId;
 	}
 
 	public Integer getEntryId() {
@@ -141,4 +144,19 @@ public class TCompanyCourse {
 		this.mCourse = mCourse;
 	}
 	
+	public List<TPlaceAssign> gettPlaceAssignList() {
+		return tPlaceAssignList;
+	}
+
+	public void settPlaceAssignList(List<TPlaceAssign> tPlaceAssignList) {
+		this.tPlaceAssignList = tPlaceAssignList;
+	}
+	
+	public TAgreementConsent gettAgreementConsent() {
+		return tAgreementConsent;
+	}
+
+	public void settAgreementConsent(TAgreementConsent tAgreementConsent) {
+		this.tAgreementConsent = tAgreementConsent;
+	}
 }
