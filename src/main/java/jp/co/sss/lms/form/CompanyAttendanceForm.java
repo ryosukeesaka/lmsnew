@@ -1,7 +1,5 @@
 package jp.co.sss.lms.form;
 
-import java.util.List;
-
 /**
  * 勤怠情報入力フォーム(全件)
  * 
@@ -27,6 +25,10 @@ public class CompanyAttendanceForm {
 		return courseName;
 	}
 	
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	
 	public String getPlaceName() {
 		return placeName;
 	}
@@ -35,8 +37,16 @@ public class CompanyAttendanceForm {
 		return companyName;
 	}
 	
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	
 	public String getUserName() {
 		return userName;
+	}
+	
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	public String getUserId() {

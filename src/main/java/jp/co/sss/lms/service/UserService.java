@@ -3,9 +3,7 @@ package jp.co.sss.lms.service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.servlet.http.HttpSession;
@@ -15,36 +13,23 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jp.co.sss.lms.dto.CompanyAttendanceSearchDto;
 import jp.co.sss.lms.dto.CompanyDto;
 import jp.co.sss.lms.dto.LmsUserDto;
 import jp.co.sss.lms.dto.LoginUserDto;
-
 import jp.co.sss.lms.dto.PlaceDto;
 import jp.co.sss.lms.dto.UserDetailDto;
-import jp.co.sss.lms.entity.MCompany;
-import jp.co.sss.lms.entity.MCourse;
 import jp.co.sss.lms.entity.MLmsUser;
-import jp.co.sss.lms.entity.MPlace;
 import jp.co.sss.lms.entity.MUser;
-import jp.co.sss.lms.entity.TCourseUser;
-import jp.co.sss.lms.entity.TUserCompany;
-import jp.co.sss.lms.entity.TUserPlace;
 import jp.co.sss.lms.form.CompanyAttendanceForm;
 import jp.co.sss.lms.form.LoginForm;
 import jp.co.sss.lms.repository.MLmsUserRepository;
 import jp.co.sss.lms.repository.MUserRepository;
 import jp.co.sss.lms.repository.TTemporaryPassStorageRepository;
-
 import jp.co.sss.lms.util.Constants;
-
 import jp.co.sss.lms.util.DateUtil;
 import jp.co.sss.lms.util.MessageUtil;
 import jp.co.sss.lms.util.PasswordUtil;
 
-import jp.co.sss.lms.dto.UserCourseCompanyPlaceBasicInfoDto;
-import jp.co.sss.lms.entity.UserCourseCompanyPlaceInfo;
-import jp.co.sss.lms.repository.UserCourseCompanyPlaceBasicInfoRepository;
 
 /**
  * ユーザーサービス
@@ -65,13 +50,12 @@ public class UserService {
 	@Autowired
 	private MLmsUserRepository mLmsUserRepository;
 	@Autowired
-	private UserCourseCompanyPlaceBasicInfoRepository userCourseCompanyPlaceBasicInfoRepository;;
-	@Autowired
 	private DateUtil dateUtil;
 	@Autowired
 	private MessageUtil messageUtil;
 	@Autowired
 	private PasswordUtil passwordUtil;
+
 	/**
 	 * パスワード変更
 	 *
@@ -219,69 +203,53 @@ public class UserService {
 		return loginUserDto; 
 	}
 	
+	
+	/**
+	 * lmsユーザー情報を検索
+	 * 
+	 * @param form 入力フォーム
+	 * @return lmsユーザー情報リスト
+	 */
 	public List<LmsUserDto> getUserListWithAddress (CompanyAttendanceForm form) {	
 		List<LmsUserDto> lmsUserDtoList = new ArrayList<LmsUserDto>();
-		List<CompanyDto> companyNameList = new ArrayList<CompanyDto>();
-		List<CompanyAttendanceSearchDto> searchDtoList = new ArrayList<CompanyAttendanceSearchDto>();
-		List<PlaceDto> placeNameList = new ArrayList<PlaceDto>();
 		
 		// ユーザー情報を取得
 		MLmsUser mLmsUserInfo = mLmsUserRepository.getUserWithCompany(Integer.parseInt(form.getUserId()));
 		
-		MLmsUser conditions = new MLmsUser();
-		MCourse mCourse = new MCourse();
-		MCompany mCompany = new MCompany();
-		MPlace mPlace = new MPlace();
-		MUser mUser = new MUser();
-		TCourseUser tCourseUser = new TCourseUser();
-		TUserCompany tUserCompany = new TUserCompany();
-		TUserPlace tUserPlace = new TUserPlace(); 
-		
 		String courseName = "";
 		String companyName = "";
-		Integer companyId = 0;
-		String placeName = "";
 		Integer placeId = 0;
 		String userName = "";
 		String role = "";
 		Integer accountId = mLmsUserInfo.getAccountId();
 		
+		//入力フォームからの情報を変数に格納
 		List<MLmsUser> mLmsUserList = new ArrayList<MLmsUser>();
 		if(mLmsUserInfo.getRole().equals(Constants.CODE_VAL_ROLL_TEACHER)) {
 			if(!StringUtils.isEmpty(form.getCourseName())) {
-				//mCourse.setCourseName(form.getCourseName());
 				courseName = form.getCourseName();
 			}
 			if(!StringUtils.isEmpty(form.getCompanyName())) {
-				//mCompany.setCompanyName(form.getCompanyName());
 				companyName = form.getCompanyName();
 			}
 			if(!Objects.isNull(form.getPlaceId())) {
-				//mPlace.setPlaceId(form.getPlaceId());
-				//placeName = form.getPlaceName();
 				placeId = Integer.parseInt(form.getPlaceId());
 			}
 			if(!StringUtils.isEmpty(form.getUserName())) {
-				//mUser.setUserName(form.getUserName());
 				userName = form.getUserName();
 			}
 			role = Constants.CODE_VAL_ROLL_STUDENT;
 		}
 
-		
+		//検索フォームに入力した情報で検索処理
 		mLmsUserList = mLmsUserRepository.findByStudentWithAddress(courseName, companyName, placeId, userName, role, accountId);
+		
+		//検索結果をlmsユーザー情報リストに格納
 		for (MLmsUser mLmsUser : mLmsUserList) {
             lmsUserDtoList.add(getLmsUserDto(mLmsUser));
-			//searchDtoList.add(getCompanyAttendanceSearchDto(mLmsUser));
-            //companyNameList
-            //placeNameList
         }
-    
-//    Map<String, Object> map = new HashMap<>();
-//	map.put("companyAttendanceDtoList", lmsUserDtoList);
-//	map.put("companyNameList", companyNameList);
-//	map.put("placeNameList", placeNameList);
 	
+	//lmsユーザー情報リストを返す	
 	return lmsUserDtoList;
 }
 	
@@ -290,61 +258,28 @@ public class UserService {
         BeanUtils.copyProperties(mLmsUser, lmsUserDto);
         BeanUtils.copyProperties(mLmsUser.getMUser(), lmsUserDto);
         
+        //取得したlmsユーザー情報をDtoに格納する
         if(!Objects.isNull(mLmsUser.getMUser())) {
         	lmsUserDto.userName = mLmsUser.getMUser().getUserName();
         	lmsUserDto.userId = mLmsUser.getMUser().getUserId();
         }
         if (!Objects.isNull(mLmsUser.getTCourseUser())) {
-            lmsUserDto.courseId   = mLmsUser.getTCourseUser().getMCourse().getCourseId();
             lmsUserDto.courseName = mLmsUser.getTCourseUser().getMCourse().getCourseName();
         }
-        //deleteFlgの条件を追加 t-murakami
         if (!Objects.isNull(mLmsUser.getTUserCompany()) && 
         		mLmsUser.getTUserCompany().getDeleteFlg().equals(Constants.DB_FLG_FALSE)) {
         	CompanyDto companyDto = new CompanyDto();
-            lmsUserDto.companyId = mLmsUser.getTUserCompany().getCompanyId();
             companyDto.setCompanyName(mLmsUser.getTUserCompany().getMCompany().getCompanyName());
             lmsUserDto.setCompanyDto(companyDto);
-             //BeanUtils.copyProperties(mLmsUser.getTUserCompany().getMCompany(), companyDto);
         }
-        //deleteFlgの条件を追加 t-murakami
         if (!Objects.isNull(mLmsUser.getTUserPlace()) && 
         		mLmsUser.getTUserPlace().getDeleteFlg().equals(Constants.DB_FLG_FALSE)) {
         	PlaceDto placeDto = new PlaceDto();
-            placeDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());;
             placeDto.setPlaceName(mLmsUser.getTUserPlace().getMPlace().getPlaceName());
             lmsUserDto.setPlaceDto(placeDto);
-            //BeanUtils.copyProperties(mLmsUser.getTUserPlace().getMPlace(), placeDto);
         }
 
+        //lmsユーザー情報を格納したDtoを返す
         return lmsUserDto;
     }
-	/**
-	 * ユーザー一覧リストの取得	
-	 * @author 梶山
-	 * @param map<string,string>
-	 * @return List <UserCourseCompanyPlaceBasicInfoDto> ユーザ、コース、企業、会場情報のdto List
-	 * */
-	public List<UserCourseCompanyPlaceBasicInfoDto> getList(Map<String,String>map) {
-		List<UserCourseCompanyPlaceBasicInfoDto> list = new ArrayList<>();
-		String placeId = map.get("placeId") ;
-		String userName = map.get("userName");
-		String companyName = map.get("companyName");
-		String courseName = map.get("courseName");
-		List<UserCourseCompanyPlaceInfo> userCourseCompanyPlaceInfoList =  userCourseCompanyPlaceBasicInfoRepository.
-																				searchUserCourseCompanyPlaceInfoListByForm
-																				(userName,courseName,companyName,placeId);
-
-		for(UserCourseCompanyPlaceInfo info:userCourseCompanyPlaceInfoList) {	
-				//nullチェック
-				if(null == info.getCompanyId() || null== info.getCourseId() || null == info.getPlaceId()) {
-					continue;
-				}
-				UserCourseCompanyPlaceBasicInfoDto userInfoDto = new UserCourseCompanyPlaceBasicInfoDto();
-				BeanUtils.copyProperties(info,userInfoDto);
-				list.add(userInfoDto);
-		}
-		return list;
-	}
-	
 }

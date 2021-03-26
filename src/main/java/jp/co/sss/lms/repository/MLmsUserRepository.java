@@ -1,6 +1,5 @@
 package jp.co.sss.lms.repository;
 
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -63,13 +62,14 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 			+ " AND t8.deleteFlg = 0")
 	public List<MLmsUser> findStudentByPlaceId(@Param("placeId") Integer placeId, @Param("courseDate") Date courseDate);
 	
-	@Query(value="SELECT * FROM m_lms_user as t1 LEFT OUTER JOIN t_course_user as t2 ON t1.lms_user_id = t2.lms_user_id "
-			+ "LEFT OUTER JOIN m_course as t3 ON t2.course_id = t3.course_id "
-			+ "LEFT OUTER JOIN t_user_company as t4 ON t1.lms_user_id = t4.lms_user_id "
-			+ "LEFT OUTER JOIN m_company as t5 ON t4.company_id = t5.company_id "
-			+ "LEFT OUTER JOIN t_user_place as t6 ON t1.lms_user_id = t6.lms_user_id "
-			+ "LEFT OUTER JOIN m_place as t7 ON t6.place_id = t7.place_id "
-			+ "LEFT OUTER JOIN m_user as t8 ON t8.user_id = t1.user_id "
+	@Query(value="SELECT * FROM m_lms_user as t1 "
+			+ "INNER JOIN t_course_user as t2 ON t1.lms_user_id = t2.lms_user_id "
+			+ "INNER JOIN m_course as t3 ON t2.course_id = t3.course_id "
+			+ "INNER JOIN t_user_company as t4 ON t1.lms_user_id = t4.lms_user_id "
+			+ "INNER JOIN m_company as t5 ON t4.company_id = t5.company_id "
+			+ "INNER JOIN t_user_place as t6 ON t1.lms_user_id = t6.lms_user_id "
+			+ "INNER JOIN m_place as t7 ON t6.place_id = t7.place_id "
+			+ "INNER JOIN m_user as t8 ON t8.user_id = t1.user_id "
 			+ "WHERE t3.course_name ILIKE %:courseName% "
 			+ "AND t5.company_name ILIKE %:companyName% "
 			+ "AND t6.place_id = :placeId "
@@ -81,4 +81,6 @@ public interface MLmsUserRepository  extends JpaRepository<MLmsUser, Integer>{
 	public List<MLmsUser> findByStudentWithAddress(@Param("courseName") String courseName,
 			@Param("companyName") String companyName, @Param("placeId") Integer placeId, @Param("userName") String userName, 
 			@Param("role") String role, @Param("accountId") Integer accountId);
+
+	
 }

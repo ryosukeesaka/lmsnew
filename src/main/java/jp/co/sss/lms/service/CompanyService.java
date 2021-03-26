@@ -1,38 +1,18 @@
 package jp.co.sss.lms.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import jp.co.sss.lms.dto.CompanyDto;
-import jp.co.sss.lms.dto.CourseServiceCategoryDto;
-import jp.co.sss.lms.dto.CourseServiceCourseDto;
-import jp.co.sss.lms.dto.CourseServiceSectionDto;
-import jp.co.sss.lms.dto.LmsUserDto;
-import jp.co.sss.lms.dto.CourseServiceCourseListDto;
-import jp.co.sss.lms.entity.MCategory;
 import jp.co.sss.lms.entity.MCompany;
-import jp.co.sss.lms.entity.MCourse;
 import jp.co.sss.lms.entity.MLmsUser;
-import jp.co.sss.lms.entity.MSection;
-import jp.co.sss.lms.form.CompanyAttendanceForm;
 import jp.co.sss.lms.repository.MCompanyRepository;
-import jp.co.sss.lms.repository.MCourseRepository;
 import jp.co.sss.lms.repository.MLmsUserRepository;
-import jp.co.sss.lms.repository.TCompanyCourseRepository;
-import jp.co.sss.lms.repository.TCourseTeachingMaterialRepository;
-import jp.co.sss.lms.util.Constants;
-import jp.co.sss.lms.util.MessageUtil;
 
 /**
  * クラス名 CourseService
@@ -57,10 +37,14 @@ public class CompanyService {
 	public List<CompanyDto> getCompanyDtoList(Integer userId) {
 		List<CompanyDto> companyDtoList = new ArrayList<CompanyDto>();
 		List<MCompany> mCompanyList = new ArrayList<MCompany>();
+		
+		//ユーザー情報取得
 		MLmsUser mLmsUser = mLmsUserRepository.getUserWithCompany(userId);
         
+		//アカウントIDで企業情報取得
         mCompanyList = mCompanyRepository.findByAccountId(mLmsUser.getAccountId());
         
+        //企業情報を企業情報リストに格納
         for (MCompany mCompany : mCompanyList) {
         	CompanyDto companyDto = new CompanyDto();
         	BeanUtils.copyProperties(mCompany, companyDto);
@@ -69,48 +53,9 @@ public class CompanyService {
             companyDtoList.add(companyDto);
         }
 
+        //企業情報リストを返す
         return companyDtoList;
 	}
 	
-//	public List<CompanyDto> getCompanyDtoSerchList(List<LmsUserDto> userList) {
-//		List<CompanyDto> companyNameList = new ArrayList<CompanyDto>();
-//		
-//        for (int i = 0; i >= userList.size(); i++) {
-//        	companyNameList = userList.
-//        }
-//
-//        return companyDtoList;
-//	}
-	
-//	public List<CompanyDto> getCompanyDtoList(CompanyAttendanceForm form) {
-//		MLmsUser mLmsUser = new MLmsUser();
-//		List<CompanyDto> companyDtoList = new ArrayList<CompanyDto>();
-//		List<MCompany> mCompanyList = new ArrayList<MCompany>();
-//
-//        MCompany conditions = new MCompany();
-//        if (StringUtils.isNumeric(form.getCompanyId())) {
-//        	conditions.setCompanyId(Integer.parseInt(form.getCompanyId()));
-//        }
-//        
-//        if(!Objects.isNull(conditions.getCompanyId()) || !StringUtils.isBlank(conditions.getCompanyName())) {
-//        	mCompanyList = mCompanyRepository.findByCondition(conditions.getCompanyId(), conditions.getCompanyName());
-//        }else{
-//        	mCompanyList = mCompanyRepository.findByAccountId(mLmsUser.getAccountId());
-//        }
-//        
-//        for (MCompany mCompany : mCompanyList) {
-//        	CompanyDto companyDto = new CompanyDto();
-//        	
-//        	BeanUtils.copyProperties(mCompany, companyDto);
-//            companyDtoList.add(companyDto);
-//        }
-//
-//        return companyDtoList;
-//	}
-	
-//	public List<CompanyDto> getCompanyDtoList() {
-//        return this.getCompanyDtoList(new CompanyForm());
-//    }
-	
-	
+
 }
