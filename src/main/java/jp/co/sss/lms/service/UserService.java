@@ -314,4 +314,18 @@ public class UserService {
 		}
 		return list;
 	}
+	
+	/**
+	 * パスワード再発行画面用処理
+	 * パスワード生成
+	 * @author Ushiku
+	 */
+	public String reissuePassword(String userId) {
+        MUser mUser = mUserRepository.findByUserId(Integer.parseInt(userId));
+        String rowPassword = PasswordUtil.generatePassword();
+        String hashedCurrentPassword = passwordUtil.getSaltedAndStrechedPassword(rowPassword, userId);
+        mUser.setPassword(hashedCurrentPassword);
+        mUser.setPasswordChangeDate(null);
+		return rowPassword;
+	}
 }
