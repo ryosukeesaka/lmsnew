@@ -51,7 +51,7 @@ public class SubsidyCompanyUpdateService {
 		List<TCompanyCourse> tCompanyCourseList = tCompanyCourseRepository.getCompanyCourseAndAgreementConsent(companyId);
 		if (!tCompanyCourseList.isEmpty()) {
 			MCompany mCompany = tCompanyCourseList.get(0).getmCompany();
-			TAgreementConsent tAgreementConsen = tCompanyCourseList.get(0).gettAgreementConsent();
+			TAgreementConsent tAgreementConsent = tCompanyCourseList.get(0).gettAgreementConsent();
 			
 			// レスポンスの設定
 			subsidyCompanyUpdateDto.setCompanyId(mCompany.getCompanyId());
@@ -76,7 +76,7 @@ public class SubsidyCompanyUpdateService {
 			subsidyCompanyUpdateDto.setSubsidyPhoneNumber1(mCompany.getSubsidyPhoneNumber1());
 			subsidyCompanyUpdateDto.setSubsidyPhoneNumber2(mCompany.getSubsidyPhoneNumber2());
 			subsidyCompanyUpdateDto.setSubsidyPhoneNumber3(mCompany.getSubsidyPhoneNumber3());	    
-			subsidyCompanyUpdateDto.setConsentFlg(tAgreementConsen.getConsentFlg());
+			subsidyCompanyUpdateDto.setConsentFlg(tAgreementConsent.getConsentFlg());
 		}
 		return subsidyCompanyUpdateDto;
 	}
@@ -87,13 +87,32 @@ public class SubsidyCompanyUpdateService {
 	 * @param SubsidyCompanyUpdateForm 企業情報form
 	 */
 	public SubsidyCompanyUpdateDto put(SubsidyCompanyUpdateForm subsidyCompanyUpdateForm) {
-		SubsidyCompanyUpdateDto subsidyCompanyUpdateDtoo = new SubsidyCompanyUpdateDto();
+		SubsidyCompanyUpdateDto subsidyCompanyUpdateDto = new SubsidyCompanyUpdateDto();
 		
-		// TODO:DB相関チェック
-		
-		Date nowDate = new Date();
+		// DB相関チェック。
+		if (subsidyCompanyUpdateForm.getFirstFlg() == 1) {
+			// 遷移元：契約書確認画面の場合
+			// 企業・コース紐づけ情報の取得
+			List<TCompanyCourse> tCompanyCourseList = tCompanyCourseRepository.getCompanyCourseAndAgreementConsent(subsidyCompanyUpdateForm.getCompanyId());
+			if (tCompanyCourseList.isEmpty()) {
+				subsidyCompanyUpdateDto.setErrInfo("企業コース紐づけ情報が取得できません。");
+			}
+			// 契約同意情報の取得
+			TAgreementConsent tAgreementConsent = tCompanyCourseList.get(0).gettAgreementConsent();
+			if (tAgreementConsent == null) {
+				subsidyCompanyUpdateDto.setErrInfo("契約同意情報が取得できません。");
+			}
+		} else {
+			// 遷移元：企業（助成金）情報画面の場合
+			if (subsidyCompanyUpdateForm.getCompanyId() 
+					!= subsidyCompanyUpdateForm.getCompanyIdSession()) {
+				subsidyCompanyUpdateDto.setErrInfo("更新対象の企業IDとセッションの企業IDが一致しません。");
+				return subsidyCompanyUpdateDto;
+			}
+		}
 		
 		// 企業情報の更新
+		Date nowDate = new Date();
 		MCompany mCompany = mCompanyRepository.getOne(subsidyCompanyUpdateForm.getCompanyId());
 		mCompany.setCompanyId(subsidyCompanyUpdateForm.getCompanyId());
 		mCompany.setCompanyName(subsidyCompanyUpdateForm.getCompanyName());
@@ -139,6 +158,6 @@ public class SubsidyCompanyUpdateService {
 		}
 		mFssGroupRepository.saveAll(mFssGroupList);
 		
-		return subsidyCompanyUpdateDtoo;
+		return subsidyCompanyUpdateDto;
 	}
 }

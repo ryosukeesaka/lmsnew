@@ -18,6 +18,9 @@ public class SubsidyCompanyUpdateForm {
 
 	/** 企業ID */
 	private Integer companyId;
+	
+	/** 企業ID(セッション) */
+	private Integer companyIdSession;
 
 	/** 企業名 */
 	private String companyName;
@@ -112,6 +115,14 @@ public class SubsidyCompanyUpdateForm {
 
 	public void setCompanyId(Integer companyId) {
 		this.companyId = companyId;
+	}
+	
+	public Integer getCompanyIdSession() {
+		return companyIdSession;
+	}
+
+	public void setCompanyIdSession(Integer companyIdSession) {
+		this.companyIdSession = companyIdSession;
 	}
 
 	public String getCompanyName() {

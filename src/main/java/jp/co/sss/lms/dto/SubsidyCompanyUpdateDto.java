@@ -83,6 +83,9 @@ public class SubsidyCompanyUpdateDto {
 	/** 申請担当者番号3 **/
 	private String subsidyPhoneNumber3;
 	
+	/** エラー情報 **/
+	private String errInfo;
+	
 	public Short getConsentFlg() {
 		return consentFlg;
 	}
@@ -288,8 +291,14 @@ public class SubsidyCompanyUpdateDto {
 	public void setAgreementConsentFlg(Boolean agreementConsentFlg) {
 		this.agreementConsentFlg = agreementConsentFlg;
 	}
+	
+	public String getErrInfo() {
+		return errInfo;
+	}
 
-
+	public void setErrInfo(String errInfo) {
+		this.errInfo = errInfo;
+	}
 }
 
 
