@@ -12,26 +12,27 @@ import jp.co.sss.lms.form.LmsUserForm;
 import jp.co.sss.lms.service.UserService;
 
 /**
- * パスワード再発行コントローラー
- * /password/reissuePassword
+ * パスワード再発行コントローラー /password/reissuePassword
+ * 
  * @author 牛久
  */
 @RestController
 @RequestMapping("/password")
 public class ReissuePasswordController {
-	
+
 	@Autowired
 	UserService userService;
 
-	@RequestMapping(value = "/reissuePassword", method = RequestMethod.POST)	public ResponseEntity<LmsUserForm> index(@RequestParam ("lmsUserId") String LmsUserId) {
-		
+	@RequestMapping(value = "/reissuePassword", method = RequestMethod.POST)
+	public ResponseEntity<LmsUserForm> index(@RequestParam("lmsUserId") String LmsUserId) {
+
 		String loginId = userService.getMUser(Integer.parseInt(LmsUserId)).getLoginId();
 		String rowPassword = userService.reissuePassword(LmsUserId);
 		LmsUserForm form = new LmsUserForm();
 		form.setLoginId(loginId);
 		form.setPassword(rowPassword);
 		form.setRole(userService.getMUser(Integer.parseInt(LmsUserId)).getMLmsUser().getRole());
-		
+
 //        // ユーザ登録の場合のみ
 //        if(StringUtil.equals(Constants.CODE_VAL_ROLL_STUDENT, userForm.role) && LoginUserUtil.isAdmin() && (userForm.companyId != null || userForm.courseId != null)){
 //           placeAssignId = userFacade.getPlaceAssignId(userForm);
