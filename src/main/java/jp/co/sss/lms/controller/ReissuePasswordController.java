@@ -23,15 +23,15 @@ public class ReissuePasswordController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping(value = "/reissuePassword", method = RequestMethod.GET)
+	@RequestMapping(value = "/password/reissuePassword", method = RequestMethod.POST)
 	public ResponseEntity<LmsUserForm> index(@RequestParam ("lmsUserId") String LmsUserId) {
 		
-		String loginId = userService.getMUser(LmsUserId).getLoginId();
+		String loginId = userService.getMUser(Integer.parseInt(LmsUserId)).getLoginId();
 		String rowPassword = userService.reissuePassword(LmsUserId);
 		LmsUserForm form = new LmsUserForm();
 		form.setLoginId(loginId);
 		form.setPassword(rowPassword);
-		form.setRole(userService.getMUser(LmsUserId).getMLmsUser().getRole());
+		form.setRole(userService.getMUser(Integer.parseInt(LmsUserId)).getMLmsUser().getRole());
 		
 //        // ユーザ登録の場合のみ
 //        if(StringUtil.equals(Constants.CODE_VAL_ROLL_STUDENT, userForm.role) && LoginUserUtil.isAdmin() && (userForm.companyId != null || userForm.courseId != null)){
