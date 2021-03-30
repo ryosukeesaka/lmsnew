@@ -13,7 +13,7 @@ public class LmsUserDto extends LmsUserDtoBase {
     /** ログインID */
     public String loginId;
 
-    /** コース名 */
+	/** コース名 */
     public String courseName;
 
     /** コースID */
@@ -36,7 +36,9 @@ public class LmsUserDto extends LmsUserDtoBase {
 
     /** 試験結果出力DTO */
     public ExamResultDto examResultDto;
-
+    
+    /** 会場出力Dto */
+    public List<PlaceDto> placeDtoList = new ArrayList<>();
     /** ユーザーマスタDTO */
     public MUserDto mUserDto;
 
@@ -74,13 +76,168 @@ public class LmsUserDto extends LmsUserDtoBase {
 
     /** ユーザー・企業紐付けID */
     public Integer userCompanyId;
-
-    /**
+    
+    /** ユーザの企業名	 */
+    public String companyName;
+    
+    /** 企業Id */
+    public Integer companyId;
+    public String getCourseName() {
+		return courseName;
+	}
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	public Integer getCouseId() {
+		return couseId;
+	}
+	public void setCouseId(Integer couseId) {
+		this.couseId = couseId;
+	}
+	public Short getCourseType() {
+		return courseType;
+	}
+	public void setCourseType(Short courseType) {
+		this.courseType = courseType;
+	}
+	public String getHopeViaTraning() {
+		return hopeViaTraning;
+	}
+	public void setHopeViaTraning(String hopeViaTraning) {
+		this.hopeViaTraning = hopeViaTraning;
+	}
+	public Short getProgrammingExperience() {
+		return programmingExperience;
+	}
+	public void setProgrammingExperience(Short programmingExperience) {
+		this.programmingExperience = programmingExperience;
+	}
+	public CompanyDto getCompanyDto() {
+		return companyDto;
+	}
+	public void setCompanyDto(CompanyDto companyDto) {
+		this.companyDto = companyDto;
+	}
+	public PlaceDto getPlaceDto() {
+		return placeDto;
+	}
+	public void setPlaceDto(PlaceDto placeDto) {
+		this.placeDto = placeDto;
+	}
+	public ExamResultDto getExamResultDto() {
+		return examResultDto;
+	}
+	public void setExamResultDto(ExamResultDto examResultDto) {
+		this.examResultDto = examResultDto;
+	}
+	public MUserDto getmUserDto() {
+		return mUserDto;
+	}
+	public void setmUserDto(MUserDto mUserDto) {
+		this.mUserDto = mUserDto;
+	}
+	public List<DailyReportDto> getDailyReportDtoList() {
+		return dailyReportDtoList;
+	}
+	public void setDailyReportDtoList(List<DailyReportDto> dailyReportDtoList) {
+		this.dailyReportDtoList = dailyReportDtoList;
+	}
+	public List<ExamResultDto> getExamResultDtoList() {
+		return examResultDtoList;
+	}
+	public void setExamResultDtoList(List<ExamResultDto> examResultDtoList) {
+		this.examResultDtoList = examResultDtoList;
+	}
+	public List<EvReportDto> getEvReportDtoList() {
+		return evReportDtoList;
+	}
+	public void setEvReportDtoList(List<EvReportDto> evReportDtoList) {
+		this.evReportDtoList = evReportDtoList;
+	}
+	public List<MeetingDto> getMeetingDtoList() {
+		return meetingDtoList;
+	}
+	public void setMeetingDtoList(List<MeetingDto> meetingDtoList) {
+		this.meetingDtoList = meetingDtoList;
+	}
+	public MeetingFileDto getMeetingFileDto() {
+		return meetingFileDto;
+	}
+	public void setMeetingFileDto(MeetingFileDto meetingFileDto) {
+		this.meetingFileDto = meetingFileDto;
+	}
+	public List<UserTicketDto> getTicketDtoList() {
+		return ticketDtoList;
+	}
+	public void setTicketDtoList(List<UserTicketDto> ticketDtoList) {
+		this.ticketDtoList = ticketDtoList;
+	}
+	public List<DeliverableDto> getDeliverableDtoList() {
+		return deliverableDtoList;
+	}
+	public void setDeliverableDtoList(List<DeliverableDto> deliverableDtoList) {
+		this.deliverableDtoList = deliverableDtoList;
+	}
+	public List<MUserDto> getmUserDtoList() {
+		return mUserDtoList;
+	}
+	public void setmUserDtoList(List<MUserDto> mUserDtoList) {
+		this.mUserDtoList = mUserDtoList;
+	}
+	public List<SkillDto> getSkillDtoList() {
+		return skillDtoList;
+	}
+	public void setSkillDtoList(List<SkillDto> skillDtoList) {
+		this.skillDtoList = skillDtoList;
+	}
+	public Integer getSubsidyCategoryId() {
+		return subsidyCategoryId;
+	}
+	public void setSubsidyCategoryId(Integer subsidyCategoryId) {
+		this.subsidyCategoryId = subsidyCategoryId;
+	}
+	public String getSubsidyCategoryName() {
+		return subsidyCategoryName;
+	}
+	public void setSubsidyCategoryName(String subsidyCategoryName) {
+		this.subsidyCategoryName = subsidyCategoryName;
+	}
+	public Integer getUserCompanyId() {
+		return userCompanyId;
+	}
+	public void setUserCompanyId(Integer userCompanyId) {
+		this.userCompanyId = userCompanyId;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public Integer getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Integer companyId) {
+		this.companyId = companyId;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
+	}
+	/**
      * ログインIDを取得します。
      * @return ログインID
      */
     public String getLoginId() {
         return loginId;
     }
+	public List<PlaceDto> getPlaceDtoList() {
+		return placeDtoList;
+	}
+	public void setPlaceDtoList(List<PlaceDto> placeDtoList) {
+		this.placeDtoList = placeDtoList;
+	}
 
 }

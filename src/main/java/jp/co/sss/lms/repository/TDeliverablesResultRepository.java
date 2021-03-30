@@ -36,4 +36,32 @@ public interface TDeliverablesResultRepository extends JpaRepository<TDeliverabl
 			)
 	
 	List<TDeliverablesResult> findByDeliverablesLmsUserId(@Param("lmsUserId") Integer lmsUserId);
+	
+	@Query("SELECT t1 FROM TDeliverablesResult t1 "
+			+ " INNER JOIN t1.tDeliverablesSection t2 "
+			+ " INNER JOIN t2.mDeliverables t3"
+			+ " WHERE t1.deliverablesResultId = :deliverablesResultId "
+			+ " AND t2.deleteFlg = 0 "
+			+ " AND t3.deleteFlg = 0 ")
+	TDeliverablesResult findByDeliverablesResultId(@Param("deliverablesResultId") Integer deliverablesResultId);
+	
+	@Query("SELECT t1 FROM TDeliverablesResult t1 "
+			  + " INNER JOIN t1.tDeliverablesSection t2 "
+			  + " INNER JOIN t2.mSection t3"
+			  + " INNER JOIN t2.mDeliverables t4 "
+			  + " INNER JOIN t1.mLmsUser t5 "
+			  + " INNER JOIN t5.mUser t6 "
+			  + " WHERE t1.deliverablesResultId IN (:deliverablesResultIdList) "
+			  + " AND t1.deleteFlg = 0 "
+			  + " AND t2.deleteFlg = 0 "
+			  + " AND t3.deleteFlg = 0 "
+			  + " AND t4.deleteFlg = 0 "
+			  + " AND t5.deleteFlg = 0 "
+			  + " AND t6.deleteFlg = 0 ")
+	List<TDeliverablesResult> findByIdListWithUser(@Param("deliverablesResultIdList") List<Integer> deliverablesResultIdList) ;
+	
+	@Query("SELECT t1 FROM TDeliverablesResult t1 "
+			+ " WHERE t1.deliverablesResultId IN (:deliverablesResultIdList) "
+			+ " AND t1.deleteFlg = 0 ")
+	List<TDeliverablesResult> findByIdList(@Param("deliverablesResultIdList") List<Integer> deliverablesResultIdList) ;
 }

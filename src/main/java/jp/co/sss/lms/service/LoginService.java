@@ -109,7 +109,6 @@ public class LoginService {
 			loginUserDto.setPlaceId(mLmsUser.getTUserPlace().getPlaceId());
 			loginUserDto.setCourseId(mLmsUser.getTCourseUser().getCourseId());
 			loginUserDto.setSupportAvailable(mLmsUser.getTUserPlace().getMPlace().getSupportAvailable());
-			System.out.println("aaa");
 		}
 		//パスワードに変更日がある場合
 		if (mLmsUser.getMUser().getPasswordChangeDate() != null) {

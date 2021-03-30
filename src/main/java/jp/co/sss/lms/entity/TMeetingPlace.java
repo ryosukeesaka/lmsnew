@@ -1,6 +1,7 @@
 package jp.co.sss.lms.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -67,6 +69,10 @@ public class TMeetingPlace {
     @ManyToOne
     @JoinColumn(name = "place_id", referencedColumnName = "placeId")
     private MPlace mPlace;
+    
+    @OneToMany(mappedBy = "tMeetingPlace")
+    public List<TMeetingCompany> tMeetingCompanyList;
+    
 
 	public Integer getMeetingPlaceId() {
 		return meetingPlaceId;
@@ -147,4 +153,13 @@ public class TMeetingPlace {
 	public void setmPlace(MPlace mPlace) {
 		this.mPlace = mPlace;
 	}
+	
+	public List<TMeetingCompany> gettMeetingCompanyList() {
+		return tMeetingCompanyList;
+	}
+
+	public void settMeetingCompanyList(List<TMeetingCompany> tMeetingCompanyList) {
+		this.tMeetingCompanyList = tMeetingCompanyList;
+	}
+
 }

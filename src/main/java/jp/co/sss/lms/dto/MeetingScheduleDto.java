@@ -1,5 +1,6 @@
 package jp.co.sss.lms.dto;
 
+
 import java.util.Date;
 
 /**
@@ -32,6 +33,9 @@ public class MeetingScheduleDto {
 
     /** 公開フラグ */
     private Short publishedFlg;
+    
+    /** 面談時間*/
+    private Date meetingTime;
 
 	public Integer getMeetingScheduleId() {
 		return meetingScheduleId;
@@ -96,5 +100,16 @@ public class MeetingScheduleDto {
 	public void setPublishedFlg(Short publishedFlg) {
 		this.publishedFlg = publishedFlg;
 	}
+	
+	//久保追加 03/15 ミーティング時間を取得するため
+	public Date getMeetingTime() {
+		return meetingTime;
+	}
+
+	public void setMeetingTime(Date meetingTime) {
+		this.meetingTime = meetingTime;
+	}
+	
+	
 
 }
