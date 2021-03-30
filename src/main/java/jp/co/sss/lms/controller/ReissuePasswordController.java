@@ -23,8 +23,7 @@ public class ReissuePasswordController {
 	@Autowired
 	UserService userService;
 
-	@RequestMapping(value = "/reissuePassword", method = RequestMethod.POST)
-	public ResponseEntity<LmsUserForm> index(@RequestParam ("lmsUserId") String LmsUserId) {
+	@RequestMapping(value = "/reissuePassword", method = RequestMethod.POST)	public ResponseEntity<LmsUserForm> index(@RequestParam ("lmsUserId") String LmsUserId) {
 		
 		String loginId = userService.getMUser(Integer.parseInt(LmsUserId)).getLoginId();
 		String rowPassword = userService.reissuePassword(LmsUserId);
