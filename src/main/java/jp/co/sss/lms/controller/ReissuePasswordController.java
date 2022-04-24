@@ -32,6 +32,7 @@ public class ReissuePasswordController {
 		form.setLoginId(loginId);
 		form.setPassword(rowPassword);
 		form.setRole(userService.getMUser(Integer.parseInt(LmsUserId)).getMLmsUser().getRole());
+		//MUser取得からエンティティのgetメソッドでロールを取得
 
 //        // ユーザ登録の場合のみ
 //        if(StringUtil.equals(Constants.CODE_VAL_ROLL_STUDENT, userForm.role) && LoginUserUtil.isAdmin() && (userForm.companyId != null || userForm.courseId != null)){

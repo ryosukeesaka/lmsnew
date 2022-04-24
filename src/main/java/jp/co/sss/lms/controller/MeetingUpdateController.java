@@ -44,8 +44,8 @@ public class MeetingUpdateController {
 	@Autowired
 	LoginUserDto loginUserDto;
 	
-	@Autowired
-	MeetingForm meetingForm;
+	//@Autowired
+	//MeetingForm meetingForm;
 	
 	//@Autowired
 	//LoggingUtil loggingUtil;
